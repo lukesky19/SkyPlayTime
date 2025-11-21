@@ -1,0 +1,48 @@
+# DO NOT TOUCH! - This is for migrating the config file format if necessary.
+config-version: "1.0.0.0"
+# The plugin's locale to use. Corresponds to a file in SkyPlayTime/locale without the file extension.
+locale: en_US
+# This is how often data is saved to the database
+save-interval-seconds: 900
+# Should the database be backed-up when any play time is reset?
+backup-on-reset: true
+# Should a snapshot of the leaderboard be saved when any play time is reset?
+leaderboard-snapshot-on-reset: true
+# The cutoff for when old backups should be removed.
+backups-remove-older-than: 30d
+# The cutoff for when old leaderboard snapshots should be removed.
+leaderboard-remove-older-than: 90d
+afk-settings:
+    # This is the time in seconds that must pass before the player is marked as AFK. Both movement and action time must be greater than or equal to this value.
+    # Set to -1 to disable.
+    auto-afk-seconds: 300
+    # If a player's last movement time has been met or exceeded the movement time below, and their action time is at or less than the action time below, they will also be marked as AFK.
+    # This is useful for detecting AFK mining and other automated actions.
+    # You can set to -1 for either (or both) to disable.
+    movement-time-seconds: 60
+    # If a player's last movement time above has been met or exceeded, and their action time below is at or less than, they will also be marked as AFK.
+    # This is useful for detecting AFK mining and other automated actions.
+    # You can set to -1 for either (or both) to disable.
+    action-time-seconds: 30
+    # These are settings that can be applied when a player is marked as AFK.
+    player-settings:
+        # Should afk players be able to pick up items?
+        afk-item-pickup: false
+        # Should afk players be invulnerable?
+        afk-invulnerable: true
+        # Should afk players be marked as sleeping?
+        afk-sleeping: true
+reset-settings:
+    # The time zone to use when calculating reset times.
+    zone-id: "America/New_York"
+    # The day of week to reset weekly play time on.
+    day-of-week: SUNDAY
+    # A number between and including 1-24.
+    # Example: 3 would be 3 AM, 15 would be 3 PM.
+    reset-hour: 10
+# Do not modify. For internal use only to automatically reset play time.
+last-reset-times:
+    daily: 0
+    weekly: 0
+    monthly: 0
+    yearly: 0

@@ -1,0 +1,77 @@
+name: SkyPlayTime
+version: '${version}'
+main: com.github.lukesky19.skyplaytime.SkyPlayTime
+api-version: '1.21'
+depend: [SkyLib]
+softdepend: [NewPlayerPerks, PlaceholderAPI]
+
+permissions:
+    skyplaytime.command.skyplaytime:
+        description: Base Command Permission
+        default: op
+    skyplaytime.command.skyplaytime.afk:
+        description: Permission to toggle your AFK status.
+        default: op
+    skyplaytime.command.skyplaytime.afk.others:
+        description: Permission to toggle other player's AFK status.
+        default: op
+    skyplaytime.command.skyplaytime.time:
+        description: Permission to view your own play time.
+        default: op
+    skyplaytime.command.skyplaytime.time.others:
+        description: Permission to view other player's play time.
+        default: op
+    skyplaytime.command.skyplaytime.leaderboard:
+        description: Permission to view the play time leaderboards.
+        default: op
+    skyplaytime.command.skyplaytime.add:
+        description: Permission to add play time to a player.
+        default: op
+    skyplaytime.command.skyplaytime.remove:
+        description: Permission to remove play time from a player.
+        default: op
+    skyplaytime.command.skyplaytime.set:
+        description: Permission to set play time for a player.
+        default: op
+    skyplaytime.command.skyplaytime.reset:
+        description: Permission to reset play time for a player or all players.
+        default: op
+    skyplaytime.command.skyplaytime.list:
+        description: Permission to list online players and their AFK status.
+        default: op
+    skyplaytime.command.skyplaytime.reload:
+        description: Permission to reload the plugin.
+        default: op
+    skyplaytime.command.skyplaytime.help:
+        description: Permission to view the plugin's help message.
+        default: op
+    skyplaytime.command.skyplaytime.save:
+        description: Permission to save play time stored in memory to the database.
+        default: op
+    skyplaytime.command.skyplaytime.backup:
+        description: Permission to backup the database.
+        default: op
+    skyplaytime.command.skyplaytime.exempt:
+        description: Permission to mark a player exempt from the leaderboards.
+        default: op
+    skyplaytime.command.skyplaytime.unexempt:
+        description: Permission to mark a player unexempt from the leaderboards.
+        default: op
+    skyplaytime.command.skyplaytime.debug:
+        description: The base permission to access the debug command.
+        default: op
+    skyplaytime.command.skyplaytime.debug.status:
+        description: Permission to view your own internal afk status.
+        default: op
+    skyplaytime.command.skyplaytime.status.others:
+        description: Permission to view the internal afk status of other players.
+        default: op
+    skyplaytime.command.skyplaytime.debug.last-move:
+        description: Permission to check when a player last moved.
+        default: op
+    skyplaytime.command.skyplaytime.debug.last-action:
+        description: Permission to check when a player last completed an action.
+        default: op
+    skyplaytime.command.skyplaytime.debug.list:
+        description: Permission to view a list that displays whether a player is online, offline, or unknown and whether their play time is being tracked.
+        default: op
