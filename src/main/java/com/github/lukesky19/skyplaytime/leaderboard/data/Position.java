@@ -18,7 +18,7 @@
 package com.github.lukesky19.skyplaytime.leaderboard.data;
 
 import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ import java.util.UUID;
  */
 @ConfigSerializable
 public record Position(
-        @NotNull UUID uuid,
-        @NotNull String name,
+        @NonNull UUID uuid,
+        @NonNull String name,
         long seconds) {
 }

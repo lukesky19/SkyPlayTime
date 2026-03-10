@@ -1,5 +1,5 @@
 # The version of this config file. DO NOT TOUCH!
-config-version: 1.0.0.0
+version: 1
 prefix: "<aqua><bold>SkyPlayTime</bold></aqua><gray> ▪ </gray>"
 help:
     - "<aqua>SkyPlayTime is developed by <white><bold>lukeskywlker19</bold></white>.</aqua>"

@@ -26,8 +26,7 @@ import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -36,11 +35,11 @@ import java.util.concurrent.CompletableFuture;
  * This class manages the update and retrieval of play time for online players.
  */
 public class TimeManager {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull DatabaseManager databaseManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull DatabaseManager databaseManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
 
     /**
      * Constructor
@@ -51,11 +50,11 @@ public class TimeManager {
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      */
     public TimeManager(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull DatabaseManager databaseManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull LeaderboardManager leaderboardManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull DatabaseManager databaseManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull LeaderboardManager leaderboardManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
         this.databaseManager = databaseManager;
@@ -70,8 +69,8 @@ public class TimeManager {
      * @return The player's play time in seconds for the provided {@link TimeCategory}.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public long getPlayTimeSeconds(@NotNull UUID uuid, @NotNull TimeCategory timeCategory) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public long getPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         return playerData.getPlayTime(timeCategory);
@@ -84,8 +83,8 @@ public class TimeManager {
      * @param playTimeSeconds The play time in seconds to remove.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public void addPlayTimeSeconds(@NotNull UUID uuid, @NotNull TimeCategory timeCategory, long playTimeSeconds) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public void addPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         playerData.addPlayTime(timeCategory, playTimeSeconds);
@@ -98,8 +97,8 @@ public class TimeManager {
      * @param playTimeSeconds The play time in seconds to remove.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public void removePlayTimeSeconds(@NotNull UUID uuid, @NotNull TimeCategory timeCategory, long playTimeSeconds) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public void removePlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         playerData.removePlayTime(timeCategory, playTimeSeconds);
@@ -112,8 +111,8 @@ public class TimeManager {
      * @param playTimeSeconds The play time in seconds to remove.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public void setPlayTimeSeconds(@NotNull UUID uuid, @NotNull TimeCategory timeCategory, long playTimeSeconds) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public void setPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         playerData.setPlayTime(timeCategory, playTimeSeconds);
@@ -131,7 +130,7 @@ public class TimeManager {
      * @return true if succeeds, false if not.
      */
     public boolean resetPlayTime(
-            @NotNull UUID uuid,
+            @NonNull UUID uuid,
             boolean session,
             boolean daily,
             boolean weekly,
@@ -150,7 +149,7 @@ public class TimeManager {
         }
 
         // Get the player's data and abort the reset if no player data was found.
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             logger.error(AdventureUtil.deserialize("No player data found for UUID " + uuid));
             return false;
@@ -179,7 +178,7 @@ public class TimeManager {
      * @param total Should total play time be reset?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, false if not.
      */
-    public @NotNull CompletableFuture<@NotNull Boolean> resetPlayTime(
+    public @NonNull CompletableFuture<@NonNull Boolean> resetPlayTime(
             boolean session,
             boolean daily,
             boolean weekly,
@@ -226,8 +225,8 @@ public class TimeManager {
      * @param total Should a leaderboard snapshot be created for total play time?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NotNull CompletableFuture<Boolean> createLeaderboardSnapshot(
-            @NotNull Settings settings,
+    private @NonNull CompletableFuture<Boolean> createLeaderboardSnapshot(
+            @NonNull Settings settings,
             boolean session,
             boolean daily,
             boolean weekly,
@@ -255,8 +254,8 @@ public class TimeManager {
      * @param total Should a leaderboard snapshot be created for total play time?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NotNull CompletableFuture<@NotNull Boolean> resetPlayTime(
-            @NotNull Settings settings,
+    private @NonNull CompletableFuture<@NonNull Boolean> resetPlayTime(
+            @NonNull Settings settings,
             boolean session,
             boolean daily,
             boolean weekly,
@@ -299,7 +298,7 @@ public class TimeManager {
             boolean monthly,
             boolean yearly,
             boolean total) {
-        @NotNull Map<@NotNull UUID, @NotNull PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
+        Map<@NonNull UUID, @NonNull PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
 
         if (session) playerDataMap.values().forEach(data -> data.setSessionPlayTime(0));
         if (daily) playerDataMap.values().forEach(data -> data.setDailyPlayTime(0));
@@ -318,7 +317,7 @@ public class TimeManager {
      * @param total Should total play time be reset?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NotNull CompletableFuture<@NotNull Boolean> resetDatabasePlayTime(
+    private @NonNull CompletableFuture<@NonNull Boolean> resetDatabasePlayTime(
             boolean daily,
             boolean weekly,
             boolean monthly,

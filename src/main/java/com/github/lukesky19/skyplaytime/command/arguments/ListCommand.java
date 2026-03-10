@@ -32,7 +32,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +43,10 @@ import java.util.UUID;
  * This class is used to create the list command used to list online players and their AFK status.
  */
 public class ListCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
@@ -54,7 +54,7 @@ public class ListCommand {
      * @param localeManager A {@link LocaleManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public ListCommand(@NotNull SkyPlayTime skyPlayTime, @NotNull LocaleManager localeManager, @NotNull PlayerDataManager playerDataManager) {
+    public ListCommand(@NonNull SkyPlayTime skyPlayTime, @NonNull LocaleManager localeManager, @NonNull PlayerDataManager playerDataManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
@@ -96,8 +96,8 @@ public class ListCommand {
      * @param locale The plugin's {@link Locale}.
      * @return A {@link List} of {@link String}s for player names and their AFK status. Vanished players are not included.
      */
-    private @NotNull List<String> getPlayerNamesAndStatuses(Locale locale) {
-        @NotNull Map<UUID, PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
+    private @NonNull List<String> getPlayerNamesAndStatuses(Locale locale) {
+        Map<UUID, PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
         List<String> playerNamesAndStatuses = new ArrayList<>();
 
         playerDataMap.forEach((uuid, playerData) -> {

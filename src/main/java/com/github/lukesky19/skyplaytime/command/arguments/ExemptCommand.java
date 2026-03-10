@@ -31,7 +31,7 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,9 +40,9 @@ import java.util.UUID;
  * This class is used to create the exempt command used to mark players exempt from leaderboard reporting.
  */
 public class ExemptCommand {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
 
     /**
      * Constructor
@@ -50,7 +50,7 @@ public class ExemptCommand {
      * @param localeManager A {@link LocaleManager} instance.
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      */
-    public ExemptCommand(@NotNull SkyPlayTime skyPlayTime, @NotNull LocaleManager localeManager, @NotNull LeaderboardManager leaderboardManager) {
+    public ExemptCommand(@NonNull SkyPlayTime skyPlayTime, @NonNull LocaleManager localeManager, @NonNull LeaderboardManager leaderboardManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.leaderboardManager = leaderboardManager;

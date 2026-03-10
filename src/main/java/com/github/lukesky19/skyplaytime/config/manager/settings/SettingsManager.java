@@ -25,8 +25,8 @@ import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,14 +38,14 @@ import java.time.ZoneId;
  * This class manages the plugin's settings.
  */
 public class SettingsManager {
-    private final @NotNull SkyPlayTime skyPlayTime;
+    private final @NonNull SkyPlayTime skyPlayTime;
     private Settings settings;
 
     /**
      * Constructor
      * @param skyPlayTime The plugin's main instance.
      */
-    public SettingsManager(@NotNull SkyPlayTime skyPlayTime) {
+    public SettingsManager(@NonNull SkyPlayTime skyPlayTime) {
         this.skyPlayTime = skyPlayTime;
     }
 
@@ -67,7 +67,7 @@ public class SettingsManager {
         saveDefaultSettings();
 
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "settings.yml");
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
         try {
             settings = loader.load().get(Settings.class);
 
@@ -81,11 +81,11 @@ public class SettingsManager {
      * Saves the plugin's settings.
      * @param settings The {@link Settings} record to save.
      */
-    public void saveSettings(@NotNull Settings settings) {
+    public void saveSettings(@NonNull Settings settings) {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "settings.yml");
 
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
         try {
             CommentedConfigurationNode node = loader.createNode();
             node.set(Settings.class, settings);

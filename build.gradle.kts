@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.lukesky19"
-version = "0.1.0.0"
+version = "0.1.1.0"
 
 repositories {
     mavenCentral()
@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
-    compileOnly("com.github.lukesky19:SkyLib:1.4.0.0")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("com.github.lukesky19:SkyLib:1.5.0.0")
     compileOnly("com.github.lukesky19:NewPlayerPerks:1.2.0.1")
     compileOnly("me.clip:placeholderapi:2.11.6")
 }

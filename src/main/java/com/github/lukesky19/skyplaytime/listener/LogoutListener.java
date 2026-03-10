@@ -23,7 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -31,13 +31,13 @@ import java.util.UUID;
  * This class listens to when a player logs out to clean up any data.
  */
 public class LogoutListener implements Listener {
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public LogoutListener(@NotNull PlayerDataManager playerDataManager) {
+    public LogoutListener(@NonNull PlayerDataManager playerDataManager) {
         this.playerDataManager = playerDataManager;
     }
 

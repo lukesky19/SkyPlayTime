@@ -18,8 +18,8 @@
 package com.github.lukesky19.skyplaytime.player.manager;
 
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -27,13 +27,13 @@ import java.util.UUID;
  * This class manages the retrieval and updating of data related to player activity.
  */
 public class ActivityManager {
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public ActivityManager(@NotNull PlayerDataManager playerDataManager) {
+    public ActivityManager(@NonNull PlayerDataManager playerDataManager) {
         this.playerDataManager = playerDataManager;
     }
 
@@ -42,8 +42,8 @@ public class ActivityManager {
      * @param uuid The {@link UUID} of the player.
      * @return The last time they moved in milliseconds.
      */
-    public long getLastMoveTime(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public long getLastMoveTime(@NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         return playerData.getLastMoveTime();
@@ -54,8 +54,8 @@ public class ActivityManager {
      * @param uuid The {@link UUID} of the player.
      * @return The last time they completed an action in milliseconds.
      */
-    public long getLastActionTime(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public long getLastActionTime(@NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
 
         return playerData.getLastActionTime();
@@ -63,23 +63,43 @@ public class ActivityManager {
 
     /**
      * Stores the current system time in milliseconds to the player's last move time.
+     * @param player The {@link Player}.
      * @param uuid The {@link UUID} of the player.
      */
-    public void updateMoveTimeStamp(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public void updateMoveTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, uuid)
+                    .thenAccept(loadedPlayerData -> {
+                        if(loadedPlayerData.isErrored()) return;
 
-        playerData.setLastMoveTime(System.currentTimeMillis());
+                        loadedPlayerData.setLastMoveTime(System.currentTimeMillis());
+                    });
+        } else {
+            if(playerData.isErrored()) return;
+
+            playerData.setLastMoveTime(System.currentTimeMillis());
+        }
     }
 
     /**
      * Stores the current system time in milliseconds to the player's last action time.
+     * @param player The {@link Player}.
      * @param uuid The {@link UUID} of the player.
      */
-    public void updateActionTimeStamp(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public void updateActionTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, uuid)
+                    .thenAccept(loadedPlayerData -> {
+                        if(loadedPlayerData.isErrored()) return;
 
-        playerData.setLastActionTime(System.currentTimeMillis());
+                        loadedPlayerData.setLastActionTime(System.currentTimeMillis());
+                    });
+        } else {
+            if(playerData.isErrored()) return;
+
+            playerData.setLastActionTime(System.currentTimeMillis());
+        }
     }
 }

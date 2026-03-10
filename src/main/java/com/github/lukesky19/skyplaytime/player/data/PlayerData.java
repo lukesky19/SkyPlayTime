@@ -18,14 +18,14 @@
 package com.github.lukesky19.skyplaytime.player.data;
 
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class stores play time data for players.
  */
 public class PlayerData {
     // Player Data
-    private final @NotNull String name;
+    private final @NonNull String name;
     // Play Time Data
     private long sessionPlayTimeSeconds = 0;
     private long dailyPlayTimeSeconds = 0;
@@ -42,13 +42,32 @@ public class PlayerData {
     // AFK Status
     private boolean isAFK = false;
 
+    private boolean isErrored = false;
+
     /**
      * Create player data using player name provided.
      * The player will be not exempt from leaderboard reporting and all play time will start at 0.
      * @param name The name of the player.
      */
-    public PlayerData(@NotNull String name) {
+    public PlayerData(@NonNull String name) {
         this.name = name;
+    }
+
+    /**
+     * Did the player data fail to load properly?
+     * @return Is the player data errored?
+     */
+    public boolean isErrored() {
+        return isErrored;
+    }
+
+    /**
+     * Set whether the player data is errored or not.
+     * Player data will not be saved if errored.
+     * @param errored true if errored or false if not.
+     */
+    public void setErrored(boolean errored) {
+        this.isErrored = errored;
     }
 
     /**
@@ -366,7 +385,7 @@ public class PlayerData {
      * @param timeCategory The {@link TimeCategory} to add play time for.
      * @param seconds The time in seconds to add.
      */
-    public void addPlayTime(@NotNull TimeCategory timeCategory, long seconds) {
+    public void addPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
         if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
 
         switch(timeCategory) {
@@ -385,7 +404,7 @@ public class PlayerData {
      * @param timeCategory The {@link TimeCategory} to remove play time for.
      * @param seconds The time in seconds to remove.
      */
-    public void removePlayTime(@NotNull TimeCategory timeCategory, long seconds) {
+    public void removePlayTime(@NonNull TimeCategory timeCategory, long seconds) {
         if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
 
         switch(timeCategory) {
@@ -404,7 +423,7 @@ public class PlayerData {
      * @param timeCategory The {@link TimeCategory} to set play time for.
      * @param seconds The time in seconds to set.
      */
-    public void setPlayTime(@NotNull TimeCategory timeCategory, long seconds) {
+    public void setPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
         if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
 
         switch(timeCategory) {
@@ -424,7 +443,7 @@ public class PlayerData {
      * @param timeCategory The {@link TimeCategory} to get play time for.
      * @return The play time in seconds for the {@link TimeCategory} provided.
      */
-    public long getPlayTime(@NotNull TimeCategory timeCategory) {
+    public long getPlayTime(@NonNull TimeCategory timeCategory) {
         return switch (timeCategory) {
             case SESSION -> getSessionPlayTimeSeconds();
             case DAILY -> getDailyPlayTimeSeconds();
@@ -503,7 +522,7 @@ public class PlayerData {
      * Get the name of the player this data is associated with.
      * @return A {@link String} containing the player's name.
      */
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return name;
     }
 }

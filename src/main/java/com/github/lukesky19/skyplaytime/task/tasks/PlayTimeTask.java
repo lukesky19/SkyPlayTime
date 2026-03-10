@@ -24,23 +24,22 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This task adds 1 second of play time to all active players.
  */
 public class PlayTimeTask extends BukkitRunnable {
-    private final @NotNull Server server;
-    private final @NotNull PluginManager pluginManager;
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull Server server;
+    private final @NonNull PluginManager pluginManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
      * @param skyPlayTime A {@link SkyPlayTime} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public PlayTimeTask(@NotNull SkyPlayTime skyPlayTime, @NotNull PlayerDataManager playerDataManager) {
+    public PlayTimeTask(@NonNull SkyPlayTime skyPlayTime, @NonNull PlayerDataManager playerDataManager) {
         this.server = skyPlayTime.getServer();
         this.pluginManager = server.getPluginManager();
         this.playerDataManager = playerDataManager;
@@ -55,7 +54,7 @@ public class PlayTimeTask extends BukkitRunnable {
                 .forEach((uuid, playerData) -> {
                     playerData.addPlayTime(1);
 
-                    @Nullable Player player = server.getPlayer(uuid);
+                    Player player = server.getPlayer(uuid);
                     if(player != null && player.isOnline() && player.isConnected()) {
                         PlayTimeGainedEvent playTimeGainedEvent = new PlayTimeGainedEvent(player);
                         pluginManager.callEvent(playTimeGainedEvent);

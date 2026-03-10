@@ -3,7 +3,7 @@ package com.github.lukesky19.skyplaytime.database.table;
 import com.github.lukesky19.skylib.api.database.parameter.impl.IntegerParameter;
 import com.github.lukesky19.skylib.api.database.parameter.impl.StringParameter;
 import com.github.lukesky19.skylib.api.database.queue.QueueManager;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.concurrent.CompletableFuture;
  * This class is used to create and interface with the versions table in the database.
  */
 public class VersionsTable {
-    private final @NotNull QueueManager queueManager;
-    private final @NotNull String tableName = "skyplaytime_versions";
+    private final @NonNull QueueManager queueManager;
+    private final @NonNull String tableName = "skyplaytime_versions";
 
     /**
      * Default Constructor.
@@ -30,7 +30,7 @@ public class VersionsTable {
      * Constructor
      * @param queueManager A {@link QueueManager} instance.
      */
-    public VersionsTable(@NotNull QueueManager queueManager) {
+    public VersionsTable(@NonNull QueueManager queueManager) {
         this.queueManager = queueManager;
     }
 
@@ -51,7 +51,7 @@ public class VersionsTable {
      * @param tableId The table id.
      * @param version The version to set.
      */
-    public void updateVersion(@NotNull String tableId, int version) {
+    public void updateVersion(@NonNull String tableId, int version) {
         String updateSql = "INSERT INTO " + tableName + " (table_id, version) VALUES (?, ?) ON CONFLICT (table_id) DO UPDATE SET version = ?";
 
         StringParameter tableIdParameter = new StringParameter(tableId);
@@ -65,7 +65,7 @@ public class VersionsTable {
      * @param tableId The table id.
      * @return A {@link CompletableFuture} of type {@link Integer} containing the version number. -1 is returned for no version stored.
      */
-    public @NotNull CompletableFuture<Integer> getTableVersion(@NotNull String tableId) {
+    public @NonNull CompletableFuture<Integer> getTableVersion(@NonNull String tableId) {
         String readSql = "SELECT version FROM " + tableName + " WHERE table_id = ?";
 
         StringParameter tableIdParameter = new StringParameter(tableId);

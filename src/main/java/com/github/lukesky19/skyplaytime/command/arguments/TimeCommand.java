@@ -32,7 +32,7 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +44,9 @@ import static com.github.lukesky19.skyplaytime.util.PluginUtils.formatPlayTimeCh
  * This class is used to create the time command used to view play time counters.
  */
 public class TimeCommand {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull TimeManager timeManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull TimeManager timeManager;
 
     /**
      * Constructor
@@ -55,9 +55,9 @@ public class TimeCommand {
      * @param timeManager A {@link TimeManager} instance.
      */
     public TimeCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull TimeManager timeManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull TimeManager timeManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.timeManager = timeManager;
@@ -67,7 +67,7 @@ public class TimeCommand {
      * Creates the {@link LiteralCommandNode} of type {@link CommandSourceStack} for the time command argument.
      * @return A {@link LiteralCommandNode} of type {@link CommandSourceStack}.
      */
-    public @NotNull LiteralCommandNode<CommandSourceStack> createCommand() {
+    public @NonNull LiteralCommandNode<CommandSourceStack> createCommand() {
         return Commands.literal("time")
                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time"))
                 .then(Commands.literal("session")

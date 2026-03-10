@@ -23,15 +23,14 @@ import com.github.lukesky19.skylib.api.time.TimeUtil;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -39,20 +38,20 @@ import java.util.*;
  * This class supplies placeholders using PlaceholderAPI.
  */
 public class SkyPlayTimeExpansion extends PlaceholderExpansion {
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull AFKManager afkManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull AFKManager afkManager;
 
     /**
      * Constructor
-     * @param localeManager A {@link LocaleManager} instance.
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      * @param afkManager An {@link AFKManager} instance.
      */
-    public SkyPlayTimeExpansion(@NotNull LocaleManager localeManager, @NotNull LeaderboardManager leaderboardManager, @NotNull PlayerDataManager playerDataManager, @NotNull AFKManager afkManager) {
-        this.localeManager = localeManager;
+    public SkyPlayTimeExpansion(
+            @NonNull LeaderboardManager leaderboardManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull AFKManager afkManager) {
         this.leaderboardManager = leaderboardManager;
         this.playerDataManager = playerDataManager;
         this.afkManager = afkManager;
@@ -63,7 +62,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @return The name of the author.
      */
     @Override
-    public @NotNull String getAuthor() {
+    public @NonNull String getAuthor() {
         return "lukeskywlker19";
     }
 
@@ -72,7 +71,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @return The idenifier for the expansion.
      */
     @Override
-    public @NotNull String getIdentifier() {
+    public @NonNull String getIdentifier() {
         return "SkyPlayTime";
     }
 
@@ -81,7 +80,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @return The version of the expansion.
      */
     @Override
-    public @NotNull String getVersion() {
+    public @NonNull String getVersion() {
         return "1.0.0.0";
     }
 
@@ -101,90 +100,90 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @return The resolved placeholder text, an empty {@link String}, or null.
      */
     @Override
-    public @Nullable String onPlaceholderRequest(@NotNull Player player, @NotNull String placeholder) {
+    public @Nullable String onPlaceholderRequest(@NonNull Player player, @NonNull String placeholder) {
         UUID uuid = player.getUniqueId();
         placeholder = placeholder.toLowerCase();
 
         switch(placeholder.toLowerCase()) {
             case "session_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getSessionPlayTimeSeconds());
             }
 
             case "daily_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getDailyPlayTimeSeconds());
             }
 
             case "weekly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getWeeklyPlayTimeSeconds());
             }
 
             case "monthly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getMonthlyPlayTimeSeconds());
             }
 
             case "yearly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getYearlyPlayTimeSeconds());
             }
 
             case "total_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getTotalPlayTimeSeconds());
             }
 
             case "session_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getSessionPlayTimeSeconds());
             }
 
             case "daily_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getDailyPlayTimeSeconds());
             }
 
             case "weekly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getWeeklyPlayTimeSeconds());
             }
 
             case "monthly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getMonthlyPlayTimeSeconds());
             }
 
             case "yearly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getYearlyPlayTimeSeconds());
             }
 
             case "total_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getTotalPlayTimeSeconds());
@@ -230,10 +229,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         return "";
                     }
 
-                    List<String> timeUnits = new ArrayList<>();
-                    for (int i = 4; i < parts.length; i++) {
-                        timeUnits.add(parts[i]);
-                    }
+                    List<String> timeUnits = new ArrayList<>(Arrays.asList(parts).subList(4, parts.length));
 
                     return formatPlayerTimeAtPosition(timeCategory, position, timeUnits);
                 } else if(placeholder.startsWith("top_session_name")
@@ -279,90 +275,90 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @return The resolved placeholder text, an empty {@link String}, or null.
      */
     @Override
-    public @Nullable String onRequest(@NotNull OfflinePlayer player, @NotNull String placeholder) {
+    public @Nullable String onRequest(@NonNull OfflinePlayer player, @NonNull String placeholder) {
         UUID uuid = player.getUniqueId();
         placeholder = placeholder.toLowerCase();
 
         switch(placeholder.toLowerCase()) {
             case "session_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getSessionPlayTimeSeconds());
             }
 
             case "daily_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getDailyPlayTimeSeconds());
             }
 
             case "weekly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getWeeklyPlayTimeSeconds());
             }
 
             case "monthly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getMonthlyPlayTimeSeconds());
             }
 
             case "yearly_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getYearlyPlayTimeSeconds());
             }
 
             case "total_time" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return formatTime(playerData.getTotalPlayTimeSeconds());
             }
 
             case "session_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getSessionPlayTimeSeconds());
             }
 
             case "daily_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getDailyPlayTimeSeconds());
             }
 
             case "weekly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getWeeklyPlayTimeSeconds());
             }
 
             case "monthly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getMonthlyPlayTimeSeconds());
             }
 
             case "yearly_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getYearlyPlayTimeSeconds());
             }
 
             case "total_time_raw" -> {
-                @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+                PlayerData playerData = playerDataManager.getPlayerData(uuid);
                 if(playerData == null) return "";
 
                 return String.valueOf(playerData.getTotalPlayTimeSeconds());
@@ -408,10 +404,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         return "";
                     }
 
-                    List<String> timeUnits = new ArrayList<>();
-                    for (int i = 4; i < parts.length; i++) {
-                        timeUnits.add(parts[i]);
-                    }
+                    List<String> timeUnits = new ArrayList<>(Arrays.asList(parts).subList(4, parts.length));
 
                     return formatPlayerTimeAtPosition(timeCategory, position, timeUnits);
                 } else if(placeholder.startsWith("top_session_name")
@@ -456,8 +449,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @param timeCategory The {@link TimeCategory} to get.
      * @return A {@link String} with the player's name or an empty {@link String}
      */
-    private @NotNull String getPlayerNameAtPosition(int positionNumber, @NotNull TimeCategory timeCategory) {
-        @Nullable Position position = leaderboardManager.getPositionForCategoryAtPositionNumber(timeCategory, positionNumber);
+    private @NonNull String getPlayerNameAtPosition(int positionNumber, @NonNull TimeCategory timeCategory) {
+        Position position = leaderboardManager.getPositionForCategoryAtPositionNumber(timeCategory, positionNumber);
         if(position == null) {
             return "";
         }
@@ -467,13 +460,13 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
 
     /**
      * Formats the play time for the given category, position, and time units.
-     * @param category The {@link TimeCategory}.
+     * @param timeCategory The {@link TimeCategory}.
      * @param positionNumber The position number.
      * @param timeUnits The time units to display.
      * @return A {@link String} containing the formatted time or an empty {@link String} for no player at said position.
      */
-    private @NotNull String formatPlayerTimeAtPosition(@NotNull TimeCategory timeCategory, int positionNumber, @NotNull List<String> timeUnits) {
-        @Nullable Position position = leaderboardManager.getPositionForCategoryAtPositionNumber(timeCategory, positionNumber);
+    private @NonNull String formatPlayerTimeAtPosition(@NonNull TimeCategory timeCategory, int positionNumber, @NonNull List<String> timeUnits) {
+        Position position = leaderboardManager.getPositionForCategoryAtPositionNumber(timeCategory, positionNumber);
         if(position == null) return "";
 
         // Format the time based on the specified time units
@@ -485,7 +478,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @param totalSeconds The total time in seconds.
      * @return A {@link String} containing the formatted time.
      */
-    private @NotNull String formatTime(long totalSeconds) {
+    private @NonNull String formatTime(long totalSeconds) {
         Time timeRecord = TimeUtil.millisToTime(totalSeconds * 1000L);
         StringBuilder messageBuilder = new StringBuilder();
         boolean firstUnit = true;
@@ -546,8 +539,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @param timeUnits The time units to display as a {@link List} of {@link String}.
      * @return A {@link String} containing the formatted time.
      */
-    private @NotNull String formatTime(long totalSeconds, @NotNull List<String> timeUnits) {
-        @Nullable TimeUnit timeUnit = getHighestTimeUnit(timeUnits);
+    private @NonNull String formatTime(long totalSeconds, @NonNull List<String> timeUnits) {
+        TimeUnit timeUnit = getHighestTimeUnit(timeUnits);
 
         if(timeUnit == null) {
             return "";
@@ -566,7 +559,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "yr" -> {
@@ -576,7 +568,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "y" -> {
@@ -586,7 +577,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "months" -> {
@@ -596,7 +586,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "mo" -> {
@@ -606,7 +595,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "weeks" -> {
@@ -616,7 +604,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "w" -> {
@@ -626,7 +613,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "days" -> {
@@ -636,7 +622,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "d" -> {
@@ -646,7 +631,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "hours" -> {
@@ -656,7 +640,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "hr" -> {
@@ -666,7 +649,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "h" -> {
@@ -676,7 +658,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "minutes" -> {
@@ -686,7 +667,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "min" -> {
@@ -696,7 +676,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "seconds" -> {
@@ -706,7 +685,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "sec" -> {
@@ -716,7 +694,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
 
                 case "s" -> {
@@ -726,7 +703,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         firstUnit = false;
                     }
 
-                    break;
                 }
             }
         }
@@ -744,8 +720,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
      * @param timeUnits The {@link List} of time units as a {@link String}.
      * @return The highest {@link TimeUnit} or null.
      */
-    private @Nullable TimeUnit getHighestTimeUnit(@NotNull List<String> timeUnits) {
-        @Nullable TimeUnit timeUnit = null;
+    private @Nullable TimeUnit getHighestTimeUnit(@NonNull List<String> timeUnits) {
+        TimeUnit timeUnit = null;
 
         for(String unit : timeUnits) {
             switch(unit.toLowerCase()) {
@@ -770,7 +746,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.MONTHS;
                     }
 
-                    break;
                 }
 
                 case "weeks", "w" -> {
@@ -782,7 +757,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.WEEKS;
                     }
 
-                    break;
                 }
 
                 case "days", "d" -> {
@@ -794,7 +768,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.DAYS;
                     }
 
-                    break;
                 }
 
                 case "hours", "hr", "h" -> {
@@ -806,7 +779,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.HOURS;
                     }
 
-                    break;
                 }
 
                 case "minutes", "min" -> {
@@ -818,7 +790,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.MINUTES;
                     }
 
-                    break;
                 }
 
                 case "seconds", "sec", "s" -> {
@@ -830,7 +801,6 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                         timeUnit = TimeUnit.SECONDS;
                     }
 
-                    break;
                 }
             }
         }

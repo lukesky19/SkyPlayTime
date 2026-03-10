@@ -19,8 +19,8 @@ package com.github.lukesky19.skyplaytime.leaderboard.data;
 
 import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -33,6 +33,6 @@ import java.util.List;
 @ConfigSerializable
 public record LeaderboardSnapshot(
         @Nullable String configVersion,
-        @NotNull TimeCategory category,
-        @NotNull List<Position> positions) {
+        @NonNull TimeCategory category,
+        @NonNull List<Position> positions) {
 }

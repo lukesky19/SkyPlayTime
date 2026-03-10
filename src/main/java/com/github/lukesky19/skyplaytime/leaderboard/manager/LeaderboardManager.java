@@ -26,8 +26,8 @@ import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -37,12 +37,12 @@ import java.util.concurrent.CompletableFuture;
  * This class manages obtaining data to display leaderboards and marking whether players are excluded from the leaderboard or not.
  */
 public class LeaderboardManager {
-    private final @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull DatabaseManager databaseManager;
+    private final @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull DatabaseManager databaseManager;
     // Cached top ten from the database.
-    private final @NotNull Map<TimeCategory, TopTen> databaseTopTen = new HashMap<>();
-    private final @NotNull Map<TimeCategory, TopTen> calculatedTopTen = new HashMap<>();
+    private final @NonNull Map<TimeCategory, TopTen> databaseTopTen = new HashMap<>();
+    private final @NonNull Map<TimeCategory, TopTen> calculatedTopTen = new HashMap<>();
 
     /**
      * Constructor
@@ -51,9 +51,9 @@ public class LeaderboardManager {
      * @param databaseManager A {@link DatabaseManager} instance.
      */
     public LeaderboardManager(
-            @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull DatabaseManager databaseManager) {
+            @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull DatabaseManager databaseManager) {
         this.leaderboardSnapshotManager = leaderboardSnapshotManager;
         this.playerDataManager = playerDataManager;
         this.databaseManager = databaseManager;
@@ -63,8 +63,8 @@ public class LeaderboardManager {
      * Mark the player as exempt from leaderboard reporting.
      * @param uuid The {@link UUID} of the player.
      */
-    public void markPlayerExempt(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public void markPlayerExempt(@NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             throw new RuntimeException("No player data found for UUID " + uuid);
         }
@@ -76,8 +76,8 @@ public class LeaderboardManager {
      * Mark the player as not exempt from leaderboard reporting.
      * @param uuid The {@link UUID} of the player.
      */
-    public void markPlayerNotExempt(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public void markPlayerNotExempt(@NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             throw new RuntimeException("No player data found for UUID " + uuid);
         }
@@ -89,7 +89,7 @@ public class LeaderboardManager {
      * Update the cached top ten from the database.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    public @NotNull CompletableFuture<Void> updateDatabaseTopTen() {
+    public @NonNull CompletableFuture<Void> updateDatabaseTopTen() {
         List<CompletableFuture<Void>> futureList = new ArrayList<>();
         PlayTimeTable playTimeTable = databaseManager.getPlayTimeTable();
 
@@ -105,16 +105,16 @@ public class LeaderboardManager {
      */
     public void updateTopTenAllCategories() {
         for(TimeCategory timeCategory : TimeCategory.values()) {
-            @Nullable TopTen databaseTopTen = this.databaseTopTen.get(timeCategory);
-            @NotNull TopTen resultTopTen = new TopTen();
+            TopTen databaseTopTen = this.databaseTopTen.get(timeCategory);
+            TopTen resultTopTen = new TopTen();
             if(databaseTopTen == null) return;
             // Get a list of all non-null database positions.
-            @NotNull List<@NotNull Position> databasePositions = databaseTopTen.getPositions();
+            List<@NonNull Position> databasePositions = databaseTopTen.getPositions();
 
             // Get loaded player data
-            @NotNull Map<UUID, PlayerData> onlinePlayerDataMap = playerDataManager.getPlayerDataMap();
+            Map<UUID, PlayerData> onlinePlayerDataMap = playerDataManager.getPlayerDataMap();
             // Calculate the top ten positions from the online player data.
-            @NotNull List<Position> onlineTopTenPositions = onlinePlayerDataMap.entrySet().stream()
+            List<Position> onlineTopTenPositions = onlinePlayerDataMap.entrySet().stream()
                     .filter(entry -> !entry.getValue().isExempt())
                     .map(entry -> {
                         PlayerData playerData = entry.getValue();
@@ -159,7 +159,7 @@ public class LeaderboardManager {
      * @param timeCategory The {@link TimeCategory} to get the top play time player data for.
      * @return The {@link TopTen} for the {@link TimeCategory}. May be null. {@link TimeCategory#ALL} will always return null.
      */
-    public @Nullable TopTen getTopTenByTimeCategoryNotExempt(@NotNull TimeCategory timeCategory) {
+    public @Nullable TopTen getTopTenByTimeCategoryNotExempt(@NonNull TimeCategory timeCategory) {
         return calculatedTopTen.get(timeCategory);
     }
 
@@ -170,7 +170,7 @@ public class LeaderboardManager {
      * @param positionNumber The position number to get.
      * @return A {@link Position}. May be null.
      */
-    public @Nullable Position getPositionForCategoryAtPositionNumber(@NotNull TimeCategory timeCategory, int positionNumber) {
+    public @Nullable Position getPositionForCategoryAtPositionNumber(@NonNull TimeCategory timeCategory, int positionNumber) {
         TopTen topTen = getTopTenByTimeCategoryNotExempt(timeCategory);
         if(topTen == null) {
             return null;
@@ -184,7 +184,7 @@ public class LeaderboardManager {
      * @param timeCategory A {@link TimeCategory} to save the current top 10 leaderboard for.
      * @return A true if successful, or false if not.
      */
-    public boolean saveLeaderboardSnapshot(@NotNull TimeCategory timeCategory) {
+    public boolean saveLeaderboardSnapshot(@NonNull TimeCategory timeCategory) {
         TopTen topTen = getTopTenByTimeCategoryNotExempt(timeCategory);
         if(topTen == null) return false;
 

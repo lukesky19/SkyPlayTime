@@ -25,17 +25,16 @@ import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This task checks if a player should be marked afk or not.
  */
 public class ActivityTask extends BukkitRunnable {
-    private final @NotNull Server server;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull AFKManager afkManager;
+    private final @NonNull Server server;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull AFKManager afkManager;
 
     /**
      * Constructor
@@ -45,10 +44,10 @@ public class ActivityTask extends BukkitRunnable {
      * @param afkManager An {@link AFKManager} instance.
      */
     public ActivityTask(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull AFKManager afkManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull AFKManager afkManager) {
         this.server = skyPlayTime.getServer();
         this.settingsManager = settingsManager;
         this.playerDataManager = playerDataManager;
@@ -68,7 +67,7 @@ public class ActivityTask extends BukkitRunnable {
         boolean checkAutomatedActions = afkSettings.movementTimeSeconds() >= 0 && afkSettings.actionTimeSeconds() >= 0;
 
         playerDataManager.getActivePlayerData().forEach((uuid, playerData) -> {
-            @Nullable Player player = server.getPlayer(uuid);
+            Player player = server.getPlayer(uuid);
             if(player != null && player.isOnline() && player.isConnected()) {
                 long moveTimeSeconds = (System.currentTimeMillis() - playerData.getLastMoveTime()) / 1000;
                 long actionTimeSeconds = (System.currentTimeMillis() - playerData.getLastActionTime()) / 1000;

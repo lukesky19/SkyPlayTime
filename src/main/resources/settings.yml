@@ -1,5 +1,5 @@
 # DO NOT TOUCH! - This is for migrating the config file format if necessary.
-config-version: "1.0.0.0"
+version: 1
 # The plugin's locale to use. Corresponds to a file in SkyPlayTime/locale without the file extension.
 locale: en_US
 # This is how often data is saved to the database

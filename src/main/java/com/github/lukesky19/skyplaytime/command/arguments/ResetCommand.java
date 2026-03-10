@@ -32,7 +32,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -42,10 +42,10 @@ import java.util.concurrent.CompletableFuture;
  * This class is used to create the reset command used to reset play time for a player or all players.
  */
 public class ResetCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull TimeManager timeManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull TimeManager timeManager;
 
     /**
      * Constructor
@@ -54,9 +54,9 @@ public class ResetCommand {
      * @param timeManager A {@link TimeManager} instance.
      */
     public ResetCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull TimeManager timeManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull TimeManager timeManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;

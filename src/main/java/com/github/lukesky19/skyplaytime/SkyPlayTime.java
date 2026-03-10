@@ -19,6 +19,7 @@ package com.github.lukesky19.skyplaytime;
 
 import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
 import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
 import com.github.lukesky19.skyplaytime.player.manager.ActivityManager;
 import com.github.lukesky19.skyplaytime.command.SkyPlayTimeCommand;
@@ -44,7 +45,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,7 @@ public final class SkyPlayTime extends JavaPlugin {
     @Override
     public void onEnable() {
         if(!checkSkyLibVersion()) return;
-        @Nullable NewPlayerPerksAPI newPlayerPerksAPI = getNewPlayerPerksAPI();
+        NewPlayerPerksAPI newPlayerPerksAPI = getNewPlayerPerksAPI();
 
         // Initialize Classes
         // Config Classes
@@ -120,7 +121,7 @@ public final class SkyPlayTime extends JavaPlugin {
 
         // Initialize player data for any online players that joined before the plugin was fully enabled.
         // This is mostly for plugman edge cases, but 99% of the time is not necessary.
-        List<CompletableFuture<Void>> futureList = new ArrayList<>();
+        List<CompletableFuture<PlayerData>> futureList = new ArrayList<>();
         this.getServer().getOnlinePlayers().forEach(player ->
                 futureList.add(playerDataManager.loadPlayerData(player, player.getUniqueId())));
 
@@ -182,7 +183,7 @@ public final class SkyPlayTime extends JavaPlugin {
     private void registerExpansion() {
         if(this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             if(skyPlayTimeExpansion == null) {
-                skyPlayTimeExpansion = new SkyPlayTimeExpansion(localeManager, leaderboardManager, playerDataManager, afkManager);
+                skyPlayTimeExpansion = new SkyPlayTimeExpansion(leaderboardManager, playerDataManager, afkManager);
                 skyPlayTimeExpansion.register();
             }
         }

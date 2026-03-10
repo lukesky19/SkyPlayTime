@@ -34,7 +34,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.time.ZoneId;
 import java.util.Map;
@@ -44,12 +44,12 @@ import java.util.UUID;
  * This class is used to create the debug command which is used to debug issues.
  */
 public class DebugCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull AFKManager afkManager;
-    private final @NotNull ActivityManager activityManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull AFKManager afkManager;
+    private final @NonNull ActivityManager activityManager;
 
     /**
      * Constructor
@@ -60,11 +60,11 @@ public class DebugCommand {
      * @param activityManager An {@link ActivityManager} instance.
      */
     public DebugCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull AFKManager afkManager,
-            @NotNull ActivityManager activityManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull AFKManager afkManager,
+            @NonNull ActivityManager activityManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
@@ -173,7 +173,7 @@ public class DebugCommand {
                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.debug.list"))
                 .then(Commands.literal("active")
                         .executes(ctx -> {
-                            @NotNull Map<UUID, PlayerData> activePlayersData = playerDataManager.getActivePlayerData();
+                            Map<UUID, PlayerData> activePlayersData = playerDataManager.getActivePlayerData();
 
                             if(ctx.getSource().getSender() instanceof Player senderPlayer) {
                                 senderPlayer.sendMessage(AdventureUtil.deserialize("<green>Green</green> <white>- Online and Play Time Tracked"));
@@ -223,7 +223,7 @@ public class DebugCommand {
 
                 .then(Commands.literal("afk")
                         .executes(ctx -> {
-                            @NotNull Map<UUID, PlayerData> afkPlayersData = afkManager.getAFKPlayers();
+                            Map<UUID, PlayerData> afkPlayersData = afkManager.getAFKPlayers();
 
                             if(ctx.getSource().getSender() instanceof Player senderPlayer) {
                                 senderPlayer.sendMessage(AdventureUtil.deserialize("<green>Green</green> <white>- Online and AFK"));

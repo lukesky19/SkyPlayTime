@@ -28,17 +28,17 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class is used to create the backup command used to backup the database.
  */
 public class BackupCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull DatabaseManager databaseManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull DatabaseManager databaseManager;
 
     /**
      * Constructor
@@ -47,7 +47,7 @@ public class BackupCommand {
      * @param playerDataManager A {@link PlayerDataManager} instance
      * @param databaseManager A {@link DatabaseManager} instance.
      */
-    public BackupCommand(@NotNull SkyPlayTime skyPlayTime, @NotNull LocaleManager localeManager, @NotNull PlayerDataManager playerDataManager, @NotNull DatabaseManager databaseManager) {
+    public BackupCommand(@NonNull SkyPlayTime skyPlayTime, @NonNull LocaleManager localeManager, @NonNull PlayerDataManager playerDataManager, @NonNull DatabaseManager databaseManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;

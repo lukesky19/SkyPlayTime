@@ -25,8 +25,7 @@ import com.github.lukesky19.skyplaytime.player.manager.TimeManager;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -37,9 +36,9 @@ import java.time.ZoneId;
  * This task resets play time categories as necessary.
  */
 public class ResetTask extends BukkitRunnable {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull TimeManager timeManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull TimeManager timeManager;
 
     /**
      * Constructor
@@ -48,9 +47,9 @@ public class ResetTask extends BukkitRunnable {
      * @param timeManager A {@link TimeManager} instance.
      */
     public ResetTask(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull TimeManager timeManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull TimeManager timeManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
         this.timeManager = timeManager;
@@ -61,7 +60,7 @@ public class ResetTask extends BukkitRunnable {
      */
     @Override
     public void run() {
-        @Nullable Settings settings = settingsManager.getSettings();
+        Settings settings = settingsManager.getSettings();
         if(settings == null) return;
 
         Settings.ResetSettings resetSettings = settings.resetSettings();
@@ -106,7 +105,7 @@ public class ResetTask extends BukkitRunnable {
                     monthlyResetTimestamp,
                     yearlyResetTimestamp);
             Settings updatedSettings = new Settings(
-                    settings.configVersion(),
+                    settings.version(),
                     settings.locale(),
                     settings.saveIntervalSeconds(),
                     settings.backupOnReset(),
@@ -130,11 +129,11 @@ public class ResetTask extends BukkitRunnable {
      * @return The milliseconds since the epoch when the next reset should occur.
      */
     private long calculateEpochMillisecondsForNextReset(
-            @NotNull TimeCategory resetType,
-            @NotNull DayOfWeek dayOfWeek,
-            @NotNull ZoneId zoneId,
+            @NonNull TimeCategory resetType,
+            @NonNull DayOfWeek dayOfWeek,
+            @NonNull ZoneId zoneId,
             int hour,
-            @NotNull Settings.LastResetTimes resetTimes) {
+            Settings.@NonNull LastResetTimes resetTimes) {
         LocalDateTime now = LocalDateTime.now(zoneId);
         LocalDateTime nextReset;
 

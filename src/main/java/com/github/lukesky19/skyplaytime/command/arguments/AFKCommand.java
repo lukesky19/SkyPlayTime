@@ -49,7 +49,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +59,9 @@ import java.util.UUID;
  * This class is used to create the AFK command.
  */
 public class AFKCommand {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull AFKManager afkManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull AFKManager afkManager;
 
     /**
      * Constructor
@@ -70,9 +70,9 @@ public class AFKCommand {
      * @param afkManager An {@link AFKManager} instance.
      */
     public AFKCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull AFKManager afkManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull AFKManager afkManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.afkManager = afkManager;
@@ -82,7 +82,7 @@ public class AFKCommand {
      * Creates the {@link LiteralCommandNode} of type {@link CommandSourceStack} for the afk command or afk command argument.
      * @return A {@link LiteralCommandNode} of type {@link CommandSourceStack}.
      */
-    public @NotNull LiteralCommandNode<CommandSourceStack> createCommand() {
+    public @NonNull LiteralCommandNode<CommandSourceStack> createCommand() {
         return Commands.literal("afk")
                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.afk"))
                 .then(Commands.argument("player", ArgumentTypes.player())

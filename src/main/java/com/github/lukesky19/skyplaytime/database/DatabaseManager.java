@@ -23,7 +23,7 @@ import com.github.lukesky19.skyplaytime.database.connection.ConnectionManager;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.database.table.VersionsTable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +40,7 @@ public class DatabaseManager extends AbstractDatabaseManager {
      * Get the {@link PlayTimeTable} table.
      * @return A {@link PlayTimeTable}
      */
-    public @NotNull PlayTimeTable getPlayTimeTable() {
+    public @NonNull PlayTimeTable getPlayTimeTable() {
         return playTimeTable;
     }
 
@@ -51,7 +51,7 @@ public class DatabaseManager extends AbstractDatabaseManager {
      * @param connectionManager A {@link ConnectionManager} instance.
      * @param queueManager A {@link QueueManager} instance.
      */
-    public DatabaseManager(@NotNull SkyPlayTime skyPlayTime, @NotNull ConnectionManager connectionManager, @NotNull QueueManager queueManager) {
+    public DatabaseManager(@NonNull SkyPlayTime skyPlayTime, @NonNull ConnectionManager connectionManager, @NonNull QueueManager queueManager) {
         super(connectionManager, queueManager);
 
         this.skyPlayTime = skyPlayTime;
@@ -59,7 +59,7 @@ public class DatabaseManager extends AbstractDatabaseManager {
         VersionsTable versionsTable = new VersionsTable(queueManager);
         versionsTable.createTable();
 
-        playTimeTable = new PlayTimeTable(queueManager, versionsTable);
+        playTimeTable = new PlayTimeTable(skyPlayTime.getComponentLogger(), queueManager, versionsTable);
         playTimeTable.createTable();
     }
 
@@ -67,7 +67,7 @@ public class DatabaseManager extends AbstractDatabaseManager {
      * Attempts to back up the database.
      * @return A {@link CompletableFuture} containing a {@link Boolean} containing true if it succeeds, and false if not.
      */
-    public @NotNull CompletableFuture<Boolean> backupDatabase() {
+    public @NonNull CompletableFuture<Boolean> backupDatabase() {
         CompletableFuture<Boolean> resultFuture = new CompletableFuture<>();
 
         // Define the source file path

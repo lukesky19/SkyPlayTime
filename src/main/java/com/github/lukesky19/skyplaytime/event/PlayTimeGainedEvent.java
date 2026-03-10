@@ -20,21 +20,21 @@ package com.github.lukesky19.skyplaytime.event;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This event is fired when a player's gains 1 second of play time.
  * This event does not fire for modifications to a player's play time done by command.
  */
 public class PlayTimeGainedEvent extends Event {
-    private static final @NotNull HandlerList HANDLERS = new HandlerList();
-    private final @NotNull Player player;
+    private static final @NonNull HandlerList HANDLERS = new HandlerList();
+    private final @NonNull Player player;
 
     /**
      * The event fired when a {@link Player} has gained 1 second of play time.
      * @param player The {@link Player} associated with the event.
      */
-    public PlayTimeGainedEvent(@NotNull Player player) {
+    public PlayTimeGainedEvent(@NonNull Player player) {
         this.player = player;
     }
 
@@ -42,7 +42,7 @@ public class PlayTimeGainedEvent extends Event {
      * The {@link Player} whose AFK status is being changed.
      * @return A {@link Player}
      */
-    public @NotNull Player getPlayer() {
+    public @NonNull Player getPlayer() {
         return player;
     }
 
@@ -50,7 +50,7 @@ public class PlayTimeGainedEvent extends Event {
      * Get the {@link HandlerList} for this event.
      * @return A {@link HandlerList}
      */
-    public static @NotNull HandlerList getHandlerList() {
+    public static @NonNull HandlerList getHandlerList() {
         return HANDLERS;
     }
 
@@ -59,7 +59,7 @@ public class PlayTimeGainedEvent extends Event {
      * @return A {@link HandlerList}
      */
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return HANDLERS;
     }
 }

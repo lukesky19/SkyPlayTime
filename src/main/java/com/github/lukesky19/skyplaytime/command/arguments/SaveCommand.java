@@ -27,16 +27,16 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class is used to create the save command used to save player data.
  */
 public class SaveCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
@@ -44,7 +44,7 @@ public class SaveCommand {
      * @param localeManager A {@link LocaleManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance
      */
-    public SaveCommand(@NotNull SkyPlayTime skyPlayTime, @NotNull LocaleManager localeManager, @NotNull PlayerDataManager playerDataManager) {
+    public SaveCommand(@NonNull SkyPlayTime skyPlayTime, @NonNull LocaleManager localeManager, @NonNull PlayerDataManager playerDataManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;

@@ -17,6 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.database.table;
 
+import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.database.parameter.Parameter;
 import com.github.lukesky19.skylib.api.database.parameter.impl.*;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
@@ -24,8 +25,9 @@ import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -35,18 +37,22 @@ import java.util.concurrent.CompletableFuture;
  * This class handles the players table that stores player data.
  */
 public class PlayTimeTable {
-    private final @NotNull QueueManager queueManager;
-    private final @NotNull VersionsTable versionsTable;
-    private final @NotNull String tableName = "players";
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull QueueManager queueManager;
+    private final @NonNull VersionsTable versionsTable;
+    private final @NonNull String tableName = "players";
 
     /**
      * Constructor
+     * @param logger A {@link ComponentLogger}.
      * @param queueManager A {@link QueueManager} instance.
      * @param versionsTable A {@link VersionsTable} instance.
      */
     public PlayTimeTable(
-            @NotNull QueueManager queueManager,
-            @NotNull VersionsTable versionsTable) {
+            @NonNull ComponentLogger logger,
+            @NonNull QueueManager queueManager,
+            @NonNull VersionsTable versionsTable) {
+        this.logger = logger;
         this.queueManager = queueManager;
         this.versionsTable = versionsTable;
     }
@@ -79,7 +85,7 @@ public class PlayTimeTable {
      * @param playerData The {@link PlayerData} to put data into.
      * @return A {@link CompletableFuture} with {@link PlayerData} when complete. The {@link PlayerData} passed to the method will be updated as well.
      */
-    public @NotNull CompletableFuture<@NotNull PlayerData> loadPlayerData(@NotNull UUID uuid, @NotNull PlayerData playerData) {
+    public @NonNull CompletableFuture<@NonNull PlayerData> loadPlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
         String selectSql = "SELECT daily, weekly, monthly, yearly, total, exempt FROM " + tableName + " WHERE uuid = ?";
         UUIDParameter uuidParameter = new UUIDParameter(uuid);
 
@@ -96,7 +102,13 @@ public class PlayTimeTable {
 
                 return playerData;
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                playerData.setErrored(true);
+
+                logger.warn(AdventureUtil.deserialize("Failed to load player data for player " + playerData.getName()));
+                logger.info(AdventureUtil.deserialize("This player will not have their play time saved to prevent overwriting their historical play time."));
+                logger.info(AdventureUtil.deserialize("This means that new play time earned will not be saved."));
+
+                return playerData;
             }
         });
     }
@@ -107,7 +119,7 @@ public class PlayTimeTable {
      * @param playerData The {@link PlayerData} for the player.
      * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    public @NotNull CompletableFuture<Void> savePlayerData(@NotNull UUID uuid, @NotNull PlayerData playerData) {
+    public @NonNull CompletableFuture<Void> savePlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
         String updateSql = "INSERT INTO " + tableName + " (" +
                 "uuid, " +
                 "name, " +
@@ -169,23 +181,39 @@ public class PlayTimeTable {
      * @param playerDataMap A {@link Map} mapping {@link UUID}s to {@link PlayerData}.
      * @return A {@link CompletableFuture} of type {@link List} containing {@link Boolean}s when complete. true if successful, and false if not.
      */
-    public @NotNull CompletableFuture<@NotNull List<@NotNull Boolean>> savePlayerData(@NotNull Map<@NotNull UUID, @NotNull PlayerData> playerDataMap) {
+    public @NonNull CompletableFuture<@NonNull List<@NonNull Boolean>> savePlayerData(@NonNull Map<@NonNull UUID, @NonNull PlayerData> playerDataMap) {
         List<List<Parameter<?>>> listOfParametersList = new ArrayList<>();
         String updateSql = "UPDATE " + tableName + " SET daily = ?, weekly = ?, monthly = ?, yearly = ?, total = ?, exempt = ?, last_updated = ? WHERE uuid = ? AND last_updated < ?";
 
-        playerDataMap.forEach((uuid, playerData) -> {
-            LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
-            LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
-            LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
-            LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
-            LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
-            IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
-            LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
-            UUIDParameter uuidParameter = new UUIDParameter(uuid);
-            List<Parameter<?>> parameters = List.of(dailyTimeParameter, weeklyTimeParameter, monthlyTimeParameter, yearlyTimeParameter, totalTimeParameter, exemptParameter, timestampParameter, uuidParameter, timestampParameter);
+        playerDataMap.entrySet()
+                .stream()
+                .filter(entry -> {
+                    UUID playerId = entry.getKey();
+                    PlayerData playerData = entry.getValue();
 
-            listOfParametersList.add(parameters);
-        });
+                    if(playerData.isErrored()) {
+                        logger.warn(AdventureUtil.deserialize("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + playerId));
+                        return false;
+                    }
+
+                    return true;
+                })
+                .forEach(entry -> {
+                    UUID playerId = entry.getKey();
+                    PlayerData playerData = entry.getValue();
+
+                    LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
+                    LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
+                    LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
+                    LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
+                    LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
+                    IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
+                    LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
+                    UUIDParameter uuidParameter = new UUIDParameter(playerId);
+                    List<Parameter<?>> parameters = List.of(dailyTimeParameter, weeklyTimeParameter, monthlyTimeParameter, yearlyTimeParameter, totalTimeParameter, exemptParameter, timestampParameter, uuidParameter, timestampParameter);
+
+                    listOfParametersList.add(parameters);
+                });
 
         return queueManager.queueBulkWriteTransaction(updateSql, listOfParametersList).thenApply(list -> {
                 List<Boolean> results = new ArrayList<>();
@@ -212,7 +240,7 @@ public class PlayTimeTable {
      * @param total Should all total play time be reset?
      * @return A {@link CompletableFuture} containing a {@link Boolean}. true if the reset succeeded, false if not.
      */
-    public @NotNull CompletableFuture<@NotNull Boolean> resetPlayTime(boolean daily, boolean weekly, boolean monthly, boolean yearly, boolean total) {
+    public @NonNull CompletableFuture<@NonNull Boolean> resetPlayTime(boolean daily, boolean weekly, boolean monthly, boolean yearly, boolean total) {
         StringBuilder sqlBuilder = new StringBuilder("UPDATE " + tableName + " SET ");
         if(daily) sqlBuilder.append("daily = 0, ");
         if(weekly) sqlBuilder.append("weekly = 0, ");
@@ -233,7 +261,7 @@ public class PlayTimeTable {
      * @param timeCategory The {@link TimeCategory} to sort the query to get player data for.
      * @return A {@link CompletableFuture} containing the {@link TopTen} for the {@link TimeCategory} provided.
      */
-    public @NotNull CompletableFuture<@NotNull TopTen> getTopTenByCategoryNotExempt(@NotNull TimeCategory timeCategory) {
+    public @NonNull CompletableFuture<@NonNull TopTen> getTopTenByCategoryNotExempt(@NonNull TimeCategory timeCategory) {
         if(timeCategory == TimeCategory.SESSION) return CompletableFuture.completedFuture(new TopTen());
         if(timeCategory == TimeCategory.ALL) timeCategory = TimeCategory.TOTAL;
         String timeCategoryName = timeCategory.toString().toLowerCase();

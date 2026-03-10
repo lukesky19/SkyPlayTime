@@ -18,12 +18,12 @@
 package com.github.lukesky19.skyplaytime.config.data.settings;
 
 import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The plugin's settings configuration.
- * @param configVersion The config version of the file.
+ * @param version The config version.
  * @param locale The locale file to use.
  * @param saveIntervalSeconds How often to save play time to the database.
  * @param backupOnReset Should the database be backed up when any play time category is reset?
@@ -36,16 +36,16 @@ import org.jetbrains.annotations.Nullable;
  */
 @ConfigSerializable
 public record Settings(
-        @Nullable String configVersion,
+        int version,
         @Nullable String locale,
         int saveIntervalSeconds,
         boolean backupOnReset,
         boolean leaderboardSnapshotOnReset,
         @Nullable String backupsRemoveOlderThan,
         @Nullable String leaderboardRemoveOlderThan,
-        @NotNull AfkSettings afkSettings,
-        @NotNull ResetSettings resetSettings,
-        @NotNull LastResetTimes lastResetTimes) {
+        @NonNull AfkSettings afkSettings,
+        @NonNull ResetSettings resetSettings,
+        @NonNull LastResetTimes lastResetTimes) {
     /**
      * The settings related to marking players as AFK.
      * @param autoAfkSeconds How many seconds should pass before a player is marked as AFK.
@@ -58,7 +58,7 @@ public record Settings(
             int autoAfkSeconds,
             int movementTimeSeconds,
             int actionTimeSeconds,
-            @NotNull PlayerSettings playerSettings) {}
+            @NonNull PlayerSettings playerSettings) {}
 
     /**
      * The settings related directly to the player that can be applied when AFK.

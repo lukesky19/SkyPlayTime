@@ -30,7 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.UUID;
 
@@ -38,10 +38,10 @@ import java.util.UUID;
  * This class tracks player activity.
  */
 public class ActivityListener implements Listener {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull AFKManager afkManager;
-    private final @NotNull ActivityManager activityManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull AFKManager afkManager;
+    private final @NonNull ActivityManager activityManager;
 
     /**
      * Constructor
@@ -51,10 +51,10 @@ public class ActivityListener implements Listener {
      * @param activityManager An {@link ActivityManager} instance.
      */
     public ActivityListener(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull AFKManager afkManager,
-            @NotNull ActivityManager activityManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull AFKManager afkManager,
+            @NonNull ActivityManager activityManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
         this.afkManager = afkManager;
@@ -89,7 +89,7 @@ public class ActivityListener implements Listener {
 
         // Only update player move time and add to recent locations if they moved a full block.
         if(fromX != toX || fromY != toY || fromZ != toZ) {
-            activityManager.updateMoveTimeStamp(uuid);
+            activityManager.updateMoveTimeStamp(player, uuid);
 
             if(afkManager.isPlayerAFK(uuid)) {
                 afkManager.togglePlayerAFK(player, uuid, true, true);
@@ -103,7 +103,9 @@ public class ActivityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent playerInteractEvent) {
-        activityManager.updateActionTimeStamp(playerInteractEvent.getPlayer().getUniqueId());
+        Player player = playerInteractEvent.getPlayer();
+
+        activityManager.updateActionTimeStamp(player, player.getUniqueId());
     }
 
     /**
@@ -112,7 +114,9 @@ public class ActivityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent playerInteractEntityEvent) {
-        activityManager.updateActionTimeStamp(playerInteractEntityEvent.getPlayer().getUniqueId());
+        Player player = playerInteractEntityEvent.getPlayer();
+
+        activityManager.updateActionTimeStamp(player, player.getUniqueId());
     }
 
     /**
@@ -122,11 +126,13 @@ public class ActivityListener implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerFish(PlayerFishEvent playerFishEvent) {
-        Player player = playerFishEvent.getPlayer();
-        UUID uuid = player.getUniqueId();
-
         switch(playerFishEvent.getState()) {
-            case REEL_IN, FISHING, CAUGHT_FISH, CAUGHT_ENTITY -> activityManager.updateActionTimeStamp(uuid);
+            case REEL_IN, FISHING, CAUGHT_FISH, CAUGHT_ENTITY -> {
+                Player player = playerFishEvent.getPlayer();
+                UUID uuid = player.getUniqueId();
+
+                activityManager.updateActionTimeStamp(player, uuid);
+            }
         }
     }
 }

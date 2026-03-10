@@ -26,7 +26,7 @@ import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,7 +39,7 @@ public class LocaleManager {
     private final SkyPlayTime skyPlayTime;
     private final SettingsManager settingsManager;
     private Locale locale;
-    private final @NotNull Locale.TimeFormat TIME_FORMAT = new Locale.TimeFormat(
+    private final Locale.@NonNull TimeFormat TIME_FORMAT = new Locale.TimeFormat(
             "",
             "<green><years></green> year(s)",
             "<green><months></green> month(s)",
@@ -49,8 +49,8 @@ public class LocaleManager {
             "<green><minutes></green> minute(s)",
             "<green><seconds></green> second(s)",
             "");
-    private final @NotNull Locale DEFAULT_LOCALE = new Locale(
-            "1.0.0.0",
+    private final @NonNull Locale DEFAULT_LOCALE = new Locale(
+            1,
             "<aqua><bold>SkyPlayTime</bold></aqua><gray> ▪ </gray>",
             List.of("<aqua>SkyPlayTime is developed by <white><bold>lukeskywlker19</bold></white>.</aqua>",
                     "<aqua>Source code is released on GitHub: <click:OPEN_URL:https://github.com/lukesky19><yellow><underlined><bold>https://github.com/lukesky19</bold></underlined></yellow></click></aqua>",
@@ -208,7 +208,7 @@ public class LocaleManager {
      * Gets the plugin's {@link Locale} or the {@link #DEFAULT_LOCALE} if the locale config failed to load.
      * @return A {@link Locale} record.
      */
-    public @NotNull Locale getLocale() {
+    public @NonNull Locale getLocale() {
         if (locale != null) return locale;
 
         return DEFAULT_LOCALE;
@@ -231,7 +231,7 @@ public class LocaleManager {
 
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "locale" + File.separator + (settings.locale() + ".yml"));
 
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
         try {
             locale = loader.load().get(Locale.class);
 
@@ -257,8 +257,7 @@ public class LocaleManager {
     public void validateConfig() {
         if (locale == null) return;
 
-        if (locale.configVersion() == null
-                || locale.prefix() == null
+        if (locale.prefix() == null
                 || locale.reload() == null
                 || locale.afkMessage() == null
                 || locale.noLongerAfkMessage() == null
@@ -389,7 +388,7 @@ public class LocaleManager {
      * @param timeFormat The {@link Locale.TimeFormat} to check.
      * @return true if invalid, false if not.
      */
-    private boolean isTimeFormatInvalid(@NotNull Locale.TimeFormat timeFormat) {
+    private boolean isTimeFormatInvalid(Locale.@NonNull TimeFormat timeFormat) {
         return timeFormat.prefix() == null
                 || timeFormat.years() == null
                 || timeFormat.months() == null

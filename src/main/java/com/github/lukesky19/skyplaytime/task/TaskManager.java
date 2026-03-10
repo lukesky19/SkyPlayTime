@@ -28,8 +28,8 @@ import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.task.tasks.*;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -38,13 +38,13 @@ import java.time.temporal.ChronoUnit;
  * This class manages
  */
 public class TaskManager {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull TimeManager timeManager;
-    private final @NotNull AFKManager afkManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull TimeManager timeManager;
+    private final @NonNull AFKManager afkManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
 
     // Tasks
     private @Nullable BukkitTask activityTask;
@@ -65,12 +65,12 @@ public class TaskManager {
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      */
     public TaskManager(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull TimeManager timeManager,
-            @NotNull AFKManager afkManager,
-            @NotNull LeaderboardManager leaderboardManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull TimeManager timeManager,
+            @NonNull AFKManager afkManager,
+            @NonNull LeaderboardManager leaderboardManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;

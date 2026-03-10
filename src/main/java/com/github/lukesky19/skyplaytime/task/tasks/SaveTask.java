@@ -19,19 +19,19 @@ package com.github.lukesky19.skyplaytime.task.tasks;
 
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This task regularly saves player data to the database.
  */
 public class SaveTask  extends BukkitRunnable {
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public SaveTask(@NotNull PlayerDataManager playerDataManager) {
+    public SaveTask(@NonNull PlayerDataManager playerDataManager) {
         this.playerDataManager = playerDataManager;
     }
 

@@ -33,8 +33,8 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,11 +43,11 @@ import java.util.stream.Collectors;
  * This class the update and retrieval of player's AFK statuses.
  */
 public class AFKManager {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull PlayerDataManager playerDataManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull PlayerDataManager playerDataManager;
     private final @Nullable NewPlayerPerksAPI newPlayerPerksAPI;
 
     /**
@@ -59,10 +59,10 @@ public class AFKManager {
      * @param newPlayerPerksAPI A {@link NewPlayerPerksAPI} instance. May be null.
      */
     public AFKManager(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull SettingsManager settingsManager,
-            @NotNull LocaleManager localeManager,
-            @NotNull PlayerDataManager playerDataManager,
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull SettingsManager settingsManager,
+            @NonNull LocaleManager localeManager,
+            @NonNull PlayerDataManager playerDataManager,
             @Nullable NewPlayerPerksAPI newPlayerPerksAPI) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
@@ -78,8 +78,8 @@ public class AFKManager {
      * @return true if afk, false if not.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public boolean isPlayerAFK(@NotNull UUID uuid) {
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public boolean isPlayerAFK(@NonNull UUID uuid) {
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             throw new RuntimeException("No player data found for UUID " + uuid);
         }
@@ -91,7 +91,7 @@ public class AFKManager {
      * Get the a {@link Map} mapping {@link UUID}s to {@link PlayerData} for all AFK players.
      * @return A {@link Map} mapping {@link UUID}s to {@link PlayerData}.
      */
-    public @NotNull Map<UUID, PlayerData> getAFKPlayers() {
+    public @NonNull Map<UUID, PlayerData> getAFKPlayers() {
         return playerDataManager.getPlayerDataMap().entrySet().stream()
                 .filter(entry -> !entry.getValue().isAFK())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -106,10 +106,10 @@ public class AFKManager {
      * @return The enum {@link AFKToggleResult} containing the result.
      * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public @NotNull AFKToggleResult togglePlayerAFK(@NotNull Player targetPlayer, @NotNull UUID uuid, boolean notifyPlayer, boolean notifyServer) {
-        @Nullable Settings settings = settingsManager.getSettings();
+    public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player targetPlayer, @NonNull UUID uuid, boolean notifyPlayer, boolean notifyServer) {
+        Settings settings = settingsManager.getSettings();
         Locale locale = localeManager.getLocale();
-        @Nullable PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        PlayerData playerData = playerDataManager.getPlayerData(uuid);
 
         // Log an error if plugin settings are invalid and return AFKToggleResult.CONFIG_ERROR
         if(settings == null) {
@@ -195,7 +195,7 @@ public class AFKManager {
      * @param settings The plugin's {@link Settings}.
      * @param player The {@link Player}.
      */
-    private void setAFKPlayerSettings(@NotNull Settings settings, @NotNull Player player) {
+    private void setAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
         Settings.PlayerSettings playerSettings = settings.afkSettings().playerSettings();
 
         // Set if the player can pickup items while afk.
@@ -219,7 +219,7 @@ public class AFKManager {
      * @param settings The plugin's {@link Settings}.
      * @param player The {@link Player}.
      */
-    private void resetAFKPlayerSettings(@NotNull Settings settings, @NotNull Player player) {
+    private void resetAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
         // Get the player's UUID
         UUID uuid = player.getUniqueId();
 

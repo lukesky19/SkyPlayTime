@@ -20,19 +20,19 @@ package com.github.lukesky19.skyplaytime.task.tasks;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This task refreshes the cached top 10 play time for each {@link TimeCategory} (excluding {@link TimeCategory#ALL}) stored in {@link LeaderboardManager}.
  */
 public class CacheTopTenTask extends BukkitRunnable {
-    private final @NotNull LeaderboardManager leaderboardManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
 
     /**
      * Constructor
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      */
-    public CacheTopTenTask(@NotNull LeaderboardManager leaderboardManager) {
+    public CacheTopTenTask(@NonNull LeaderboardManager leaderboardManager) {
         this.leaderboardManager = leaderboardManager;
     }
 

@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class is the event fired when a {@link Player}'s AFK status is changed.
@@ -37,7 +37,7 @@ public class AFKStatusChangeEvent extends Event implements Cancellable {
      * @param player The {@link Player} associated with the event.
      * @param status The updated AFK status of the player. true if being marked AFK, false if being marked no longer AFK.
      */
-    public AFKStatusChangeEvent(@NotNull Player player, boolean status) {
+    public AFKStatusChangeEvent(@NonNull Player player, boolean status) {
         this.player = player;
         this.status = status;
         this.isCancelled = false;
@@ -47,7 +47,7 @@ public class AFKStatusChangeEvent extends Event implements Cancellable {
      * The {@link Player} whose AFK status is being changed.
      * @return A {@link Player}
      */
-    public @NotNull Player getPlayer() {
+    public @NonNull Player getPlayer() {
         return player;
     }
 
@@ -63,7 +63,7 @@ public class AFKStatusChangeEvent extends Event implements Cancellable {
      * Get the {@link HandlerList} for this event.
      * @return A {@link HandlerList}
      */
-    public static @NotNull HandlerList getHandlerList() {
+    public static @NonNull HandlerList getHandlerList() {
         return HANDLERS;
     }
 
@@ -72,7 +72,7 @@ public class AFKStatusChangeEvent extends Event implements Cancellable {
      * @return A {@link HandlerList}
      */
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

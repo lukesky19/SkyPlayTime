@@ -37,8 +37,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -48,10 +47,10 @@ import static com.github.lukesky19.skyplaytime.util.PluginUtils.formatPlayTimeCh
  * This class is used to create the leaderboard command used to view leaderboards for play time.
  */
 public class LeaderboardCommand {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
 
     /**
      * Constructor
@@ -61,10 +60,10 @@ public class LeaderboardCommand {
      * @param leaderboardSnapshotManager A {@link LeaderboardSnapshotManager} instance.
      */
     public LeaderboardCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull LeaderboardManager leaderboardManager,
-            @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull LeaderboardManager leaderboardManager,
+            @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.leaderboardSnapshotManager = leaderboardSnapshotManager;
@@ -82,7 +81,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.SESSION);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.SESSION);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.sessionLeaderboardTitle()));
@@ -115,7 +114,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.DAILY);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.DAILY);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.dailyLeaderboardTitle()));
@@ -148,7 +147,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.WEEKLY);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.WEEKLY);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.weeklyLeaderboardTitle()));
@@ -181,7 +180,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.MONTHLY);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.MONTHLY);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.monthlyLeaderboardTitle()));
@@ -214,7 +213,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.YEARLY);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.YEARLY);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.yearlyLeaderboardTitle()));
@@ -247,7 +246,7 @@ public class LeaderboardCommand {
                         .executes(ctx -> {
                             Locale locale = localeManager.getLocale();
                             CommandSender sender = ctx.getSource().getSender();
-                            @Nullable TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.TOTAL);
+                            TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.TOTAL);
                             if(topTen == null) topTen = new TopTen();
 
                             sender.sendMessage(AdventureUtil.deserialize(locale.totalLeaderboardTitle()));

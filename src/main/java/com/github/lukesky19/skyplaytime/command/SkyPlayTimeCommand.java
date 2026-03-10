@@ -31,21 +31,21 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This class creates the main /skyplaytime command to register.
  */
 public class SkyPlayTimeCommand {
-    private final @NotNull SkyPlayTime skyPlayTime;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager;
-    private final @NotNull DatabaseManager databaseManager;
-    private final @NotNull PlayerDataManager playerDataManager;
-    private final @NotNull LeaderboardManager leaderboardManager;
-    private final @NotNull TimeManager timeManager;
-    private final @NotNull AFKManager afkManager;
-    private final @NotNull ActivityManager activityManager;
+    private final @NonNull SkyPlayTime skyPlayTime;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager;
+    private final @NonNull DatabaseManager databaseManager;
+    private final @NonNull PlayerDataManager playerDataManager;
+    private final @NonNull LeaderboardManager leaderboardManager;
+    private final @NonNull TimeManager timeManager;
+    private final @NonNull AFKManager afkManager;
+    private final @NonNull ActivityManager activityManager;
 
     /**
      * Constructor
@@ -60,15 +60,15 @@ public class SkyPlayTimeCommand {
      * @param activityManager An {@link ActivityManager} instance.
      */
     public SkyPlayTimeCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull LeaderboardSnapshotManager leaderboardSnapshotManager,
-            @NotNull DatabaseManager databaseManager,
-            @NotNull PlayerDataManager playerDataManager,
-            @NotNull LeaderboardManager leaderboardManager,
-            @NotNull TimeManager timeManager,
-            @NotNull AFKManager afkManager,
-            @NotNull ActivityManager activityManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager,
+            @NonNull DatabaseManager databaseManager,
+            @NonNull PlayerDataManager playerDataManager,
+            @NonNull LeaderboardManager leaderboardManager,
+            @NonNull TimeManager timeManager,
+            @NonNull AFKManager afkManager,
+            @NonNull ActivityManager activityManager) {
         this.skyPlayTime = skyPlayTime;
         this.localeManager = localeManager;
         this.leaderboardSnapshotManager = leaderboardSnapshotManager;
@@ -84,7 +84,7 @@ public class SkyPlayTimeCommand {
      * Creates the {@link LiteralCommandNode} of type {@link CommandSourceStack} to register using the Lifecycle API.
      * @return A {@link LiteralCommandNode} of type {@link CommandSourceStack} to register using the Lifecycle API.
      */
-    public @NotNull LiteralCommandNode<CommandSourceStack> createCommand() {
+    public @NonNull LiteralCommandNode<CommandSourceStack> createCommand() {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal("skyplaytime");
         builder.requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime"));
 

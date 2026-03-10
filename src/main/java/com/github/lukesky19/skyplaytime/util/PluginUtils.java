@@ -25,7 +25,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -43,7 +43,7 @@ public class PluginUtils {
      * @param player The {@link Player} to check if they are vanished.
      * @return true if vanished, false if not.
      */
-    public static boolean isPlayerVanished(@NotNull Player player) {
+    public static boolean isPlayerVanished(@NonNull Player player) {
         for(MetadataValue meta : player.getMetadata("vanished")) {
             if (meta.asBoolean()) return true;
         }
@@ -58,7 +58,7 @@ public class PluginUtils {
      * @param timeInSeconds The time in milliseconds to format to a message.
      * @return The time in seconds formatted to a {@link String}.
      */
-    public static @NotNull String formatPlayTimeChat(@NotNull Locale.TimeFormat timeMessage, long timeInSeconds) {
+    public static @NonNull String formatPlayTimeChat(Locale.@NonNull TimeFormat timeMessage, long timeInSeconds) {
         boolean firstUnit = true;
         Time timeRecord = TimeUtil.millisToTime(timeInSeconds * 1000L);
         StringBuilder messageBuilder = new StringBuilder();

@@ -24,8 +24,7 @@ import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,17 +38,17 @@ import java.util.stream.Stream;
  * This task removes old database backups and leaderboard snapshots.
  */
 public class CleanupTask extends BukkitRunnable {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull SettingsManager settingsManager;
-    private final @NotNull Path databaseBackupDirectory;
-    private final @NotNull Path leaderboardDirectory;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull SettingsManager settingsManager;
+    private final @NonNull Path databaseBackupDirectory;
+    private final @NonNull Path leaderboardDirectory;
 
     /**
      * Constructor
      * @param skyPlayTime A {@link SkyPlayTime} instance.
      * @param settingsManager A {@link SettingsManager} instance.
      */
-    public CleanupTask(@NotNull SkyPlayTime skyPlayTime, @NotNull SettingsManager settingsManager) {
+    public CleanupTask(@NonNull SkyPlayTime skyPlayTime, @NonNull SettingsManager settingsManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
 
@@ -62,7 +61,7 @@ public class CleanupTask extends BukkitRunnable {
      */
     @Override
     public void run() {
-        @Nullable Settings settings = settingsManager.getSettings();
+        Settings settings = settingsManager.getSettings();
         if(settings == null) {
             logger.error(AdventureUtil.deserialize("Unable to delete old database backups and leaderboard snapshots due to invalid plugin settings."));
             return;
@@ -92,7 +91,7 @@ public class CleanupTask extends BukkitRunnable {
      * @param directory The {@link Path} to loop through.
      * @param cutoffMillis The cutoff time in milliseconds.
      */
-    private void deleteOlderThan(@NotNull Path directory, long cutoffMillis) {
+    private void deleteOlderThan(@NonNull Path directory, long cutoffMillis) {
         if(Files.isDirectory(directory)) {
             try(Stream<Path> paths = Files.walk(directory)) {
                 paths.forEach(path -> {

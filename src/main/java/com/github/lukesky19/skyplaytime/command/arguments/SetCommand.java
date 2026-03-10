@@ -34,7 +34,7 @@ import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,9 +45,9 @@ import static com.github.lukesky19.skyplaytime.util.PluginUtils.formatPlayTimeCh
  * This class is used to create the set command used to set a player's play time.
  */
 public class SetCommand {
-    private final @NotNull ComponentLogger logger;
-    private final @NotNull LocaleManager localeManager;
-    private final @NotNull TimeManager timeManager;
+    private final @NonNull ComponentLogger logger;
+    private final @NonNull LocaleManager localeManager;
+    private final @NonNull TimeManager timeManager;
 
     /**
      * Constructor
@@ -56,9 +56,9 @@ public class SetCommand {
      * @param timeManager A {@link TimeManager} instance.
      */
     public SetCommand(
-            @NotNull SkyPlayTime skyPlayTime,
-            @NotNull LocaleManager localeManager,
-            @NotNull TimeManager timeManager) {
+            @NonNull SkyPlayTime skyPlayTime,
+            @NonNull LocaleManager localeManager,
+            @NonNull TimeManager timeManager) {
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.timeManager = timeManager;

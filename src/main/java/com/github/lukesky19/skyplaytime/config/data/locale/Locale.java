@@ -18,13 +18,13 @@
 package com.github.lukesky19.skyplaytime.config.data.locale;
 
 import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
 /**
  * This record contains the locale configuration for the plugin's messages.
- * @param configVersion The config version.
+ * @param version The config version.
  * @param prefix The plugin's prefix.
  * @param help The plugin's help messages.
  * @param reload The message sent when the plugin is reloaded.
@@ -150,9 +150,9 @@ import java.util.List;
  */
 @ConfigSerializable
 public record Locale(
-        String configVersion,
+        int version,
         String prefix,
-        @NotNull List<String> help,
+        @NonNull List<String> help,
         String afkMessage,
         String noLongerAfkMessage,
         String playerAfkMessage,

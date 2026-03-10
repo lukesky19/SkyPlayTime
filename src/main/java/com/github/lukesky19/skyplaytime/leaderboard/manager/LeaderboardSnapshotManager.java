@@ -25,8 +25,8 @@ import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.leaderboard.data.LeaderboardSnapshot;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,13 +40,13 @@ import java.util.stream.Stream;
  * This class manages the loading and saving of leaderboard snapshots.
  */
 public class LeaderboardSnapshotManager {
-    private final @NotNull SkyPlayTime skyPlayTime;
+    private final @NonNull SkyPlayTime skyPlayTime;
 
     /**
      * Constructor
      * @param skyPlayTime The plugin's main instance.
      */
-    public LeaderboardSnapshotManager(@NotNull SkyPlayTime skyPlayTime) {
+    public LeaderboardSnapshotManager(@NonNull SkyPlayTime skyPlayTime) {
         this.skyPlayTime = skyPlayTime;
     }
 
@@ -56,11 +56,11 @@ public class LeaderboardSnapshotManager {
      * @return A {@link LeaderboardSnapshot} or null.
      * @throws RuntimeException on any {@link ConfigurateException}.
      */
-    public @Nullable LeaderboardSnapshot loadLeaderboardSnapshot(@NotNull String fileName) {
+    public @Nullable LeaderboardSnapshot loadLeaderboardSnapshot(@NonNull String fileName) {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "leaderboards" + File.separator + fileName);
 
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
         try {
             return loader.load().get(LeaderboardSnapshot.class);
         } catch (ConfigurateException e) {
@@ -75,11 +75,11 @@ public class LeaderboardSnapshotManager {
      * @param leaderboardSnapshot The {@link LeaderboardSnapshot} to save.
      * @return true if successful, otherwise false.
      */
-    public boolean saveHistoricalLeaderboard(@NotNull String fileName, @NotNull LeaderboardSnapshot leaderboardSnapshot) {
+    public boolean saveHistoricalLeaderboard(@NonNull String fileName, @NonNull LeaderboardSnapshot leaderboardSnapshot) {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "leaderboards" + File.separator + fileName + ".yml");
 
-        @NotNull YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
         try {
             CommentedConfigurationNode node = loader.createNode();
             node.set(LeaderboardSnapshot.class, leaderboardSnapshot);
@@ -96,7 +96,7 @@ public class LeaderboardSnapshotManager {
      * @return A {@link List} of {@link String}s for file names.
      * @throws RuntimeException on any {@link IOException}.
      */
-    public @NotNull List<String> getLeaderboardSnapshotFileNames() {
+    public @NonNull List<String> getLeaderboardSnapshotFileNames() {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         List<String> fileNames = new ArrayList<>();
 
