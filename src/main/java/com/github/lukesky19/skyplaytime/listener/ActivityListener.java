@@ -66,7 +66,7 @@ public class ActivityListener implements Listener {
      * Also marks the player as no longer AFK if necessary.
      * @param playerMoveEvent A {@link PlayerMoveEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
@@ -101,7 +101,7 @@ public class ActivityListener implements Listener {
      * Listens to when a player interacts in general and stores the timestamp of when they completed the action.
      * @param playerInteractEvent A {@link PlayerInteractEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent playerInteractEvent) {
         Player player = playerInteractEvent.getPlayer();
 
@@ -112,7 +112,7 @@ public class ActivityListener implements Listener {
      * Listens to when a player interacts with an entity and stores the timestamp of when they completed the action.
      * @param playerInteractEntityEvent A {@link PlayerInteractEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent playerInteractEntityEvent) {
         Player player = playerInteractEntityEvent.getPlayer();
 
@@ -124,7 +124,7 @@ public class ActivityListener implements Listener {
      * This method only considers an action completed for the following states: REEL_IN, FISHING, CAUGHT_FISH, and CAUGHT_ENTITY.
      * @param playerFishEvent A {@link PlayerFishEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerFish(PlayerFishEvent playerFishEvent) {
         switch(playerFishEvent.getState()) {
             case REEL_IN, FISHING, CAUGHT_FISH, CAUGHT_ENTITY -> {

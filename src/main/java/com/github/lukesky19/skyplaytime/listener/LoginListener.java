@@ -43,7 +43,7 @@ public class LoginListener implements Listener {
      * Initialize player data on join.
      * @param playerJoinEvent A {@link PlayerJoinEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent playerJoinEvent) {
         Player player = playerJoinEvent.getPlayer();
 

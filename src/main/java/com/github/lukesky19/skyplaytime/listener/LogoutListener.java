@@ -45,7 +45,7 @@ public class LogoutListener implements Listener {
      * Listens to when a player disconnects to clean up any data for that player.
      * @param playerQuitEvent A {@link PlayerQuitEvent}.
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLeave(PlayerQuitEvent playerQuitEvent) {
         Player player = playerQuitEvent.getPlayer();
         UUID uuid = player.getUniqueId();
