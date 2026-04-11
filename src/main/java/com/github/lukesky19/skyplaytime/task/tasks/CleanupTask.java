@@ -63,7 +63,7 @@ public class CleanupTask extends BukkitRunnable {
     public void run() {
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.error(AdventureUtil.deserialize("Unable to delete old database backups and leaderboard snapshots due to invalid plugin settings."));
+            logger.warn(AdventureUtil.deserialize("Unable to delete old database backups and leaderboard snapshots due to invalid plugin settings."));
             return;
         }
 
@@ -105,12 +105,12 @@ public class CleanupTask extends BukkitRunnable {
                                 file.delete();
                             }
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            logger.warn(AdventureUtil.deserialize("Failed to delete an old database or leaderboard file. Error: " + e.getMessage()));
                         }
                     }
                 });
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                logger.warn(AdventureUtil.deserialize("Failed to delete old database backups and leaderboard files. Error: " + e.getMessage()));
             }
         }
     }

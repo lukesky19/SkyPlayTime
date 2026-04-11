@@ -23,6 +23,7 @@ import com.github.lukesky19.skyplaytime.database.connection.ConnectionManager;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.database.table.VersionsTable;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
@@ -55,11 +56,12 @@ public class DatabaseManager extends AbstractDatabaseManager {
         super(connectionManager, queueManager);
 
         this.skyPlayTime = skyPlayTime;
+        ComponentLogger logger = skyPlayTime.getComponentLogger();
 
-        VersionsTable versionsTable = new VersionsTable(queueManager);
+        VersionsTable versionsTable = new VersionsTable(logger, queueManager);
         versionsTable.createTable();
 
-        playTimeTable = new PlayTimeTable(skyPlayTime.getComponentLogger(), queueManager, versionsTable);
+        playTimeTable = new PlayTimeTable(logger, queueManager, versionsTable);
         playTimeTable.createTable();
     }
 

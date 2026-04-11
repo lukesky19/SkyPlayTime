@@ -85,7 +85,7 @@ public class ResetTask extends BukkitRunnable {
 
         timeManager.resetPlayTime(false, resetDailyTime, resetWeeklyTime, resetMonthlyTime, resetYearlyTime, false).thenAccept(result -> {
             if(!result) {
-                logger.error(AdventureUtil.deserialize("Unable save last reset timestamps due to an error while resetting play time."));
+                logger.warn(AdventureUtil.deserialize("Unable save last reset timestamps due to an error while resetting play time."));
                 return;
             }
 
@@ -126,7 +126,7 @@ public class ResetTask extends BukkitRunnable {
      * @param zoneId The {@link ZoneId} (the time zone) to use when calculating reset times.
      * @param hour What hour of the day should resets occur at. Should be a value between and including 1 to 24.
      * @param resetTimes The {@link Settings.LastResetTimes} containing when each {@link TimeCategory} was last reset.
-     * @return The milliseconds since the epoch when the next reset should occur.
+     * @return The milliseconds since the epoch when the next reset should occur. -1 on any error.
      */
     private long calculateEpochMillisecondsForNextReset(
             @NonNull TimeCategory resetType,
@@ -135,15 +135,16 @@ public class ResetTask extends BukkitRunnable {
             int hour,
             Settings.@NonNull LastResetTimes resetTimes) {
         LocalDateTime now = LocalDateTime.now(zoneId);
-        LocalDateTime nextReset;
+        LocalDateTime nextReset = null;
 
         long lastResetMillis = switch (resetType) {
             case DAILY -> resetTimes.daily();
             case WEEKLY -> resetTimes.weekly();
             case MONTHLY -> resetTimes.monthly();
             case YEARLY -> resetTimes.yearly();
-            default -> throw new IllegalStateException("Unexpected TimeCategory provided: " + resetType);
+            default -> -1;
         };
+        if(lastResetMillis <= -1) return -1;
 
         LocalDateTime lastReset = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastResetMillis), zoneId);
 
@@ -152,7 +153,6 @@ public class ResetTask extends BukkitRunnable {
             case WEEKLY -> nextReset = lastReset.with(dayOfWeek).plusWeeks(1).withHour(hour).withMinute(0).withSecond(0).withNano(0);
             case MONTHLY -> nextReset = lastReset.withDayOfMonth(1).plusMonths(1).withHour(hour).withMinute(0).withSecond(0).withNano(0);
             case YEARLY -> nextReset = lastReset.withMonth(1).withDayOfMonth(1).plusYears(1).withHour(hour).withMinute(0).withSecond(0).withNano(0);
-            default -> throw new RuntimeException("Unknown ResetType provided.");
         }
 
         if(nextReset.isBefore(now)) {

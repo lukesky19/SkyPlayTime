@@ -128,11 +128,10 @@ public class DebugCommand {
                 .then(Commands.argument("player", ArgumentTypes.player())
                         .executes(ctx -> {
                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            UUID targetUUID = target.getUniqueId();
                             Locale locale = localeManager.getLocale();
 
                             String timeStampFormat = "MM-dd-yyyy HH:mm:ss";
-                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastMoveTime(targetUUID), ZoneId.of("America/New_York"), timeStampFormat);
+                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastMoveTime(target), ZoneId.of("America/New_York"), timeStampFormat);
                             String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last moved at <yellow>" + timeMessage + "</yellow>.</aqua>";
 
                             if(ctx.getSource().getSender() instanceof Player player) {
@@ -151,11 +150,10 @@ public class DebugCommand {
                 .then(Commands.argument("player", ArgumentTypes.player())
                         .executes(ctx -> {
                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            UUID targetUUID = target.getUniqueId();
                             Locale locale = localeManager.getLocale();
 
                             String timeStampFormat = "MM-dd-yyyy HH:mm:ss";
-                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastActionTime(targetUUID), ZoneId.of("America/New_York"), timeStampFormat);
+                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastActionTime(target), ZoneId.of("America/New_York"), timeStampFormat);
                             String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last interacted at <yellow>" + timeMessage + "</yellow>.</aqua>";
 
                             if(ctx.getSource().getSender() instanceof Player player) {

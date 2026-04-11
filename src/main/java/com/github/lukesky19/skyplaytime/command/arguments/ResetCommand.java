@@ -35,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -75,10 +74,9 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
 
                                     // Reset the desired play time
-                                    timeManager.resetPlayTime(targetUUID, true, false, false, false, false, false);
+                                    timeManager.resetPlayTime(target, true, false, false, false, false, false);
 
                                     // Create the placeholders list
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
@@ -124,7 +122,6 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     CommandSender sender = ctx.getSource().getSender();
                                     boolean isSenderPlayer = sender instanceof Player;
 
@@ -132,7 +129,7 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Reset the desired play time
-                                    boolean result = timeManager.resetPlayTime(targetUUID, false,true, false, false, false, false);
+                                    boolean result = timeManager.resetPlayTime(target, false,true, false, false, false, false);
 
                                     if(result) {
                                         // Tell the target player that their daily play time was reset
@@ -207,7 +204,6 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     CommandSender sender = ctx.getSource().getSender();
                                     boolean isSenderPlayer = sender instanceof Player;
 
@@ -215,7 +211,7 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Reset the desired play time
-                                    boolean result = timeManager.resetPlayTime(targetUUID, false,false, true, false, false, false);
+                                    boolean result = timeManager.resetPlayTime(target, false,false, true, false, false, false);
 
                                     if(result) {
                                         // Tell the target player that their weekly play time was reset
@@ -290,7 +286,6 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     CommandSender sender = ctx.getSource().getSender();
                                     boolean isSenderPlayer = sender instanceof Player;
 
@@ -298,7 +293,7 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Reset the desired play time
-                                    boolean result = timeManager.resetPlayTime(targetUUID, false,false, false, true, false, false);
+                                    boolean result = timeManager.resetPlayTime(target, false,false, false, true, false, false);
 
                                     if(result) {
                                         // Tell the target player that their monthly play time was reset
@@ -373,7 +368,6 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     CommandSender sender = ctx.getSource().getSender();
                                     boolean isSenderPlayer = sender instanceof Player;
 
@@ -381,7 +375,7 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Reset the desired play time
-                                    boolean result = timeManager.resetPlayTime(targetUUID, false,false, false, false, true, false);
+                                    boolean result = timeManager.resetPlayTime(target, false,false, false, false, true, false);
 
                                     if(result) {
                                         // Tell the target player that their yearly play time was reset
@@ -456,7 +450,6 @@ public class ResetCommand {
                                 .executes(ctx -> {
                                     Locale locale = localeManager.getLocale();
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     CommandSender sender = ctx.getSource().getSender();
                                     boolean isSenderPlayer = sender instanceof Player;
 
@@ -464,7 +457,7 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Reset the desired play time
-                                    boolean result = timeManager.resetPlayTime(targetUUID, false,false, false, false, false, true);
+                                    boolean result = timeManager.resetPlayTime(target, false,false, false, false, false, true);
 
                                     if(result) {
                                         // Tell the target player that their total play time was reset

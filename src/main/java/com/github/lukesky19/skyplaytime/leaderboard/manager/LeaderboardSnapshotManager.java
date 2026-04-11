@@ -54,7 +54,6 @@ public class LeaderboardSnapshotManager {
      * Loads a leaderboard snapshot file
      * @param fileName The file name to load.
      * @return A {@link LeaderboardSnapshot} or null.
-     * @throws RuntimeException on any {@link ConfigurateException}.
      */
     public @Nullable LeaderboardSnapshot loadLeaderboardSnapshot(@NonNull String fileName) {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
@@ -64,7 +63,7 @@ public class LeaderboardSnapshotManager {
         try {
             return loader.load().get(LeaderboardSnapshot.class);
         } catch (ConfigurateException e) {
-            logger.error(AdventureUtil.deserialize("Failed to load historical leaderboard for file: " + fileName + ". " + e.getMessage()));
+            logger.warn(AdventureUtil.deserialize("Failed to load historical leaderboard for file: " + fileName + ". " + e.getMessage()));
             return null;
         }
     }
@@ -86,7 +85,7 @@ public class LeaderboardSnapshotManager {
             loader.save(node);
             return true;
         } catch (ConfigurateException e) {
-            logger.error(AdventureUtil.deserialize("Failed to save the leaderboard snapshot. " + e.getMessage()));
+            logger.warn(AdventureUtil.deserialize("Failed to save the leaderboard snapshot. " + e.getMessage()));
             return false;
         }
     }
@@ -94,7 +93,6 @@ public class LeaderboardSnapshotManager {
     /**
      * Get a list of file names in the SkyPlayTime/leaderboards directory.
      * @return A {@link List} of {@link String}s for file names.
-     * @throws RuntimeException on any {@link IOException}.
      */
     public @NonNull List<String> getLeaderboardSnapshotFileNames() {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
@@ -104,7 +102,7 @@ public class LeaderboardSnapshotManager {
         try(Stream<Path> stream = Files.walk(path)) {
             stream.filter(Files::isRegularFile).forEach(file -> fileNames.add(String.valueOf(file.getFileName())));
         } catch (IOException e) {
-            logger.error(AdventureUtil.deserialize("Failed to load historical leaderboard file names. " + e.getMessage()));
+            logger.warn(AdventureUtil.deserialize("Failed to load historical leaderboard file names. " + e.getMessage()));
             return new ArrayList<>();
         }
 

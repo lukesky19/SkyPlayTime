@@ -281,7 +281,8 @@ public class PlayTimeTable {
 
                 return new TopTen(positionList);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                logger.warn(AdventureUtil.deserialize("Failed to get top ten by category " + timeCategoryName + " due to an error. Error: " + e.getMessage()));
+                return new TopTen();
             }
         });
     }

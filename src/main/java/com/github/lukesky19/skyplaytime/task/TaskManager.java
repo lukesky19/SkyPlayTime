@@ -248,7 +248,7 @@ public class TaskManager {
     private void startSaveTask() {
         Settings settings = settingsManager.getSettings();
         if(settings == null || settings.saveIntervalSeconds() <= 0) {
-            logger.error(AdventureUtil.deserialize("Unable to start the save task due to invalid plugin settings."));
+            logger.warn(AdventureUtil.deserialize("Unable to start the save task due to invalid plugin settings."));
             return;
         }
 

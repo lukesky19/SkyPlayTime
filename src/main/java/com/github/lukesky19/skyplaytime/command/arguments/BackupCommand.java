@@ -72,8 +72,8 @@ public class BackupCommand {
                                     player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
                                     player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
                                 } else {
-                                    logger.error(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                    logger.error(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
+                                    logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
                                 }
                             });
 
@@ -96,13 +96,13 @@ public class BackupCommand {
                                         }
                                     }
                         })).exceptionally(ex -> {
-                            logger.error(AdventureUtil.deserialize("Failed to backup database: " + ex.getMessage()));
+                            logger.warn(AdventureUtil.deserialize("Failed to backup database: " + ex.getMessage()));
 
                             skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                                 if(ctx.getSource().getSender() instanceof Player player) {
                                     player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
                                 } else {
-                                    logger.error(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                    logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
                                 }
                             });
 
@@ -114,8 +114,8 @@ public class BackupCommand {
                                 player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
                                 player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
                             } else {
-                                logger.error(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                logger.error(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
+                                logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
                             }
                         });
 

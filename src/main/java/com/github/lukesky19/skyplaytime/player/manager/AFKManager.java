@@ -74,14 +74,36 @@ public class AFKManager {
 
     /**
      * Is the player AFK?
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @return true if afk, false if not.
-     * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public boolean isPlayerAFK(@NonNull UUID uuid) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public boolean isPlayerAFK(@NonNull Player player) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
-            throw new RuntimeException("No player data found for UUID " + uuid);
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to check player AFK status due to no player data found for player " + player.getName()));
+            return false;
+        }
+
+        return playerData.isAFK();
+    }
+
+    /**
+     * Is the player AFK?
+     * @param playerId The {@link UUID} of the player.
+     * @return true if afk, false if not.
+     */
+    public boolean isPlayerAFK(@NonNull UUID playerId) {
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            Player player = skyPlayTime.getServer().getPlayer(playerId);
+            if(player != null && player.isOnline() && player.isConnected()) {
+                playerDataManager.loadPlayerData(player, playerId);
+            }
+
+            logger.warn(AdventureUtil.deserialize("Unable to check player AFK status due to no player data found for player id " + playerId));
+            return false;
         }
 
         return playerData.isAFK();
@@ -99,36 +121,36 @@ public class AFKManager {
 
     /**
      * Toggles whether the player is AFK or not. If the target player is vanished, their AFK status change will not be broadcasted to the server regardless of the option provided.
-     * @param targetPlayer The player to toggle their AFK status for.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param notifyPlayer Should the player be notified of their AFK status change?
      * @param notifyServer Should the server be notified of this player's AFK status change?
      * @return The enum {@link AFKToggleResult} containing the result.
-     * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player targetPlayer, @NonNull UUID uuid, boolean notifyPlayer, boolean notifyServer) {
+    public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player player, boolean notifyPlayer, boolean notifyServer) {
         Settings settings = settingsManager.getSettings();
         Locale locale = localeManager.getLocale();
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
 
         // Log an error if plugin settings are invalid and return AFKToggleResult.CONFIG_ERROR
         if(settings == null) {
-            logger.warn(AdventureUtil.deserialize("Failed to toggle AFK Status for player " + targetPlayer.getName() + " due to invalid plugin settings."));
+            logger.warn(AdventureUtil.deserialize("Failed to toggle AFK Status for player " + player.getName() + " due to invalid plugin settings."));
             return AFKToggleResult.CONFIG_ERROR;
         }
 
         // Log an error if no player data was found and return AFKToggleResult.ERROR
         if(playerData == null) {
-            logger.warn(AdventureUtil.deserialize("Failed to toggle AFK status as no player data was found for player: " + targetPlayer.getName()));
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Failed to toggle AFK status as no player data was found for player: " + player.getName()));
             return AFKToggleResult.ERROR;
         }
 
         // Get Player Data
         boolean currentAFKStatus = playerData.isAFK();
-        if(PluginUtils.isPlayerVanished(targetPlayer)) notifyServer = false;
+        if(PluginUtils.isPlayerVanished(player)) notifyServer = false;
 
         // Create a AFKStatusChangeEvent and call the event
-        AFKStatusChangeEvent afkStatusChangeEvent = new AFKStatusChangeEvent(targetPlayer, !currentAFKStatus);
+        AFKStatusChangeEvent afkStatusChangeEvent = new AFKStatusChangeEvent(player, !currentAFKStatus);
         skyPlayTime.getServer().getPluginManager().callEvent(afkStatusChangeEvent);
 
         // if the event was cancelled, return AFKToggleResult.CANCELLED
@@ -140,19 +162,19 @@ public class AFKManager {
             playerData.setAFK(false);
 
             // If the target player should be notified that they are no longer AFK, do so here
-            if(notifyPlayer) targetPlayer.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.noLongerAfkMessage()));
+            if(notifyPlayer) player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.noLongerAfkMessage()));
             // If the server should be notified that the player is no longer AFK, do so here
             if(notifyServer) {
                 // Create the placeholders list
-                List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", targetPlayer.getName()));
+                List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", player.getName()));
                 // Get a list of all online players minus the target player.
                 List<Player> onlinePlayersExceptTarget = new ArrayList<>(skyPlayTime.getServer().getOnlinePlayers());
-                onlinePlayersExceptTarget.remove(targetPlayer);
+                onlinePlayersExceptTarget.remove(player);
 
                 // Create the message to send to all online players
                 Component serverMessage = AdventureUtil.deserialize(locale.prefix() + locale.playerNoLongerAfkMessage(), placeholders);
                 // Send the message that the target player is no longer AFK
-                onlinePlayersExceptTarget.forEach(player -> player.sendMessage(serverMessage));
+                onlinePlayersExceptTarget.forEach(onlinePlayer -> onlinePlayer.sendMessage(serverMessage));
             }
 
             // Reset movement and action time counters to avoid being marked as AFK right away.
@@ -160,7 +182,7 @@ public class AFKManager {
             playerData.setLastActionTime(System.currentTimeMillis());
 
             // Reset AFK settings
-            resetAFKPlayerSettings(settings, targetPlayer);
+            resetAFKPlayerSettings(settings, player);
 
             return AFKToggleResult.SUCCESS_NO_LONGER_AFK;
         } else {
@@ -168,23 +190,23 @@ public class AFKManager {
             playerData.setAFK(true);
 
             // If the target player should be notified that they are now AFK, do so here
-            if(notifyPlayer) targetPlayer.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.afkMessage()));
+            if(notifyPlayer) player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.afkMessage()));
             // If the server should be notified that the player is now AFK, do so here
             if(notifyServer) {
                 // Create the placeholders list
-                List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", targetPlayer.getName()));
+                List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", player.getName()));
                 // Get a list of all online players minus the target player.
                 List<Player> onlinePlayersExceptTarget = new ArrayList<>(skyPlayTime.getServer().getOnlinePlayers());
-                onlinePlayersExceptTarget.remove(targetPlayer);
+                onlinePlayersExceptTarget.remove(player);
 
                 // Create the message to send to all online players
                 Component serverMessage = AdventureUtil.deserialize(locale.prefix() + locale.playerAfkMessage(), placeholders);
                 // Send the message that the target player is now AFK
-                onlinePlayersExceptTarget.forEach(player -> player.sendMessage(serverMessage));
+                onlinePlayersExceptTarget.forEach(onlinePlayer -> onlinePlayer.sendMessage(serverMessage));
             }
 
             // Apply AFK settings
-            setAFKPlayerSettings(settings, targetPlayer);
+            setAFKPlayerSettings(settings, player);
 
             return AFKToggleResult.SUCCESS_AFK;
         }
@@ -221,7 +243,7 @@ public class AFKManager {
      */
     private void resetAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
         // Get the player's UUID
-        UUID uuid = player.getUniqueId();
+        UUID playerId = player.getUniqueId();
 
         Settings.PlayerSettings playerSettings = settings.afkSettings().playerSettings();
         // Reset if the player can pickup items while afk.
@@ -234,7 +256,7 @@ public class AFKManager {
             // If the NewPlayerPerksAPI is not null, check the player's perks
             if(newPlayerPerksAPI != null) {
                 // If the player doesn't have perks or the invulnerable perk isn't used, remove invulnerability
-                if(!newPlayerPerksAPI.hasPerks(uuid) || !newPlayerPerksAPI.isInvulnerablePerkEnabled()) {
+                if(!newPlayerPerksAPI.hasPerks(playerId) || !newPlayerPerksAPI.isInvulnerablePerkEnabled()) {
                     player.setInvulnerable(false);
                 }
             } else {

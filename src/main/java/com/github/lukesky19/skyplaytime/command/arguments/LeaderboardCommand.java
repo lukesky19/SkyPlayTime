@@ -296,7 +296,7 @@ public class LeaderboardCommand {
                                         if(isPlayer) {
                                             sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.historicalLeaderboardLoadError(), placeholders));
                                         } else {
-                                            logger.error(locale.historicalLeaderboardLoadError(), placeholders);
+                                            logger.warn(locale.historicalLeaderboardLoadError(), placeholders);
                                         }
 
                                         return 0;

@@ -73,7 +73,7 @@ public class SettingsManager {
 
             validateConfig();
         } catch (ConfigurateException e) {
-            logger.error(AdventureUtil.deserialize("Failed to load plugin settings."));
+            logger.warn(AdventureUtil.deserialize("Failed to load plugin settings."));
         }
     }
 
@@ -93,7 +93,7 @@ public class SettingsManager {
 
             this.settings = settings;
         } catch (ConfigurateException e) {
-            logger.error(AdventureUtil.deserialize("Failed to save plugin settings."));
+            logger.warn(AdventureUtil.deserialize("Failed to save plugin settings."));
         }
     }
 
@@ -117,13 +117,13 @@ public class SettingsManager {
 
         if(settings.locale() == null) {
             settings = null;
-            logger.error(AdventureUtil.deserialize("Invalid locale name provided in settings.yml."));
+            logger.warn(AdventureUtil.deserialize("Invalid locale name provided in settings.yml."));
             return;
         }
 
         if(settings.resetSettings().zoneId() == null) {
             settings = null;
-            logger.error(AdventureUtil.deserialize("Invalid zone id name provided in settings.yml."));
+            logger.warn(AdventureUtil.deserialize("Invalid zone id name provided in settings.yml."));
             return;
         }
 
@@ -132,7 +132,7 @@ public class SettingsManager {
             ZoneId.of(settings.resetSettings().zoneId());
         } catch (DateTimeException e) {
             settings = null;
-            logger.error(AdventureUtil.deserialize("Invalid zone id provided in settings.yml. " + e));
+            logger.warn(AdventureUtil.deserialize("Invalid zone id provided in settings.yml. " + e));
             return;
         }
 
@@ -140,7 +140,7 @@ public class SettingsManager {
             DayOfWeek.valueOf(settings.resetSettings().dayOfWeek());
         } catch (IllegalArgumentException e) {
             settings = null;
-            logger.error(AdventureUtil.deserialize("Invalid day of week provided in settings.yml. " + e));
+            logger.warn(AdventureUtil.deserialize("Invalid day of week provided in settings.yml. " + e));
         }
     }
 }

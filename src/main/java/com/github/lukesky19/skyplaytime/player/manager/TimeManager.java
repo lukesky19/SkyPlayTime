@@ -26,6 +26,7 @@ import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
@@ -64,63 +65,85 @@ public class TimeManager {
 
     /**
      * Gets the player's play time in seconds for the provided {@link TimeCategory}.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param timeCategory The {@link TimeCategory} to get play time for.
      * @return The player's play time in seconds for the provided {@link TimeCategory}.
-     * @throws RuntimeException if there is no player data loaded for the player.
      */
-    public long getPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public long getPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
+            return 0;
+        }
 
         return playerData.getPlayTime(timeCategory);
     }
 
     /**
      * Adds the play time in seconds provided to the player's play time for the provided {@link TimeCategory}.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param timeCategory The {@link TimeCategory} to add play time to.
      * @param playTimeSeconds The play time in seconds to remove.
-     * @throws RuntimeException if there is no player data loaded for the player.
+     * @return true if successful, false if not.
      */
-    public void addPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public boolean addPlayTimeSeconds(
+            @NonNull Player player,
+            @NonNull TimeCategory timeCategory,
+            long playTimeSeconds) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
+            return false;
+        }
 
-        playerData.addPlayTime(timeCategory, playTimeSeconds);
+        return playerData.addPlayTime(timeCategory, playTimeSeconds);
     }
 
     /**
      * Removes the play time in seconds provided to the player's play time for the provided {@link TimeCategory}.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param timeCategory The {@link TimeCategory} to remove play time from.
      * @param playTimeSeconds The play time in seconds to remove.
-     * @throws RuntimeException if there is no player data loaded for the player.
+     * @return true if successful, false if not.
      */
-    public void removePlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public boolean removePlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
+            return false;
+        }
 
-        playerData.removePlayTime(timeCategory, playTimeSeconds);
+        return playerData.removePlayTime(timeCategory, playTimeSeconds);
     }
 
     /**
      * Sets the player's play time for the provided {@link TimeCategory} to the play time in seconds provided.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param timeCategory The {@link TimeCategory} to set play time for.
      * @param playTimeSeconds The play time in seconds to remove.
-     * @throws RuntimeException if there is no player data loaded for the player.
+     * @return true if successful, false if not.
      */
-    public void setPlayTimeSeconds(@NonNull UUID uuid, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public boolean setPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
+            return false;
+        }
 
-        playerData.setPlayTime(timeCategory, playTimeSeconds);
+        return playerData.setPlayTime(timeCategory, playTimeSeconds);
     }
 
     /**
      * Reset the player's play time for the provided {@link UUID} according to the provided boolean options.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @param session Should session play time be reset?
      * @param daily Should daily play time be reset?
      * @param weekly Should weekly play time be reset?
@@ -130,7 +153,7 @@ public class TimeManager {
      * @return true if succeeds, false if not.
      */
     public boolean resetPlayTime(
-            @NonNull UUID uuid,
+            @NonNull Player player,
             boolean session,
             boolean daily,
             boolean weekly,
@@ -144,14 +167,16 @@ public class TimeManager {
         // If the plugin's settings are invalid, abort the reset.
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.error(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
+            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
             return false;
         }
 
         // Get the player's data and abort the reset if no player data was found.
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
-            logger.error(AdventureUtil.deserialize("No player data found for UUID " + uuid));
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to reset play time for player " + player.getName() + " due to no player data found."));
             return false;
         }
 
@@ -163,7 +188,7 @@ public class TimeManager {
         if(yearly) playerData.setDailyPlayTime(0);
         if(total) playerData.setDailyPlayTime(0);
 
-        playerDataManager.savePlayerData(uuid);
+        playerDataManager.savePlayerData(playerId);
 
         return true;
     }
@@ -193,7 +218,7 @@ public class TimeManager {
         // If the plugin's settings are invalid, abort the reset.
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.error(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
+            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
             return CompletableFuture.completedFuture(false);
         }
 
@@ -202,7 +227,7 @@ public class TimeManager {
                 .thenCompose(list -> {
                     // If an error occurred while saving player data, abort the reset.
                     if(list.contains(false)) {
-                        logger.error(AdventureUtil.deserialize("Unable to reset play time due to an error while saving player data."));
+                        logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error while saving player data."));
                         return CompletableFuture.completedFuture(false);
                     }
 
@@ -236,7 +261,7 @@ public class TimeManager {
         boolean leaderboardResult = leaderboardManager.saveLeaderboardSnapshots(session, daily, weekly, monthly, yearly, total);
 
         if(!leaderboardResult) {
-            logger.error(AdventureUtil.deserialize("Unable to reset play time due to an error while saving leaderboard snapshots."));
+            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error while saving leaderboard snapshots."));
             return CompletableFuture.completedFuture(false);
         }
 
@@ -267,7 +292,7 @@ public class TimeManager {
             return databaseManager.backupDatabase()
                     .thenCompose(backupResult -> {
                         if(!backupResult) {
-                            logger.error(AdventureUtil.deserialize("Unable to reset play time due to an error during backup."));
+                            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error during backup."));
                             return CompletableFuture.completedFuture(false);
                         }
 

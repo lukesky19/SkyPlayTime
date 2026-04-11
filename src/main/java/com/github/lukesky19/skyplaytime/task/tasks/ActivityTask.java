@@ -74,13 +74,13 @@ public class ActivityTask extends BukkitRunnable {
 
                 if(checkAutoAFK) {
                     if (moveTimeSeconds >= settings.afkSettings().autoAfkSeconds() && actionTimeSeconds >= settings.afkSettings().autoAfkSeconds()) {
-                        afkManager.togglePlayerAFK(player, uuid, true, true);
+                        afkManager.togglePlayerAFK(player, true, true);
                     }
                 }
 
                 if(checkAutomatedActions) {
                     if (moveTimeSeconds >= settings.afkSettings().movementTimeSeconds() && actionTimeSeconds <= settings.afkSettings().actionTimeSeconds()) {
-                        afkManager.togglePlayerAFK(player, uuid, true, true);
+                        afkManager.togglePlayerAFK(player, true, true);
                     }
                 }
             }

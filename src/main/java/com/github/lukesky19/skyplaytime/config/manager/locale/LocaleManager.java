@@ -237,7 +237,7 @@ public class LocaleManager {
 
             validateConfig();
         } catch (ConfigurateException e) {
-            logger.error(AdventureUtil.deserialize("Failed to load locale configuration. " + e.getMessage()));
+            logger.warn(AdventureUtil.deserialize("Failed to load locale configuration. " + e.getMessage()));
         }
     }
 

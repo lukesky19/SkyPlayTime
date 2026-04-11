@@ -36,7 +36,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static com.github.lukesky19.skyplaytime.util.PluginUtils.formatPlayTimeChat;
 
@@ -75,11 +74,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.sessionPlayTimeTimePlaceholder();
 
-                                    long currentSessionPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.SESSION);
+                                    long currentSessionPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.SESSION);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -100,7 +98,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.sessionPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentSessionPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.SESSION);
+                                long currentSessionPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.SESSION);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentSessionPlayTime)));
@@ -121,11 +119,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.dailyPlayTimeTimePlaceholder();
 
-                                    long currentDailyPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.DAILY);
+                                    long currentDailyPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.DAILY);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -146,7 +143,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.dailyPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentDailyPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.DAILY);
+                                long currentDailyPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.DAILY);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentDailyPlayTime)));
@@ -167,11 +164,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.weeklyPlayTimeTimePlaceholder();
 
-                                    long currentWeeklyPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.WEEKLY);
+                                    long currentWeeklyPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.WEEKLY);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -192,7 +188,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.weeklyPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentWeeklyPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.WEEKLY);
+                                long currentWeeklyPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.WEEKLY);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentWeeklyPlayTime)));
@@ -213,11 +209,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.monthlyPlayTimeTimePlaceholder();
 
-                                    long currentMonthlyPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.MONTHLY);
+                                    long currentMonthlyPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.MONTHLY);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -238,7 +233,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.monthlyPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentMonthlyPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.MONTHLY);
+                                long currentMonthlyPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.MONTHLY);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentMonthlyPlayTime)));
@@ -259,11 +254,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.yearlyPlayTimeTimePlaceholder();
 
-                                    long currentYearlyPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.YEARLY);
+                                    long currentYearlyPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.YEARLY);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -284,7 +278,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.yearlyPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentYearlyPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.YEARLY);
+                                long currentYearlyPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.YEARLY);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentYearlyPlayTime)));
@@ -305,11 +299,10 @@ public class TimeCommand {
                                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.time.others"))
                                 .executes(ctx -> {
                                     Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                    UUID targetUUID = target.getUniqueId();
                                     Locale locale = localeManager.getLocale();
                                     Locale.TimeFormat timeFormat = locale.totalPlayTimeTimePlaceholder();
 
-                                    long currentTotalPlayTime = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.TOTAL);
+                                    long currentTotalPlayTime = timeManager.getPlayTimeSeconds(target, TimeCategory.TOTAL);
 
                                     List<TagResolver.Single> placeholders = new ArrayList<>();
                                     placeholders.add(Placeholder.parsed("player_name", target.getName()));
@@ -330,7 +323,7 @@ public class TimeCommand {
                             Locale.TimeFormat timeFormat = locale.monthlyPlayTimeTimePlaceholder();
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                long currentTotalPlayTime = timeManager.getPlayTimeSeconds(player.getUniqueId(), TimeCategory.TOTAL);
+                                long currentTotalPlayTime = timeManager.getPlayTimeSeconds(player, TimeCategory.TOTAL);
 
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentTotalPlayTime)));

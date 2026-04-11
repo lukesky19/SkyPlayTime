@@ -83,9 +83,9 @@ public class PlayerDataManager {
      * Loads player data from the database.
      * @param player The {@link Player} to load data for.
      * @param uuid The {@link UUID} of the player to load data for.
-     * @return A {@link CompletableFuture} of type {@link PlayerData} when complete.
+     * @return A {@link CompletableFuture} of type {@link Optional} {@link PlayerData} when complete.
      */
-    public @NonNull CompletableFuture<@NonNull PlayerData> loadPlayerData(@NonNull Player player, @NonNull UUID uuid) {
+    public @NonNull CompletableFuture<@NonNull Optional<PlayerData>> loadPlayerData(@NonNull Player player, @NonNull UUID uuid) {
         PlayTimeTable playTimeTable = databaseManager.getPlayTimeTable();
         PlayerData playerData = playerDataMap.getOrDefault(uuid, new PlayerData(player.getName()));
 
@@ -97,7 +97,11 @@ public class PlayerDataManager {
                     // Save player data as the player name may have been updated.
                     savePlayerData(uuid, updatedPlayerData);
 
-                    return updatedPlayerData;
+                    return Optional.of(updatedPlayerData);
+                })
+                .exceptionally(ex -> {
+                    logger.warn(AdventureUtil.deserialize("Failed to load player data for player " + player.getName()));
+                    return Optional.empty();
                 });
     }
 
@@ -125,7 +129,7 @@ public class PlayerDataManager {
                 .thenAccept(v -> playerDataMap.remove(uuid))
                 .exceptionally(ex -> {
                     playerDataMap.remove(uuid);
-                    logger.error(AdventureUtil.deserialize("Failed to save player data to the database."));
+                    logger.warn(AdventureUtil.deserialize("Failed to save player data to the database."));
                     return null;
                 });
     }
@@ -157,7 +161,7 @@ public class PlayerDataManager {
 
         databaseManager.getPlayTimeTable().savePlayerData(uuid, playerData)
                 .exceptionally(t -> {
-                    logger.error(AdventureUtil.deserialize("Failed to save player data to the database."));
+                    logger.warn(AdventureUtil.deserialize("Failed to save player data to the database."));
                     return null;
                 });
     }

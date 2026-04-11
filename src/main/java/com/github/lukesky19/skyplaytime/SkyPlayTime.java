@@ -49,6 +49,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -90,10 +91,10 @@ public final class SkyPlayTime extends JavaPlugin {
 
         // Manager classes
         playerDataManager = new PlayerDataManager(this, databaseManager);
-        leaderboardManager = new LeaderboardManager(leaderboardSnapshotManager, playerDataManager, databaseManager);
+        leaderboardManager = new LeaderboardManager(this, leaderboardSnapshotManager, playerDataManager, databaseManager);
         TimeManager timeManager = new TimeManager(this, settingsManager, databaseManager, playerDataManager, leaderboardManager);
         afkManager = new AFKManager(this, settingsManager, localeManager, playerDataManager, newPlayerPerksAPI);
-        ActivityManager activityManager = new ActivityManager(playerDataManager);
+        ActivityManager activityManager = new ActivityManager(this.getComponentLogger(), playerDataManager);
         taskManager = new TaskManager(this, settingsManager, playerDataManager, timeManager, afkManager, leaderboardManager);
 
         // Register Listeners
@@ -121,7 +122,7 @@ public final class SkyPlayTime extends JavaPlugin {
 
         // Initialize player data for any online players that joined before the plugin was fully enabled.
         // This is mostly for plugman edge cases, but 99% of the time is not necessary.
-        List<CompletableFuture<PlayerData>> futureList = new ArrayList<>();
+        List<CompletableFuture<Optional<PlayerData>>> futureList = new ArrayList<>();
         this.getServer().getOnlinePlayers().forEach(player ->
                 futureList.add(playerDataManager.loadPlayerData(player, player.getUniqueId())));
 

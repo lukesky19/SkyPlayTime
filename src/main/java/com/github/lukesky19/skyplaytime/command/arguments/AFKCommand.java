@@ -53,7 +53,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * This class is used to create the AFK command.
@@ -91,13 +90,12 @@ public class AFKCommand {
                             CommandSender sender = ctx.getSource().getSender();
                             boolean isSenderPlayer = sender instanceof Player;
                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            UUID targetUUID = target.getUniqueId();
                             Locale locale = localeManager.getLocale();
 
                             List<TagResolver.Single> placeholders = new ArrayList<>();
                             placeholders.add(Placeholder.parsed("player_name", target.getName()));
 
-                            AFKToggleResult result = afkManager.togglePlayerAFK(target, targetUUID, true, true);
+                            AFKToggleResult result = afkManager.togglePlayerAFK(target, true, true);
 
                             switch(result) {
                                 case SUCCESS_AFK -> {
@@ -137,9 +135,7 @@ public class AFKCommand {
                     Locale locale = localeManager.getLocale();
 
                     if(ctx.getSource().getSender() instanceof Player player) {
-                        UUID uuid = player.getUniqueId();
-
-                        afkManager.togglePlayerAFK(player, uuid, true, true);
+                        afkManager.togglePlayerAFK(player, true, true);
 
                         return 1;
                     } else {

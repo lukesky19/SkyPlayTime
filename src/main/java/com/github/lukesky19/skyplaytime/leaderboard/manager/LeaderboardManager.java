@@ -17,7 +17,9 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.manager;
 
+import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.leaderboard.data.LeaderboardSnapshot;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
@@ -26,6 +28,8 @@ import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -37,6 +41,7 @@ import java.util.concurrent.CompletableFuture;
  * This class manages obtaining data to display leaderboards and marking whether players are excluded from the leaderboard or not.
  */
 public class LeaderboardManager {
+    private final @NonNull ComponentLogger logger;
     private final @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager;
     private final @NonNull PlayerDataManager playerDataManager;
     private final @NonNull DatabaseManager databaseManager;
@@ -46,14 +51,17 @@ public class LeaderboardManager {
 
     /**
      * Constructor
+     * @param skyPlayTime A {@link SkyPlayTime} instance.
      * @param leaderboardSnapshotManager A {@link LeaderboardSnapshotManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      * @param databaseManager A {@link DatabaseManager} instance.
      */
     public LeaderboardManager(
+            @NonNull SkyPlayTime skyPlayTime,
             @NonNull LeaderboardSnapshotManager leaderboardSnapshotManager,
             @NonNull PlayerDataManager playerDataManager,
             @NonNull DatabaseManager databaseManager) {
+        this.logger = skyPlayTime.getComponentLogger();
         this.leaderboardSnapshotManager = leaderboardSnapshotManager;
         this.playerDataManager = playerDataManager;
         this.databaseManager = databaseManager;
@@ -61,28 +69,36 @@ public class LeaderboardManager {
 
     /**
      * Mark the player as exempt from leaderboard reporting.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
+     * @return true if successful, false if not.
      */
-    public void markPlayerExempt(@NonNull UUID uuid) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public boolean markPlayerExempt(@NonNull Player player) {
+        PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
         if(playerData == null) {
-            throw new RuntimeException("No player data found for UUID " + uuid);
+            logger.warn(AdventureUtil.deserialize("Unable to mark player exempt due to no player data found for player " + player.getName()));
+            return false;
         }
 
         playerData.setExempt(true);
+
+        return true;
     }
 
     /**
      * Mark the player as not exempt from leaderboard reporting.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
+     * @return true if successful, false if not.
      */
-    public void markPlayerNotExempt(@NonNull UUID uuid) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
+    public boolean markPlayerNotExempt(@NonNull Player player) {
+        PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
         if(playerData == null) {
-            throw new RuntimeException("No player data found for UUID " + uuid);
+            logger.warn(AdventureUtil.deserialize("Unable to mark player not exempt due to no player data found for player " + player.getName()));
+            return false;
         }
 
         playerData.setExempt(false);
+
+        return true;
     }
 
     /**

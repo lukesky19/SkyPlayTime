@@ -1,8 +1,10 @@
 package com.github.lukesky19.skyplaytime.database.table;
 
+import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skylib.api.database.parameter.impl.IntegerParameter;
 import com.github.lukesky19.skylib.api.database.parameter.impl.StringParameter;
 import com.github.lukesky19.skylib.api.database.queue.QueueManager;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
 
 import java.sql.SQLException;
@@ -13,13 +15,14 @@ import java.util.concurrent.CompletableFuture;
  * This class is used to create and interface with the versions table in the database.
  */
 public class VersionsTable {
+    private final @NonNull ComponentLogger logger;
     private final @NonNull QueueManager queueManager;
     private final @NonNull String tableName = "skyplaytime_versions";
 
     /**
      * Default Constructor.
-     * You should use {@link #VersionsTable(QueueManager)} instead.
-     * @deprecated You should use {@link #VersionsTable(QueueManager)} instead.
+     * You should use {@link #VersionsTable(ComponentLogger, QueueManager)} instead.
+     * @deprecated You should use {@link #VersionsTable(ComponentLogger, QueueManager)} instead.
      */
     @Deprecated
     public VersionsTable() {
@@ -28,9 +31,11 @@ public class VersionsTable {
 
     /**
      * Constructor
+     * @param logger A {@link ComponentLogger} instance.
      * @param queueManager A {@link QueueManager} instance.
      */
-    public VersionsTable(@NonNull QueueManager queueManager) {
+    public VersionsTable(@NonNull ComponentLogger logger, @NonNull QueueManager queueManager) {
+        this.logger = logger;
         this.queueManager = queueManager;
     }
 
@@ -75,10 +80,11 @@ public class VersionsTable {
                 if(resultSet.next()) {
                     return resultSet.getInt("version");
                 } else {
-                    return -1; // No known version
+                    return 0;
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                logger.warn(AdventureUtil.deserialize("Failed to get the table version for table id " + tableId + ". Error: " + e.getMessage()));
+                return -1;
             }
         });
     }

@@ -92,7 +92,7 @@ public class ActivityListener implements Listener {
             activityManager.updateMoveTimeStamp(player, uuid);
 
             if(afkManager.isPlayerAFK(uuid)) {
-                afkManager.togglePlayerAFK(player, uuid, true, true);
+                afkManager.togglePlayerAFK(player, true, true);
             }
         }
     }

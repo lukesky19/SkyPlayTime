@@ -73,10 +73,10 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to all play time counters.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds += playTimeSeconds;
         dailyPlayTimeSeconds += playTimeSeconds;
@@ -84,15 +84,17 @@ public class PlayerData {
         monthlyPlayTimeSeconds += playTimeSeconds;
         yearlyPlayTimeSeconds += playTimeSeconds;
         totalPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from all play time counters.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removePlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removePlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds += playTimeSeconds;
         dailyPlayTimeSeconds += playTimeSeconds;
@@ -105,56 +107,66 @@ public class PlayerData {
         if(weeklyPlayTimeSeconds < 0) weeklyPlayTimeSeconds = 0;
         if(monthlyPlayTimeSeconds < 0) monthlyPlayTimeSeconds = 0;
         if(totalPlayTimeSeconds < 0) totalPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces all play time counters with the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds = playTimeSeconds;
         dailyPlayTimeSeconds = playTimeSeconds;
         weeklyPlayTimeSeconds = playTimeSeconds;
         monthlyPlayTimeSeconds = playTimeSeconds;
         totalPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Adds the provided play time in seconds to the player's session play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addSessionPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's session play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeSessionPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds -= playTimeSeconds;
 
         if(sessionPlayTimeSeconds < 0) sessionPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's session play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setSessionPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         sessionPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -168,36 +180,42 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to the player's daily play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addDailyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         dailyPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's daily play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeDailyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         dailyPlayTimeSeconds -= playTimeSeconds;
 
         if(dailyPlayTimeSeconds < 0) dailyPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's daily play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setDailyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         dailyPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -211,36 +229,42 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to the player's weekly play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addWeeklyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         weeklyPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's weekly play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeWeeklyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         weeklyPlayTimeSeconds -= playTimeSeconds;
 
         if(weeklyPlayTimeSeconds < 0) weeklyPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's weekly play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setWeeklyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         weeklyPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -254,36 +278,42 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to the player's monthly play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addMonthlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         monthlyPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's monthly play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeMonthlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         monthlyPlayTimeSeconds -= playTimeSeconds;
 
         if(monthlyPlayTimeSeconds < 0) monthlyPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's monthly play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setMonthlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         monthlyPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -297,36 +327,42 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to the player's yearly play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addYearlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         yearlyPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's yearly play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeYearlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         yearlyPlayTimeSeconds -= playTimeSeconds;
 
         if(yearlyPlayTimeSeconds < 0) yearlyPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's total play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setYearlyPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         yearlyPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -340,36 +376,42 @@ public class PlayerData {
     /**
      * Adds the provided play time in seconds to the player's total play time counter.
      * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void addTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addTotalPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         totalPlayTimeSeconds += playTimeSeconds;
+
+        return true;
     }
 
     /**
      * Removes the provided play time in seconds from player's total play time counter.
      * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void removeTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removeTotalPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         totalPlayTimeSeconds -= playTimeSeconds;
 
         if(totalPlayTimeSeconds < 0) totalPlayTimeSeconds = 0;
+
+        return true;
     }
 
     /**
      * Replaces the player's total play time using the provided play time in seconds.
      * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @throws RuntimeException if the play time provided is less than 0.
+     * @return true if successful, false if not.
      */
-    public void setTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setTotalPlayTime(long playTimeSeconds) {
+        if(playTimeSeconds < 0) return false;
 
         totalPlayTimeSeconds = playTimeSeconds;
+
+        return true;
     }
 
     /**
@@ -384,11 +426,12 @@ public class PlayerData {
      * Add the play time in seconds for the {@link TimeCategory} provided.
      * @param timeCategory The {@link TimeCategory} to add play time for.
      * @param seconds The time in seconds to add.
+     * @return true if successful, false if not.
      */
-    public void addPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
-        if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean addPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
+        if(seconds < 0) return false;
 
-        switch(timeCategory) {
+        return switch(timeCategory) {
             case SESSION -> addSessionPlayTime(seconds);
             case DAILY -> addDailyPlayTime(seconds);
             case WEEKLY -> addWeeklyPlayTime(seconds);
@@ -396,18 +439,19 @@ public class PlayerData {
             case YEARLY -> addYearlyPlayTime(seconds);
             case TOTAL -> addTotalPlayTime(seconds);
             case ALL -> addPlayTime(seconds);
-        }
+        };
     }
 
     /**
      * Remove the play time in seconds for the {@link TimeCategory} provided.
      * @param timeCategory The {@link TimeCategory} to remove play time for.
      * @param seconds The time in seconds to remove.
+     * @return true if successful, false if not.
      */
-    public void removePlayTime(@NonNull TimeCategory timeCategory, long seconds) {
-        if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean removePlayTime(@NonNull TimeCategory timeCategory, long seconds) {
+        if(seconds < 0) return false;
 
-        switch(timeCategory) {
+        return switch(timeCategory) {
             case SESSION -> removeSessionPlayTime(seconds);
             case DAILY -> removeDailyPlayTime(seconds);
             case WEEKLY -> removeWeeklyPlayTime(seconds);
@@ -415,18 +459,19 @@ public class PlayerData {
             case YEARLY -> removeYearlyPlayTime(seconds);
             case TOTAL -> removeTotalPlayTime(seconds);
             case ALL -> removePlayTime(seconds);
-        }
+        };
     }
 
     /**
      * Set the play time in seconds for the {@link TimeCategory} provided.
      * @param timeCategory The {@link TimeCategory} to set play time for.
      * @param seconds The time in seconds to set.
+     * @return true if successful, false if not.
      */
-    public void setPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
-        if(seconds < 0) throw new RuntimeException("Play time must be a positive number.");
+    public boolean setPlayTime(@NonNull TimeCategory timeCategory, long seconds) {
+        if(seconds < 0) return false;
 
-        switch(timeCategory) {
+        return switch(timeCategory) {
             case SESSION -> setSessionPlayTime(seconds);
             case DAILY -> setDailyPlayTime(seconds);
             case WEEKLY -> setWeeklyPlayTime(seconds);
@@ -434,7 +479,7 @@ public class PlayerData {
             case YEARLY -> setYearlyPlayTime(seconds);
             case TOTAL -> setTotalPlayTime(seconds);
             case ALL -> setPlayTime(seconds);
-        }
+        };
     }
 
     /**

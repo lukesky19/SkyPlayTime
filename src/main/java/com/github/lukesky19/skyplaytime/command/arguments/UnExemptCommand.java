@@ -35,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * This class is used to create the unexempt command used to mark players not exempt from leaderboard reporting.
@@ -67,12 +66,11 @@ public class UnExemptCommand {
                 .then(Commands.argument("player", ArgumentTypes.player())
                         .executes(ctx -> {
                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            UUID targetUUID = target.getUniqueId();
                             Locale locale = localeManager.getLocale();
 
                             List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
-                            leaderboardManager.markPlayerNotExempt(targetUUID);
+                            leaderboardManager.markPlayerNotExempt(target);
 
                             if(ctx.getSource().getSender() instanceof Player player) {
                                 player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerUnexempt(), placeholders));

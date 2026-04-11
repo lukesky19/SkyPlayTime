@@ -17,7 +17,9 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
+import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
@@ -27,36 +29,49 @@ import java.util.UUID;
  * This class manages the retrieval and updating of data related to player activity.
  */
 public class ActivityManager {
+    private final @NonNull ComponentLogger logger;
     private final @NonNull PlayerDataManager playerDataManager;
 
     /**
      * Constructor
+     * @param logger A {@link ComponentLogger} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      */
-    public ActivityManager(@NonNull PlayerDataManager playerDataManager) {
+    public ActivityManager(@NonNull ComponentLogger logger, @NonNull PlayerDataManager playerDataManager) {
+        this.logger = logger;
         this.playerDataManager = playerDataManager;
     }
 
     /**
      * Gets when a player last moved.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @return The last time they moved in milliseconds.
      */
-    public long getLastMoveTime(@NonNull UUID uuid) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public long getLastMoveTime(@NonNull Player player) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to get last move time for player " + player.getName() + " due to no player data loaded."));
+            return 0;
+        }
 
         return playerData.getLastMoveTime();
     }
 
     /**
      * Gets when a player last completed an action.
-     * @param uuid The {@link UUID} of the player.
+     * @param player The {@link Player}.
      * @return The last time they completed an action in milliseconds.
      */
-    public long getLastActionTime(@NonNull UUID uuid) {
-        PlayerData playerData = playerDataManager.getPlayerData(uuid);
-        if(playerData == null) throw new RuntimeException("No player data found for UUID " + uuid);
+    public long getLastActionTime(@NonNull Player player) {
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        if(playerData == null) {
+            playerDataManager.loadPlayerData(player, playerId);
+            logger.warn(AdventureUtil.deserialize("Unable to get last action time for player " + player.getName() + " due to no player data loaded."));
+            return 0;
+        }
 
         return playerData.getLastActionTime();
     }
@@ -69,17 +84,12 @@ public class ActivityManager {
     public void updateMoveTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, uuid)
-                    .thenAccept(loadedPlayerData -> {
-                        if(loadedPlayerData.isErrored()) return;
-
-                        loadedPlayerData.setLastMoveTime(System.currentTimeMillis());
-                    });
-        } else {
-            if(playerData.isErrored()) return;
-
-            playerData.setLastMoveTime(System.currentTimeMillis());
+            playerDataManager.loadPlayerData(player, uuid);
+            logger.warn(AdventureUtil.deserialize("Unable to update the last move time for player " + player.getName() + " due to no player data loaded."));
+            return;
         }
+
+        playerData.setLastMoveTime(System.currentTimeMillis());
     }
 
     /**
@@ -90,16 +100,11 @@ public class ActivityManager {
     public void updateActionTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, uuid)
-                    .thenAccept(loadedPlayerData -> {
-                        if(loadedPlayerData.isErrored()) return;
-
-                        loadedPlayerData.setLastActionTime(System.currentTimeMillis());
-                    });
-        } else {
-            if(playerData.isErrored()) return;
-
-            playerData.setLastActionTime(System.currentTimeMillis());
+            playerDataManager.loadPlayerData(player, uuid);
+            logger.warn(AdventureUtil.deserialize("Unable to update the last action time for player " + player.getName() + " due to no player data loaded."));
+            return;
         }
+
+        playerData.setLastActionTime(System.currentTimeMillis());
     }
 }

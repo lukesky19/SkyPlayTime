@@ -190,7 +190,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
             }
 
             case "afk" -> {
-                if(afkManager.isPlayerAFK(uuid)) {
+                if(afkManager.isPlayerAFK(player)) {
                     return "AFK";
                 } else {
                     return "";
@@ -365,7 +365,7 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
             }
 
             case "afk" -> {
-                if(afkManager.isPlayerAFK(uuid)) {
+                if(afkManager.isPlayerAFK(player.getUniqueId())) {
                     return "AFK";
                 } else {
                     return "";

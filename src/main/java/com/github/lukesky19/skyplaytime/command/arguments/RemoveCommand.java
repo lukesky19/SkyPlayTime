@@ -37,7 +37,6 @@ import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.github.lukesky19.skyplaytime.util.PluginUtils.formatPlayTimeChat;
 
@@ -77,13 +76,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.SESSION, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.SESSION);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.SESSION, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.SESSION);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(
@@ -112,13 +110,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.DAILY, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.DAILY);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.DAILY, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.DAILY);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(
@@ -147,13 +144,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.WEEKLY, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.WEEKLY);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.WEEKLY, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.WEEKLY);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(
@@ -182,13 +178,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.MONTHLY, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.MONTHLY);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.MONTHLY, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.MONTHLY);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(
@@ -217,13 +212,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.YEARLY, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.YEARLY);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.YEARLY, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.YEARLY);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(
@@ -252,13 +246,12 @@ public class RemoveCommand {
                                         .executes(ctx -> {
                                             Locale locale = localeManager.getLocale();
                                             Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                                            UUID targetUUID = target.getUniqueId();
 
                                             long timeToRemove = TimeUtil.stringToMillis(ctx.getArgument("time", String.class)) / 1000;
 
                                             // Remove the play time and then get the updated play time
-                                            timeManager.removePlayTimeSeconds(targetUUID, TimeCategory.TOTAL, timeToRemove);
-                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(targetUUID, TimeCategory.TOTAL);
+                                            timeManager.removePlayTimeSeconds(target, TimeCategory.TOTAL, timeToRemove);
+                                            long playTimeSeconds = timeManager.getPlayTimeSeconds(target, TimeCategory.TOTAL);
 
                                             // Create the placeholders list
                                             List<TagResolver.Single> placeholders = List.of(

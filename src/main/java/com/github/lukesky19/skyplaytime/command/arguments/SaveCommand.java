@@ -71,9 +71,9 @@ public class SaveCommand {
                                 }
                             } else {
                                 if(!results.contains(false)) {
-                                    logger.error(AdventureUtil.deserialize(locale.playTimeSaveSuccess()));
+                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveSuccess()));
                                 } else {
-                                    logger.error(AdventureUtil.deserialize(locale.playTimeSaveError()));
+                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
                                 }
                             }
                         });
@@ -83,8 +83,8 @@ public class SaveCommand {
                                 player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
                                 player.sendMessage(AdventureUtil.deserialize(locale.prefix() + ex.getMessage()));
                             } else {
-                                logger.error(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                logger.error(AdventureUtil.deserialize(ex.getMessage()));
+                                logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
+                                logger.warn(AdventureUtil.deserialize(ex.getMessage()));
                             }
                         });
 
