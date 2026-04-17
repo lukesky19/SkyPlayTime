@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
@@ -74,7 +74,7 @@ public class TimeManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
 
@@ -96,7 +96,7 @@ public class TimeManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
             return false;
         }
 
@@ -115,7 +115,7 @@ public class TimeManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
             return false;
         }
 
@@ -134,7 +134,7 @@ public class TimeManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
             return false;
         }
 
@@ -167,7 +167,7 @@ public class TimeManager {
         // If the plugin's settings are invalid, abort the reset.
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
+            logger.warn(AdventureUtility.plain("Unable to reset play time due to an invalid settings.yml!"));
             return false;
         }
 
@@ -176,7 +176,7 @@ public class TimeManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to reset play time for player " + player.getName() + " due to no player data found."));
+            logger.warn(AdventureUtility.plain("Unable to reset play time for player " + player.getName() + " due to no player data found."));
             return false;
         }
 
@@ -218,7 +218,7 @@ public class TimeManager {
         // If the plugin's settings are invalid, abort the reset.
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an invalid settings.yml!"));
+            logger.warn(AdventureUtility.plain("Unable to reset play time due to an invalid settings.yml!"));
             return CompletableFuture.completedFuture(false);
         }
 
@@ -227,7 +227,7 @@ public class TimeManager {
                 .thenCompose(list -> {
                     // If an error occurred while saving player data, abort the reset.
                     if(list.contains(false)) {
-                        logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error while saving player data."));
+                        logger.warn(AdventureUtility.plain("Unable to reset play time due to an error while saving player data."));
                         return CompletableFuture.completedFuture(false);
                     }
 
@@ -261,7 +261,7 @@ public class TimeManager {
         boolean leaderboardResult = leaderboardManager.saveLeaderboardSnapshots(session, daily, weekly, monthly, yearly, total);
 
         if(!leaderboardResult) {
-            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error while saving leaderboard snapshots."));
+            logger.warn(AdventureUtility.plain("Unable to reset play time due to an error while saving leaderboard snapshots."));
             return CompletableFuture.completedFuture(false);
         }
 
@@ -292,7 +292,7 @@ public class TimeManager {
             return databaseManager.backupDatabase()
                     .thenCompose(backupResult -> {
                         if(!backupResult) {
-                            logger.warn(AdventureUtil.deserialize("Unable to reset play time due to an error during backup."));
+                            logger.warn(AdventureUtility.plain("Unable to reset play time due to an error during backup."));
                             return CompletableFuture.completedFuture(false);
                         }
 

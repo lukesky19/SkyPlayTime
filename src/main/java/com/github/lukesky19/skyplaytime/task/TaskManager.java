@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.task;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
@@ -248,7 +248,7 @@ public class TaskManager {
     private void startSaveTask() {
         Settings settings = settingsManager.getSettings();
         if(settings == null || settings.saveIntervalSeconds() <= 0) {
-            logger.warn(AdventureUtil.deserialize("Unable to start the save task due to invalid plugin settings."));
+            logger.warn(AdventureUtility.plain("Unable to start the save task due to invalid plugin settings."));
             return;
         }
 

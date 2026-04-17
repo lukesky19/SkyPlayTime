@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardSnapshotManager;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
@@ -84,7 +84,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.SESSION);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.sessionLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.sessionLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -93,7 +93,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.sessionLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.sessionLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.sessionLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -101,7 +101,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.sessionLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.sessionLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -117,7 +117,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.DAILY);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.dailyLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.dailyLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -126,7 +126,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.dailyLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.dailyLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.dailyLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -134,7 +134,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.dailyLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.dailyLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -150,7 +150,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.WEEKLY);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.weeklyLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.weeklyLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -159,7 +159,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.weeklyLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.weeklyLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.weeklyLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -167,7 +167,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.weeklyLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.weeklyLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -183,7 +183,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.MONTHLY);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.monthlyLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.monthlyLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -192,7 +192,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.monthlyLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.monthlyLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.monthlyLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -200,7 +200,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.monthlyLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.monthlyLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -216,7 +216,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.YEARLY);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.yearlyLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.yearlyLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -225,7 +225,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.yearlyLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.yearlyLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.yearlyLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -233,7 +233,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.yearlyLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.yearlyLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -249,7 +249,7 @@ public class LeaderboardCommand {
                             TopTen topTen = leaderboardManager.getTopTenByTimeCategoryNotExempt(TimeCategory.TOTAL);
                             if(topTen == null) topTen = new TopTen();
 
-                            sender.sendMessage(AdventureUtil.deserialize(locale.totalLeaderboardTitle()));
+                            sender.sendMessage(AdventureUtility.deserialize(locale.totalLeaderboardTitle()));
 
                             int positionNumber = 1;
                             for(Position position : topTen.getPositions()) {
@@ -258,7 +258,7 @@ public class LeaderboardCommand {
                                         Placeholder.parsed("player_name", position.name()),
                                         Placeholder.parsed("time", formatPlayTimeChat(locale.totalLeaderboardTimePlaceholder(), position.seconds())));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.totalLeaderboardPosition(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.totalLeaderboardPosition(), placeholders));
 
                                 positionNumber++;
                             }
@@ -266,7 +266,7 @@ public class LeaderboardCommand {
                             while(positionNumber <= 10) {
                                 List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                sender.sendMessage(AdventureUtil.deserialize(locale.totalLeaderboardPositionEmpty(), placeholders));
+                                sender.sendMessage(AdventureUtility.deserialize(locale.totalLeaderboardPositionEmpty(), placeholders));
 
                                 positionNumber++;
                             }
@@ -278,7 +278,7 @@ public class LeaderboardCommand {
                 .then(Commands.literal("history")
                         .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.commands.skyplaytime.leaderboard.historical"))
                         .then(Commands.argument("file_name", StringArgumentType.word())
-                                .suggests((ctx, suggestionsBuilder) -> {
+                                .suggests((_, suggestionsBuilder) -> {
                                     List<String> fileNames = leaderboardSnapshotManager.getLeaderboardSnapshotFileNames();
                                     fileNames.forEach(suggestionsBuilder::suggest);
 
@@ -294,7 +294,7 @@ public class LeaderboardCommand {
                                     LeaderboardSnapshot historicalLeaderboard = leaderboardSnapshotManager.loadLeaderboardSnapshot(fileName);
                                     if(historicalLeaderboard == null) {
                                         if(isPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.historicalLeaderboardLoadError(), placeholders));
+                                            sender.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.historicalLeaderboardLoadError(), placeholders));
                                         } else {
                                             logger.warn(locale.historicalLeaderboardLoadError(), placeholders);
                                         }
@@ -302,7 +302,7 @@ public class LeaderboardCommand {
                                         return 0;
                                     }
 
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.historicalLeaderboardTitle(), placeholders));
+                                    sender.sendMessage(AdventureUtility.deserialize(locale.historicalLeaderboardTitle(), placeholders));
 
                                     int positionNumber = 1;
                                     for(Position position : historicalLeaderboard.positions()) {
@@ -311,7 +311,7 @@ public class LeaderboardCommand {
                                                 Placeholder.parsed("player_name", position.name()),
                                                 Placeholder.parsed("time", PluginUtils.formatPlayTimeChat(locale.historicalLeaderboardTimePlaceholder(), position.seconds())));
 
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.historicalLeaderboardPosition(), positionPlaceholders));
+                                        sender.sendMessage(AdventureUtility.deserialize(locale.historicalLeaderboardPosition(), positionPlaceholders));
 
                                         positionNumber++;
                                     }
@@ -319,7 +319,7 @@ public class LeaderboardCommand {
                                     while(positionNumber <= 10) {
                                         List<TagResolver.Single> positionPlaceholders = List.of(Placeholder.parsed("position", String.valueOf(positionNumber)));
 
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.historicalLeaderboardPositionEmpty(), positionPlaceholders));
+                                        sender.sendMessage(AdventureUtility.deserialize(locale.historicalLeaderboardPositionEmpty(), positionPlaceholders));
 
                                         positionNumber++;
                                     }

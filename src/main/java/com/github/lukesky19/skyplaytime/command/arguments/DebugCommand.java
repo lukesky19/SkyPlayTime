@@ -17,8 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
+import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -95,9 +95,9 @@ public class DebugCommand {
                             String statusMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow>'s AFK status is: <yellow>" + afkText + "</yellow>.</aqua>";
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + statusMessage));
+                                player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + statusMessage));
                             } else {
-                                logger.info(AdventureUtil.deserialize(target, statusMessage));
+                                logger.info(PaperAdventureUtility.deserialize(target, statusMessage));
                             }
 
                             return 1;
@@ -112,11 +112,11 @@ public class DebugCommand {
                         String afkText = (status ? "AFK" : "Not AFK");
                         String statusMessage = "<aqua>Your AFK status is: <yellow>" + afkText + "</yellow>.</aqua>";
 
-                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + statusMessage));
+                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + statusMessage));
 
                         return 1;
                     } else {
-                        logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                        logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                         return 0;
                     }
@@ -135,9 +135,9 @@ public class DebugCommand {
                             String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last moved at <yellow>" + timeMessage + "</yellow>.</aqua>";
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + lastMoveMessage));
+                                player.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + lastMoveMessage));
                             } else {
-                                logger.info(AdventureUtil.deserialize(lastMoveMessage));
+                                logger.info(PaperAdventureUtility.deserialize(lastMoveMessage));
                             }
 
                             return 1;
@@ -157,9 +157,9 @@ public class DebugCommand {
                             String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last interacted at <yellow>" + timeMessage + "</yellow>.</aqua>";
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + lastMoveMessage));
+                                player.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + lastMoveMessage));
                             } else {
-                                logger.info(AdventureUtil.deserialize(lastMoveMessage));
+                                logger.info(PaperAdventureUtility.deserialize(lastMoveMessage));
                             }
 
                             return 1;
@@ -174,43 +174,43 @@ public class DebugCommand {
                             Map<UUID, PlayerData> activePlayersData = playerDataManager.getActivePlayerData();
 
                             if(ctx.getSource().getSender() instanceof Player senderPlayer) {
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<green>Green</green> <white>- Online and Play Time Tracked"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<yellow>Yellow</yellow> <white>- Offline and Play Time Tracked"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<red>Red</red> <white>- Unknown and Play Time Tracked"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize(" "));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<aqua>A list of all players with active play time being tracked:"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<green>Green</green> <white>- Online and Play Time Tracked"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<yellow>Yellow</yellow> <white>- Offline and Play Time Tracked"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<red>Red</red> <white>- Unknown and Play Time Tracked"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize(" "));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<aqua>A list of all players with active play time being tracked:"));
 
                                 activePlayersData.keySet()
                                         .forEach(uuid -> {
                                             Player targetPlayer = skyPlayTime.getServer().getPlayer(uuid);
                                             if(targetPlayer != null) {
                                                 if(targetPlayer.isOnline() && targetPlayer.isConnected()) {
-                                                    senderPlayer.sendMessage(AdventureUtil.deserialize("<green>" + targetPlayer.getName()));
+                                                    senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<green>" + targetPlayer.getName()));
                                                 } else {
-                                                    senderPlayer.sendMessage(AdventureUtil.deserialize("<yellow>" + targetPlayer.getName()));
+                                                    senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<yellow>" + targetPlayer.getName()));
                                                 }
                                             } else {
-                                                senderPlayer.sendMessage(AdventureUtil.deserialize("<red>Unknown Player: " + uuid));
+                                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<red>Unknown Player: " + uuid));
                                             }
                                         });
                             } else {
-                                logger.info(AdventureUtil.deserialize("<green>Green</green> <white>- Online and Play Time Tracked"));
-                                logger.info(AdventureUtil.deserialize("<yellow>Yellow</yellow> <white>- Offline and Play Time Tracked"));
-                                logger.info(AdventureUtil.deserialize("<red>Red</red> <white>- Unknown and Play Time Tracked"));
-                                logger.info(AdventureUtil.deserialize(" "));
-                                logger.info(AdventureUtil.deserialize("<aqua>A list of all players with active play time being tracked:"));
+                                logger.info(PaperAdventureUtility.deserialize("<green>Green</green> <white>- Online and Play Time Tracked"));
+                                logger.info(PaperAdventureUtility.deserialize("<yellow>Yellow</yellow> <white>- Offline and Play Time Tracked"));
+                                logger.info(PaperAdventureUtility.deserialize("<red>Red</red> <white>- Unknown and Play Time Tracked"));
+                                logger.info(PaperAdventureUtility.deserialize(" "));
+                                logger.info(PaperAdventureUtility.deserialize("<aqua>A list of all players with active play time being tracked:"));
 
                                 activePlayersData.keySet()
                                         .forEach(uuid -> {
                                             Player targetPlayer = skyPlayTime.getServer().getPlayer(uuid);
                                             if(targetPlayer != null) {
                                                 if(targetPlayer.isOnline() && targetPlayer.isConnected()) {
-                                                    logger.info(AdventureUtil.deserialize("<green>" + targetPlayer.getName()));
+                                                    logger.info(PaperAdventureUtility.deserialize("<green>" + targetPlayer.getName()));
                                                 } else {
-                                                    logger.info(AdventureUtil.deserialize("<yellow>" + targetPlayer.getName()));
+                                                    logger.info(PaperAdventureUtility.deserialize("<yellow>" + targetPlayer.getName()));
                                                 }
                                             } else {
-                                                logger.info(AdventureUtil.deserialize("<red>Unknown Player: " + uuid));
+                                                logger.info(PaperAdventureUtility.deserialize("<red>Unknown Player: " + uuid));
                                             }
                                         });
                             }
@@ -224,43 +224,43 @@ public class DebugCommand {
                             Map<UUID, PlayerData> afkPlayersData = afkManager.getAFKPlayers();
 
                             if(ctx.getSource().getSender() instanceof Player senderPlayer) {
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<green>Green</green> <white>- Online and AFK"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<yellow>Yellow</yellow> <white>- Offline and AFK"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<red>Red</red> <white>- Unknown and AFK"));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize(" "));
-                                senderPlayer.sendMessage(AdventureUtil.deserialize("<aqua>A list of all players that are afk and time is not tracked:"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<green>Green</green> <white>- Online and AFK"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<yellow>Yellow</yellow> <white>- Offline and AFK"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<red>Red</red> <white>- Unknown and AFK"));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize(" "));
+                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<aqua>A list of all players that are afk and time is not tracked:"));
 
                                 afkPlayersData.keySet()
                                         .forEach(uuid -> {
                                             Player targetPlayer = skyPlayTime.getServer().getPlayer(uuid);
                                             if(targetPlayer != null) {
                                                 if(targetPlayer.isOnline() && targetPlayer.isConnected()) {
-                                                    senderPlayer.sendMessage(AdventureUtil.deserialize("<green>" + targetPlayer.getName()));
+                                                    senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<green>" + targetPlayer.getName()));
                                                 } else {
-                                                    senderPlayer.sendMessage(AdventureUtil.deserialize("<yellow>" + targetPlayer.getName()));
+                                                    senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<yellow>" + targetPlayer.getName()));
                                                 }
                                             } else {
-                                                senderPlayer.sendMessage(AdventureUtil.deserialize("<red>Unknown Player: " + uuid));
+                                                senderPlayer.sendMessage(PaperAdventureUtility.deserialize("<red>Unknown Player: " + uuid));
                                             }
                                         });
                             } else {
-                                logger.info(AdventureUtil.deserialize("<green>Green</green> <white>- Online and AFK"));
-                                logger.info(AdventureUtil.deserialize("<yellow>Yellow</yellow> <white>- Offline and AFK"));
-                                logger.info(AdventureUtil.deserialize("<red>Red</red> <white>- Unknown and AFK"));
-                                logger.info(AdventureUtil.deserialize(" "));
-                                logger.info(AdventureUtil.deserialize("<aqua>A list of all players that are afk and time is not tracked:"));
+                                logger.info(PaperAdventureUtility.deserialize("<green>Green</green> <white>- Online and AFK"));
+                                logger.info(PaperAdventureUtility.deserialize("<yellow>Yellow</yellow> <white>- Offline and AFK"));
+                                logger.info(PaperAdventureUtility.deserialize("<red>Red</red> <white>- Unknown and AFK"));
+                                logger.info(PaperAdventureUtility.deserialize(" "));
+                                logger.info(PaperAdventureUtility.deserialize("<aqua>A list of all players that are afk and time is not tracked:"));
 
                                 afkPlayersData.keySet()
                                         .forEach(uuid -> {
                                             Player targetPlayer = skyPlayTime.getServer().getPlayer(uuid);
                                             if(targetPlayer != null) {
                                                 if(targetPlayer.isOnline() && targetPlayer.isConnected()) {
-                                                    logger.info(AdventureUtil.deserialize("<green>" + targetPlayer.getName()));
+                                                    logger.info(PaperAdventureUtility.deserialize("<green>" + targetPlayer.getName()));
                                                 } else {
-                                                    logger.info(AdventureUtil.deserialize("<yellow>" + targetPlayer.getName()));
+                                                    logger.info(PaperAdventureUtility.deserialize("<yellow>" + targetPlayer.getName()));
                                                 }
                                             } else {
-                                                logger.info(AdventureUtil.deserialize("<red>Unknown Player: " + uuid));
+                                                logger.info(PaperAdventureUtility.deserialize("<red>Unknown Player: " + uuid));
                                             }
                                         });
                             }

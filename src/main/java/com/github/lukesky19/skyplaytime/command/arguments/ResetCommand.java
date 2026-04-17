@@ -17,7 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -82,13 +83,13 @@ public class ResetCommand {
                                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_name", target.getName()));
 
                                     // Tell the target player that their play time was reset
-                                    target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.sessionPlayTimeReset(), placeholders));
+                                    target.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.sessionPlayTimeReset(), placeholders));
 
                                     // Tell the sender that the target had their play time reset
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerSessionPlayTimeReset(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerSessionPlayTimeReset(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerSessionPlayTimeReset(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerSessionPlayTimeReset(), placeholders));
                                     }
 
                                     return 1;
@@ -103,14 +104,14 @@ public class ResetCommand {
 
                             // Tell all online players that their play time was reset
                             for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.sessionPlayTimeReset()));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.sessionPlayTimeReset()));
                             }
 
                             // Tell the sender that the all players had their play time reset
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.resetSessionPlayTime()));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.resetSessionPlayTime()));
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.resetSessionPlayTime()));
+                                logger.info(AdventureUtility.deserialize(locale.resetSessionPlayTime()));
                             }
 
                             return 1;
@@ -133,22 +134,22 @@ public class ResetCommand {
 
                                     if(result) {
                                         // Tell the target player that their daily play time was reset
-                                        target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.dailyPlayTimeReset(), placeholders));
+                                        target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.dailyPlayTimeReset(), placeholders));
 
                                         // Tell the command sender (if a player) or log to console that the target had their daily play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerDailyPlayTimeReset(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerDailyPlayTimeReset(), placeholders));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(target, locale.playerDailyPlayTimeReset(), placeholders));
+                                            logger.info(PaperAdventureUtility.deserialize(target, locale.playerDailyPlayTimeReset(), placeholders));
                                         }
 
                                         return 1;
                                     } else {
                                         // Tell the command sender (if a player) or log to console that the target failed to have their daily play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerDailyPlayTimeResetError(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerDailyPlayTimeResetError(), placeholders));
                                         } else {
-                                            logger.warn(AdventureUtil.deserialize(target, locale.playerDailyPlayTimeResetError(), placeholders));
+                                            logger.warn(PaperAdventureUtility.deserialize(target, locale.playerDailyPlayTimeResetError(), placeholders));
                                         }
 
                                         return 0;
@@ -167,29 +168,29 @@ public class ResetCommand {
                                 if(result) {
                                     // Tell all online players that their daily play time was reset
                                     for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.dailyPlayTimeReset()));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.dailyPlayTimeReset()));
                                     }
 
                                     // Notify the sender that all daily play time was reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetDailyPlayTime()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetDailyPlayTime()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetDailyPlayTime()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetDailyPlayTime()));
                                     }
                                 } else {
                                     // Notify the sender that all daily play time failed to be reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetDailyPlayTimeError()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetDailyPlayTimeError()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetDailyPlayTimeError()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetDailyPlayTimeError()));
                                     }
                                 }
-                            }).exceptionally(ex -> {
+                            }).exceptionally(_ -> {
                                 // Notify the sender that all daily play time failed to be reset
                                 if(isSenderPlayer) {
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetDailyPlayTimeError()));
+                                    sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetDailyPlayTimeError()));
                                 } else {
-                                    logger.info(AdventureUtil.deserialize(locale.resetDailyPlayTimeError()));
+                                    logger.info(PaperAdventureUtility.deserialize(locale.resetDailyPlayTimeError()));
                                 }
 
                                 return null;
@@ -215,22 +216,22 @@ public class ResetCommand {
 
                                     if(result) {
                                         // Tell the target player that their weekly play time was reset
-                                        target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.weeklyPlayTimeReset(), placeholders));
+                                        target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.weeklyPlayTimeReset(), placeholders));
 
                                         // Tell the command sender (if a player) or log to console that the target had their weekly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTimeReset(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTimeReset(), placeholders));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(target, locale.playerWeeklyPlayTimeReset(), placeholders));
+                                            logger.info(PaperAdventureUtility.deserialize(target, locale.playerWeeklyPlayTimeReset(), placeholders));
                                         }
 
                                         return 1;
                                     } else {
                                         // Tell the command sender (if a player) or log to console that the target failed to have their weekly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTimeResetError(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTimeResetError(), placeholders));
                                         } else {
-                                            logger.warn(AdventureUtil.deserialize(target, locale.playerWeeklyPlayTimeResetError(), placeholders));
+                                            logger.warn(PaperAdventureUtility.deserialize(target, locale.playerWeeklyPlayTimeResetError(), placeholders));
                                         }
 
                                         return 0;
@@ -249,29 +250,29 @@ public class ResetCommand {
                                 if(result) {
                                     // Tell all online players that their weekly play time was reset
                                     for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.weeklyPlayTimeReset()));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.weeklyPlayTimeReset()));
                                     }
 
                                     // Notify the sender that all weekly play time was reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetWeeklyPlayTime()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetWeeklyPlayTime()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetWeeklyPlayTime()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetWeeklyPlayTime()));
                                     }
                                 } else {
                                     // Notify the sender that all weekly play time failed to be reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetWeeklyPlayTimeError()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetWeeklyPlayTimeError()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetWeeklyPlayTimeError()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetWeeklyPlayTimeError()));
                                     }
                                 }
-                            }).exceptionally(ex -> {
+                            }).exceptionally(_ -> {
                                 // Notify the sender that all weekly play time failed to be reset
                                 if(isSenderPlayer) {
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetWeeklyPlayTimeError()));
+                                    sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetWeeklyPlayTimeError()));
                                 } else {
-                                    logger.info(AdventureUtil.deserialize(locale.resetWeeklyPlayTimeError()));
+                                    logger.info(PaperAdventureUtility.deserialize(locale.resetWeeklyPlayTimeError()));
                                 }
 
                                 return null;
@@ -297,22 +298,22 @@ public class ResetCommand {
 
                                     if(result) {
                                         // Tell the target player that their monthly play time was reset
-                                        target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.monthlyPlayTimeReset(), placeholders));
+                                        target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.monthlyPlayTimeReset(), placeholders));
 
                                         // Tell the command sender (if a player) or log to console that the target had their monthly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTimeReset(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTimeReset(), placeholders));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(target, locale.playerMonthlyPlayTimeReset(), placeholders));
+                                            logger.info(PaperAdventureUtility.deserialize(target, locale.playerMonthlyPlayTimeReset(), placeholders));
                                         }
 
                                         return 1;
                                     } else {
                                         // Tell the command sender (if a player) or log to console that the target failed to have their monthly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTimeResetError(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTimeResetError(), placeholders));
                                         } else {
-                                            logger.warn(AdventureUtil.deserialize(target, locale.playerMonthlyPlayTimeResetError(), placeholders));
+                                            logger.warn(PaperAdventureUtility.deserialize(target, locale.playerMonthlyPlayTimeResetError(), placeholders));
                                         }
 
                                         return 0;
@@ -331,29 +332,29 @@ public class ResetCommand {
                                 if(result) {
                                     // Tell all online players that their monthly play time was reset
                                     for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.monthlyPlayTimeReset()));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.monthlyPlayTimeReset()));
                                     }
 
                                     // Notify the sender that all monthly play time was reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetMonthlyPlayTime()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetMonthlyPlayTime()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetMonthlyPlayTime()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetMonthlyPlayTime()));
                                     }
                                 } else {
                                     // Notify the sender that all monthly play time failed to be reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetMonthlyPlayTimeError()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetMonthlyPlayTimeError()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetMonthlyPlayTimeError()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetMonthlyPlayTimeError()));
                                     }
                                 }
-                            }).exceptionally(ex -> {
+                            }).exceptionally(_ -> {
                                 // Notify the sender that all monthly play time failed to be reset
                                 if(isSenderPlayer) {
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetMonthlyPlayTimeError()));
+                                    sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetMonthlyPlayTimeError()));
                                 } else {
-                                    logger.info(AdventureUtil.deserialize(locale.resetMonthlyPlayTimeError()));
+                                    logger.info(PaperAdventureUtility.deserialize(locale.resetMonthlyPlayTimeError()));
                                 }
 
                                 return null;
@@ -379,22 +380,22 @@ public class ResetCommand {
 
                                     if(result) {
                                         // Tell the target player that their yearly play time was reset
-                                        target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.yearlyPlayTimeReset(), placeholders));
+                                        target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.yearlyPlayTimeReset(), placeholders));
 
                                         // Tell the command sender (if a player) or log to console that the target had their yearly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerYearlyPlayTimeReset(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerYearlyPlayTimeReset(), placeholders));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(target, locale.playerYearlyPlayTimeReset(), placeholders));
+                                            logger.info(PaperAdventureUtility.deserialize(target, locale.playerYearlyPlayTimeReset(), placeholders));
                                         }
 
                                         return 1;
                                     } else {
                                         // Tell the command sender (if a player) or log to console that the target failed to have their yearly play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerYearlyPlayTimeResetError(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerYearlyPlayTimeResetError(), placeholders));
                                         } else {
-                                            logger.warn(AdventureUtil.deserialize(target, locale.playerYearlyPlayTimeResetError(), placeholders));
+                                            logger.warn(PaperAdventureUtility.deserialize(target, locale.playerYearlyPlayTimeResetError(), placeholders));
                                         }
 
                                         return 0;
@@ -413,29 +414,29 @@ public class ResetCommand {
                                 if(result) {
                                     // Tell all online players that their yearly play time was reset
                                     for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.yearlyPlayTimeReset()));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.yearlyPlayTimeReset()));
                                     }
 
                                     // Notify the sender that all yearly play time was reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetYearlyPlayTime()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetYearlyPlayTime()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetYearlyPlayTime()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetYearlyPlayTime()));
                                     }
                                 } else {
                                     // Notify the sender that all yearly play time failed to be reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetYearlyPlayTimeError()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetYearlyPlayTimeError()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetYearlyPlayTimeError()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetYearlyPlayTimeError()));
                                     }
                                 }
-                            }).exceptionally(ex -> {
+                            }).exceptionally(_ -> {
                                 // Notify the sender that all yearly play time failed to be reset
                                 if(isSenderPlayer) {
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetYearlyPlayTimeError()));
+                                    sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetYearlyPlayTimeError()));
                                 } else {
-                                    logger.info(AdventureUtil.deserialize(locale.resetYearlyPlayTimeError()));
+                                    logger.info(PaperAdventureUtility.deserialize(locale.resetYearlyPlayTimeError()));
                                 }
 
                                 return null;
@@ -461,22 +462,22 @@ public class ResetCommand {
 
                                     if(result) {
                                         // Tell the target player that their total play time was reset
-                                        target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.totalPlayTimeReset(), placeholders));
+                                        target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.totalPlayTimeReset(), placeholders));
 
                                         // Tell the command sender (if a player) or log to console that the target had their total play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerTotalPlayTimeReset(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerTotalPlayTimeReset(), placeholders));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(target, locale.playerTotalPlayTimeReset(), placeholders));
+                                            logger.info(PaperAdventureUtility.deserialize(target, locale.playerTotalPlayTimeReset(), placeholders));
                                         }
 
                                         return 1;
                                     } else {
                                         // Tell the command sender (if a player) or log to console that the target failed to have their total play time reset
                                         if(isSenderPlayer) {
-                                            sender.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerTotalPlayTimeResetError(), placeholders));
+                                            sender.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerTotalPlayTimeResetError(), placeholders));
                                         } else {
-                                            logger.warn(AdventureUtil.deserialize(target, locale.playerTotalPlayTimeResetError(), placeholders));
+                                            logger.warn(PaperAdventureUtility.deserialize(target, locale.playerTotalPlayTimeResetError(), placeholders));
                                         }
 
                                         return 0;
@@ -495,29 +496,29 @@ public class ResetCommand {
                                 if(result) {
                                     // Tell all online players that their total play time was reset
                                     for(Player player : skyPlayTime.getServer().getOnlinePlayers()) {
-                                        player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.totalPlayTimeReset()));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.totalPlayTimeReset()));
                                     }
 
                                     // Notify the sender that all total play time was reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetTotalPlayTime()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetTotalPlayTime()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetTotalPlayTime()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetTotalPlayTime()));
                                     }
                                 } else {
                                     // Notify the sender that all total play time failed to be reset
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetTotalPlayTimeError()));
+                                        sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetTotalPlayTimeError()));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.resetTotalPlayTimeError()));
+                                        logger.info(PaperAdventureUtility.deserialize(locale.resetTotalPlayTimeError()));
                                     }
                                 }
-                            }).exceptionally(ex -> {
+                            }).exceptionally(_ -> {
                                 // Notify the sender that all total play time failed to be reset
                                 if(isSenderPlayer) {
-                                    sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.resetTotalPlayTimeError()));
+                                    sender.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + locale.resetTotalPlayTimeError()));
                                 } else {
-                                    logger.info(AdventureUtil.deserialize(locale.resetTotalPlayTimeError()));
+                                    logger.info(PaperAdventureUtility.deserialize(locale.resetTotalPlayTimeError()));
                                 }
 
                                 return null;

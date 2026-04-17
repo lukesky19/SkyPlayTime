@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -84,8 +84,8 @@ public class ListCommand {
                     String finalMessage = String.join(locale.delimiter(), playerNamesAndStatuses);
 
                     // Send the list title and message containing player names and statuses, excluding vanished players
-                    sender.sendMessage(AdventureUtil.deserialize(locale.listTitle(), placeholders));
-                    sender.sendMessage(AdventureUtil.deserialize(finalMessage));
+                    sender.sendMessage(AdventureUtility.deserialize(locale.listTitle(), placeholders));
+                    sender.sendMessage(AdventureUtility.deserialize(finalMessage));
 
                     return 1;
                 }).build();
@@ -104,7 +104,7 @@ public class ListCommand {
             Player player = skyPlayTime.getServer().getPlayer(uuid);
             if(player != null && player.isOnline() && player.isConnected()) {
                 if(!PluginUtils.isPlayerVanished(player)) {
-                    String playerName = AdventureUtil.serialize(AdventureUtil.deserialize(locale.playerName(), List.of(Placeholder.parsed("player_name", playerData.getName()))));
+                    String playerName = AdventureUtility.serialize(AdventureUtility.deserialize(locale.playerName(), List.of(Placeholder.parsed("player_name", playerData.getName()))));
 
                     if(playerData.isAFK()) {
                         playerNamesAndStatuses.add(playerName + locale.afkIndicator());
@@ -113,7 +113,7 @@ public class ListCommand {
                     }
                 }
             } else {
-                logger.warn(AdventureUtil.deserialize("There is player data stored for a player that is invalid (null), offline, and or not connected!"));
+                logger.warn(AdventureUtility.plain("There is player data stored for a player that is invalid (null), offline, and or not connected!"));
             }
         });
 

@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -65,26 +65,26 @@ public class SaveCommand {
                         skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                             if(ctx.getSource().getSender() instanceof Player player) {
                                 if(!results.contains(false)) {
-                                    player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveSuccess()));
+                                    player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.playTimeSaveSuccess()));
                                 } else {
-                                    player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
+                                    player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.playTimeSaveError()));
                                 }
                             } else {
                                 if(!results.contains(false)) {
-                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveSuccess()));
+                                    logger.warn(AdventureUtility.deserialize(locale.playTimeSaveSuccess()));
                                 } else {
-                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
+                                    logger.warn(AdventureUtility.deserialize(locale.playTimeSaveError()));
                                 }
                             }
                         });
                     }).exceptionally(ex -> {
                         skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + ex.getMessage()));
+                                player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.playTimeSaveError()));
+                                player.sendMessage(AdventureUtility.deserialize(locale.prefix() + ex.getMessage()));
                             } else {
-                                logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                logger.warn(AdventureUtil.deserialize(ex.getMessage()));
+                                logger.warn(AdventureUtility.deserialize(locale.playTimeSaveError()));
+                                logger.warn(AdventureUtility.deserialize(ex.getMessage()));
                             }
                         });
 

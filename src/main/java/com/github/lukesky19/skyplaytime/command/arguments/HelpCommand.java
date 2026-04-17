@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -52,7 +52,7 @@ public class HelpCommand {
                     CommandSender sender = ctx.getSource().getSender();
 
                     for (String msg : locale.help()) {
-                        sender.sendMessage(AdventureUtil.deserialize(msg));
+                        sender.sendMessage(AdventureUtility.deserialize(msg));
                     }
 
                     return 1;

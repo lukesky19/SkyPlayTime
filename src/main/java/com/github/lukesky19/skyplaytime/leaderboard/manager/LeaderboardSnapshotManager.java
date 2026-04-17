@@ -17,16 +17,17 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.manager;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
-import com.github.lukesky19.skylib.libs.configurate.CommentedConfigurationNode;
-import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
-import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.platform.PlatformUtils;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.leaderboard.data.LeaderboardSnapshot;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import com.github.lukesky19.skylib.libs.configurate.CommentedConfigurationNode;
+import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
+import com.github.lukesky19.skylib.libs.configurate.yaml.NodeStyle;
+import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +60,11 @@ public class LeaderboardSnapshotManager {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "leaderboards" + File.separator + fileName);
 
-        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = createLoader(path);
         try {
             return loader.load().get(LeaderboardSnapshot.class);
         } catch (ConfigurateException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to load historical leaderboard for file: " + fileName + ". " + e.getMessage()));
+            logger.warn(AdventureUtility.plain("Failed to load historical leaderboard for file: " + fileName + ". " + e.getMessage()));
             return null;
         }
     }
@@ -78,14 +79,14 @@ public class LeaderboardSnapshotManager {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "leaderboards" + File.separator + fileName + ".yml");
 
-        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = createLoader(path);
         try {
             CommentedConfigurationNode node = loader.createNode();
             node.set(LeaderboardSnapshot.class, leaderboardSnapshot);
             loader.save(node);
             return true;
         } catch (ConfigurateException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to save the leaderboard snapshot. " + e.getMessage()));
+            logger.warn(AdventureUtility.plain("Failed to save the leaderboard snapshot. " + e.getMessage()));
             return false;
         }
     }
@@ -102,10 +103,27 @@ public class LeaderboardSnapshotManager {
         try(Stream<Path> stream = Files.walk(path)) {
             stream.filter(Files::isRegularFile).forEach(file -> fileNames.add(String.valueOf(file.getFileName())));
         } catch (IOException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to load historical leaderboard file names. " + e.getMessage()));
+            logger.warn(AdventureUtility.plain("Failed to load historical leaderboard file names. " + e.getMessage()));
             return new ArrayList<>();
         }
 
         return fileNames;
+    }
+
+    /**
+     * Create the {@link YamlConfigurationLoader} for the path provided.
+     * @apiNote {@link PlatformUtils#getSerializers()} are included by default.
+     * @param path The {@link Path}.
+     * @return The {@link YamlConfigurationLoader}.
+     */
+    protected @NonNull YamlConfigurationLoader createLoader(@NonNull Path path) {
+        return YamlConfigurationLoader.builder()
+                .path(path)
+                .nodeStyle(NodeStyle.BLOCK)
+                .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder ->
+                                builder.registerAll(PlatformUtils.getSerializers())))
+                .build();
     }
 }

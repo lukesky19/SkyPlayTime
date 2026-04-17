@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.task.tasks;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
@@ -85,7 +85,7 @@ public class ResetTask extends BukkitRunnable {
 
         timeManager.resetPlayTime(false, resetDailyTime, resetWeeklyTime, resetMonthlyTime, resetYearlyTime, false).thenAccept(result -> {
             if(!result) {
-                logger.warn(AdventureUtil.deserialize("Unable save last reset timestamps due to an error while resetting play time."));
+                logger.warn(AdventureUtility.plain("Unable save last reset timestamps due to an error while resetting play time."));
                 return;
             }
 

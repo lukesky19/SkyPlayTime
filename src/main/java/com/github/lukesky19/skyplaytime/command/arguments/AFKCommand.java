@@ -33,7 +33,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -100,9 +100,9 @@ public class AFKCommand {
                             switch(result) {
                                 case SUCCESS_AFK -> {
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.forcedPlayerAfkMessage(), placeholders));
+                                        sender.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.forcedPlayerAfkMessage(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.forcedPlayerAfkMessage(), placeholders));
+                                        logger.info(AdventureUtility.deserialize(locale.forcedPlayerAfkMessage(), placeholders));
                                     }
 
                                     return 1;
@@ -110,9 +110,9 @@ public class AFKCommand {
 
                                 case SUCCESS_NO_LONGER_AFK -> {
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.forcedPlayerNoLongerAfkMessage(), placeholders));
+                                        sender.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.forcedPlayerNoLongerAfkMessage(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.forcedPlayerNoLongerAfkMessage(), placeholders));
+                                        logger.info(AdventureUtility.deserialize(locale.forcedPlayerNoLongerAfkMessage(), placeholders));
                                     }
 
                                     return 1;
@@ -120,9 +120,9 @@ public class AFKCommand {
 
                                 default -> {
                                     if(isSenderPlayer) {
-                                        sender.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.forcedAfkToggleFailed(), placeholders));
+                                        sender.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.forcedAfkToggleFailed(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(locale.forcedAfkToggleFailed(), placeholders));
+                                        logger.info(AdventureUtility.deserialize(locale.forcedAfkToggleFailed(), placeholders));
                                     }
 
                                     return 0;
@@ -139,7 +139,7 @@ public class AFKCommand {
 
                         return 1;
                     } else {
-                        logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                        logger.info(AdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                         return 0;
                     }

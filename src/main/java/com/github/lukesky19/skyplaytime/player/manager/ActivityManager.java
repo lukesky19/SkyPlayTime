@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
@@ -52,7 +52,7 @@ public class ActivityManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to get last move time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to get last move time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
 
@@ -69,7 +69,7 @@ public class ActivityManager {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, playerId);
-            logger.warn(AdventureUtil.deserialize("Unable to get last action time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to get last action time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
 
@@ -85,7 +85,7 @@ public class ActivityManager {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, uuid);
-            logger.warn(AdventureUtil.deserialize("Unable to update the last move time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to update the last move time for player " + player.getName() + " due to no player data loaded."));
             return;
         }
 
@@ -101,7 +101,7 @@ public class ActivityManager {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
             playerDataManager.loadPlayerData(player, uuid);
-            logger.warn(AdventureUtil.deserialize("Unable to update the last action time for player " + player.getName() + " due to no player data loaded."));
+            logger.warn(AdventureUtility.plain("Unable to update the last action time for player " + player.getName() + " due to no player data loaded."));
             return;
         }
 

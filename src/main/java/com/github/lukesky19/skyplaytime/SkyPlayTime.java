@@ -18,7 +18,8 @@
 package com.github.lukesky19.skyplaytime;
 
 import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.paper.api.plugin.SkyPlugin;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
 import com.github.lukesky19.skyplaytime.player.manager.ActivityManager;
@@ -44,7 +45,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * This is the entry point to the SkyPlayTime plugin.
  */
-public final class SkyPlayTime extends JavaPlugin {
+public final class SkyPlayTime extends SkyPlugin {
     private SettingsManager settingsManager;
     private LocaleManager localeManager;
     private DatabaseManager databaseManager;
@@ -127,9 +127,14 @@ public final class SkyPlayTime extends JavaPlugin {
                 futureList.add(playerDataManager.loadPlayerData(player, player.getUniqueId())));
 
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0]));
-        allFutures.thenAccept(v1 ->
-                leaderboardManager.updateDatabaseTopTen().thenAccept(v2 ->
+        allFutures.thenAccept(_ ->
+                leaderboardManager.updateDatabaseTopTen().thenAccept(_ ->
                         leaderboardManager.updateTopTenAllCategories()));
+    }
+
+    @Override
+    public void reload() {
+        reload(false);
     }
 
     /**
@@ -144,7 +149,7 @@ public final class SkyPlayTime extends JavaPlugin {
         taskManager.restartTasks();
 
         if(!onEnable) {
-            leaderboardManager.updateDatabaseTopTen().thenAccept(v2 ->
+            leaderboardManager.updateDatabaseTopTen().thenAccept(_ ->
                     leaderboardManager.updateTopTenAllCategories());
         }
     }
@@ -167,11 +172,11 @@ public final class SkyPlayTime extends JavaPlugin {
                 if (finalResult) {
                     databaseManager.handlePluginDisable();
                 } else {
-                    this.getComponentLogger().warn(AdventureUtil.deserialize("Failed to save player data on plugin disable. Data loss will occur."));
+                    this.getComponentLogger().warn(AdventureUtility.plain("Failed to save player data on plugin disable. Data loss will occur."));
                     databaseManager.handlePluginDisable();
                 }
-            }).exceptionally(ex -> {
-                this.getComponentLogger().warn(AdventureUtil.deserialize("Failed to save player data on plugin disable. Data loss will occur."));
+            }).exceptionally(_ -> {
+                this.getComponentLogger().warn(AdventureUtility.plain("Failed to save player data on plugin disable. Data loss will occur."));
                 databaseManager.handlePluginDisable();
                 return null;
             });
@@ -223,14 +228,14 @@ public final class SkyPlayTime extends JavaPlugin {
         if(skyLib != null) {
             String version = skyLib.getPluginMeta().getVersion();
             String[] splitVersion = version.split("\\.");
-            int second = Integer.parseInt(splitVersion[1]);
+            int first = Integer.parseInt(splitVersion[0]);
 
-            if(second >= 4) {
+            if(first >= 2) {
                 return true;
             }
         }
 
-        this.getComponentLogger().error(AdventureUtil.deserialize("SkyLib Version 1.4.0.0 or newer is required to run this plugin."));
+        this.getComponentLogger().error(AdventureUtility.plain("SkyLib Version 2.0.0.0 or newer is required to run this plugin."));
         this.getServer().getPluginManager().disablePlugin(this);
         return false;
     }

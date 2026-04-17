@@ -17,16 +17,17 @@
 */
 package com.github.lukesky19.skyplaytime.config.manager.locale;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
-import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
-import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.platform.PlatformUtils;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
+import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
+import com.github.lukesky19.skylib.libs.configurate.yaml.NodeStyle;
+import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -231,13 +232,13 @@ public class LocaleManager {
 
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "locale" + File.separator + (settings.locale() + ".yml"));
 
-        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = createLoader(path);
         try {
             locale = loader.load().get(Locale.class);
 
             validateConfig();
         } catch (ConfigurateException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to load locale configuration. " + e.getMessage()));
+            logger.warn(AdventureUtility.plain("Failed to load locale configuration. " + e.getMessage()));
         }
     }
 
@@ -398,5 +399,22 @@ public class LocaleManager {
                 || timeFormat.minutes() == null
                 || timeFormat.seconds() == null
                 || timeFormat.suffix() == null;
+    }
+
+    /**
+     * Create the {@link YamlConfigurationLoader} for the path provided.
+     * @apiNote {@link PlatformUtils#getSerializers()} are included by default.
+     * @param path The {@link Path}.
+     * @return The {@link YamlConfigurationLoader}.
+     */
+    protected @NonNull YamlConfigurationLoader createLoader(@NonNull Path path) {
+        return YamlConfigurationLoader.builder()
+                .path(path)
+                .nodeStyle(NodeStyle.BLOCK)
+                .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder ->
+                                builder.registerAll(PlatformUtils.getSerializers())))
+                .build();
     }
 }

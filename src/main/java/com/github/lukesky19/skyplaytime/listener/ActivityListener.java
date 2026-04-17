@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.listener;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
@@ -70,7 +70,7 @@ public class ActivityListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent playerMoveEvent) {
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to process a PlayerMoveEvent due to invalid plugin settings."));
+            logger.warn(AdventureUtility.plain("Unable to process a PlayerMoveEvent due to invalid plugin settings."));
             return;
         }
 

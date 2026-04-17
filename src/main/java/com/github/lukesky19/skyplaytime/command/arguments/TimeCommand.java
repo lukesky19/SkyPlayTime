@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -84,9 +84,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentSessionPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerSessionPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerSessionPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerSessionPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerSessionPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -103,11 +103,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentSessionPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.sessionPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.sessionPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }
@@ -129,9 +129,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentDailyPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerDailyPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerDailyPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerDailyPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerDailyPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -148,11 +148,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentDailyPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.dailyPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.dailyPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }
@@ -174,9 +174,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentWeeklyPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerWeeklyPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerWeeklyPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerWeeklyPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -193,11 +193,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentWeeklyPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.weeklyPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.weeklyPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }
@@ -219,9 +219,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentMonthlyPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerMonthlyPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerMonthlyPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerMonthlyPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -238,11 +238,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentMonthlyPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.monthlyPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.monthlyPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }
@@ -264,9 +264,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentYearlyPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerYearlyPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerYearlyPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerYearlyPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerYearlyPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -283,11 +283,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentYearlyPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.yearlyPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.yearlyPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }
@@ -309,9 +309,9 @@ public class TimeCommand {
                                     placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentTotalPlayTime)));
 
                                     if(ctx.getSource().getSender() instanceof Player player) {
-                                        player.sendMessage(AdventureUtil.deserialize(target, locale.prefix() + locale.playerTotalPlayTime(), placeholders));
+                                        player.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.playerTotalPlayTime(), placeholders));
                                     } else {
-                                        logger.info(AdventureUtil.deserialize(target, locale.playerTotalPlayTime(), placeholders));
+                                        logger.info(PaperAdventureUtility.deserialize(target, locale.playerTotalPlayTime(), placeholders));
                                     }
 
                                     return 1;
@@ -328,11 +328,11 @@ public class TimeCommand {
                                 List<TagResolver.Single> placeholders = new ArrayList<>();
                                 placeholders.add(Placeholder.parsed("time", formatPlayTimeChat(timeFormat, currentTotalPlayTime)));
 
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.totalPlayTime(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.totalPlayTime(), placeholders));
 
                                 return 1;
                             } else {
-                                logger.info(AdventureUtil.deserialize(locale.commandPlayerOnly()));
+                                logger.info(PaperAdventureUtility.deserialize(locale.commandPlayerOnly()));
 
                                 return 0;
                             }

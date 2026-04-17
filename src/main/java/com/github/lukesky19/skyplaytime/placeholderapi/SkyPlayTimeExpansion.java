@@ -17,9 +17,9 @@
 */
 package com.github.lukesky19.skyplaytime.placeholderapi;
 
-import com.github.lukesky19.skylib.api.time.Time;
-import com.github.lukesky19.skylib.api.time.TimeUnit;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.time.Time;
+import com.github.lukesky19.skylib.common.api.time.TimeUnit;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;

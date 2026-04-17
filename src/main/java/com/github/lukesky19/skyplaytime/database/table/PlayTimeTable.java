@@ -17,9 +17,12 @@
 */
 package com.github.lukesky19.skyplaytime.database.table;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.database.parameter.Parameter;
-import com.github.lukesky19.skylib.api.database.parameter.impl.*;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.api.database.parameter.Parameter;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.IntegerParameter;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.LongParameter;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.StringParameter;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.UUIDParameter;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
@@ -104,9 +107,9 @@ public class PlayTimeTable {
             } catch (SQLException e) {
                 playerData.setErrored(true);
 
-                logger.warn(AdventureUtil.deserialize("Failed to load player data for player " + playerData.getName()));
-                logger.info(AdventureUtil.deserialize("This player will not have their play time saved to prevent overwriting their historical play time."));
-                logger.info(AdventureUtil.deserialize("This means that new play time earned will not be saved."));
+                logger.warn(AdventureUtility.plain("Failed to load player data for player " + playerData.getName()));
+                logger.info(AdventureUtility.plain("This player will not have their play time saved to prevent overwriting their historical play time."));
+                logger.info(AdventureUtility.plain("This means that new play time earned will not be saved."));
 
                 return playerData;
             }
@@ -192,7 +195,7 @@ public class PlayTimeTable {
                     PlayerData playerData = entry.getValue();
 
                     if(playerData.isErrored()) {
-                        logger.warn(AdventureUtil.deserialize("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + playerId));
+                        logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + playerId));
                         return false;
                     }
 
@@ -281,7 +284,7 @@ public class PlayTimeTable {
 
                 return new TopTen(positionList);
             } catch (SQLException e) {
-                logger.warn(AdventureUtil.deserialize("Failed to get top ten by category " + timeCategoryName + " due to an error. Error: " + e.getMessage()));
+                logger.warn(AdventureUtility.plain("Failed to get top ten by category " + timeCategoryName + " due to an error. Error: " + e.getMessage()));
                 return new TopTen();
             }
         });

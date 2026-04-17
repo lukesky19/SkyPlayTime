@@ -17,8 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.data;
 
-import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 import org.jspecify.annotations.NonNull;
+import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 
 import java.util.UUID;
 

@@ -17,9 +17,9 @@
 */
 package com.github.lukesky19.skyplaytime.config.data.settings;
 
-import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 
 /**
  * The plugin's settings configuration.

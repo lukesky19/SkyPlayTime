@@ -17,8 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
+import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -89,13 +89,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.sessionPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.sessionPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target, locale.prefix() + locale.sessionPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerSessionPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerSessionPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerSessionPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerSessionPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;
@@ -123,13 +123,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.dailyPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.dailyPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.dailyPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerDailyPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerDailyPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerDailyPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerDailyPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;
@@ -157,13 +157,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.weeklyPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.weeklyPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.weeklyPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerWeeklyPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerWeeklyPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerWeeklyPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerWeeklyPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;
@@ -191,13 +191,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.monthlyPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.monthlyPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.monthlyPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerMonthlyPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerMonthlyPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerMonthlyPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerMonthlyPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;
@@ -225,13 +225,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.yearlyPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.yearlyPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.yearlyPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerYearlyPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerYearlyPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerYearlyPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerYearlyPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;
@@ -259,13 +259,13 @@ public class AddCommand {
                                                     Placeholder.parsed("time", formatPlayTimeChat(locale.totalPlayTimeUpdatedTimePlaceholder(), playTimeSeconds)));
 
                                             // Tell the target player that their play time was updated
-                                            target.sendMessage(AdventureUtil.deserialize(target,locale.prefix() + locale.totalPlayTimeUpdated(), placeholders));
+                                            target.sendMessage(PaperAdventureUtility.deserialize(target,locale.prefix() + locale.totalPlayTimeUpdated(), placeholders));
 
                                             // Tell the sender that the target had their play time updated
                                             if(ctx.getSource().getSender() instanceof Player player) {
-                                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerTotalPlayTimeUpdated(), placeholders));
+                                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerTotalPlayTimeUpdated(), placeholders));
                                             } else {
-                                                logger.info(AdventureUtil.deserialize(target, locale.playerTotalPlayTimeUpdated(), placeholders));
+                                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerTotalPlayTimeUpdated(), placeholders));
                                             }
 
                                             return 1;

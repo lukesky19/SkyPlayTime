@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
@@ -99,8 +99,8 @@ public class PlayerDataManager {
 
                     return Optional.of(updatedPlayerData);
                 })
-                .exceptionally(ex -> {
-                    logger.warn(AdventureUtil.deserialize("Failed to load player data for player " + player.getName()));
+                .exceptionally(_ -> {
+                    logger.warn(AdventureUtility.plain("Failed to load player data for player " + player.getName()));
                     return Optional.empty();
                 });
     }
@@ -112,13 +112,13 @@ public class PlayerDataManager {
     public void unloadPlayerData(@NonNull UUID uuid) {
         PlayerData playerData = playerDataMap.get(uuid);
         if(playerData == null) {
-            logger.warn(AdventureUtil.deserialize("No player data loaded to save and unload."));
+            logger.warn(AdventureUtility.plain("No player data loaded to save and unload."));
             return;
         }
 
         if(playerData.isErrored()) {
-            logger.warn(AdventureUtil.deserialize("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
-            logger.info(AdventureUtil.deserialize("Player data will still be unloaded which will lead to data loss."));
+            logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
+            logger.info(AdventureUtility.plain("Player data will still be unloaded which will lead to data loss."));
 
             playerDataMap.remove(uuid);
 
@@ -126,10 +126,10 @@ public class PlayerDataManager {
         }
 
         databaseManager.getPlayTimeTable().savePlayerData(uuid, playerData)
-                .thenAccept(v -> playerDataMap.remove(uuid))
-                .exceptionally(ex -> {
+                .thenAccept(_ -> playerDataMap.remove(uuid))
+                .exceptionally(_ -> {
                     playerDataMap.remove(uuid);
-                    logger.warn(AdventureUtil.deserialize("Failed to save player data to the database."));
+                    logger.warn(AdventureUtility.plain("Failed to save player data to the database."));
                     return null;
                 });
     }
@@ -141,7 +141,7 @@ public class PlayerDataManager {
     public void savePlayerData(@NonNull UUID uuid) {
         PlayerData playerData = playerDataMap.get(uuid);
         if(playerData == null) {
-            logger.warn(AdventureUtil.deserialize("No player data to save."));
+            logger.warn(AdventureUtility.plain("No player data to save."));
             return;
         }
 
@@ -155,13 +155,13 @@ public class PlayerDataManager {
      */
     public void savePlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
         if(playerData.isErrored()) {
-            logger.warn(AdventureUtil.deserialize("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
+            logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
             return;
         }
 
         databaseManager.getPlayTimeTable().savePlayerData(uuid, playerData)
-                .exceptionally(t -> {
-                    logger.warn(AdventureUtil.deserialize("Failed to save player data to the database."));
+                .exceptionally(_ -> {
+                    logger.warn(AdventureUtility.plain("Failed to save player data to the database."));
                     return null;
                 });
     }

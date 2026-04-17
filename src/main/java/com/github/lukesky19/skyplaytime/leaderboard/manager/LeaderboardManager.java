@@ -17,8 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.manager;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.leaderboard.data.LeaderboardSnapshot;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
@@ -75,7 +75,7 @@ public class LeaderboardManager {
     public boolean markPlayerExempt(@NonNull Player player) {
         PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
         if(playerData == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to mark player exempt due to no player data found for player " + player.getName()));
+            logger.warn(AdventureUtility.plain("Unable to mark player exempt due to no player data found for player " + player.getName()));
             return false;
         }
 
@@ -92,7 +92,7 @@ public class LeaderboardManager {
     public boolean markPlayerNotExempt(@NonNull Player player) {
         PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
         if(playerData == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to mark player not exempt due to no player data found for player " + player.getName()));
+            logger.warn(AdventureUtility.plain("Unable to mark player not exempt due to no player data found for player " + player.getName()));
             return false;
         }
 

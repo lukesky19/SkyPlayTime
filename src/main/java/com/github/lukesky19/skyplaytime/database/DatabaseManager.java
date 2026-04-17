@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.database;
 
-import com.github.lukesky19.skylib.api.database.AbstractDatabaseManager;
+import com.github.lukesky19.skylib.common.api.database.AbstractDatabaseManager;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.database.connection.ConnectionManager;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
@@ -76,7 +76,7 @@ public class DatabaseManager extends AbstractDatabaseManager {
         Path sourcePath = Paths.get(skyPlayTime.getDataFolder().toString(), "database.db");
 
         super.backupDatabase(sourcePath)
-                .thenAccept(v -> resultFuture.complete(true))
+                .thenAccept(_ -> resultFuture.complete(true))
                 .exceptionally(ex -> {
                     resultFuture.completeExceptionally(ex);
                     return null;

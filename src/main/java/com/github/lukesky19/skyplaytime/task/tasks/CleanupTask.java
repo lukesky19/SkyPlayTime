@@ -17,8 +17,8 @@
 */
 package com.github.lukesky19.skyplaytime.task.tasks;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
@@ -63,7 +63,7 @@ public class CleanupTask extends BukkitRunnable {
     public void run() {
         Settings settings = settingsManager.getSettings();
         if(settings == null) {
-            logger.warn(AdventureUtil.deserialize("Unable to delete old database backups and leaderboard snapshots due to invalid plugin settings."));
+            logger.warn(AdventureUtility.plain("Unable to delete old database backups and leaderboard snapshots due to invalid plugin settings."));
             return;
         }
 
@@ -105,12 +105,12 @@ public class CleanupTask extends BukkitRunnable {
                                 file.delete();
                             }
                         } catch (IOException e) {
-                            logger.warn(AdventureUtil.deserialize("Failed to delete an old database or leaderboard file. Error: " + e.getMessage()));
+                            logger.warn(AdventureUtility.plain("Failed to delete an old database or leaderboard file. Error: " + e.getMessage()));
                         }
                     }
                 });
             } catch (IOException e) {
-                logger.warn(AdventureUtil.deserialize("Failed to delete old database backups and leaderboard files. Error: " + e.getMessage()));
+                logger.warn(AdventureUtility.plain("Failed to delete old database backups and leaderboard files. Error: " + e.getMessage()));
             }
         }
     }

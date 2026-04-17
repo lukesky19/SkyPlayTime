@@ -17,10 +17,10 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.data;
 
-import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
 

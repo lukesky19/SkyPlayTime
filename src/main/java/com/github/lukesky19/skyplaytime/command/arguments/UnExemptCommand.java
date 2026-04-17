@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.SkyPlayTimeAPI;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
@@ -73,9 +73,9 @@ public class UnExemptCommand {
                             leaderboardManager.markPlayerNotExempt(target);
 
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(player, locale.prefix() + locale.playerUnexempt(), placeholders));
+                                player.sendMessage(PaperAdventureUtility.deserialize(player, locale.prefix() + locale.playerUnexempt(), placeholders));
                             } else {
-                                logger.info(AdventureUtil.deserialize(target, locale.playerUnexempt(), placeholders));
+                                logger.info(PaperAdventureUtility.deserialize(target, locale.playerUnexempt(), placeholders));
                             }
 
                             return 1;

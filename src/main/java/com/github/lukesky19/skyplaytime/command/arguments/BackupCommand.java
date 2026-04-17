@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
@@ -69,11 +69,11 @@ public class BackupCommand {
                         if(results.contains(false)) {
                             skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                                 if(ctx.getSource().getSender() instanceof Player player) {
-                                    player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
-                                    player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
+                                    player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.playTimeSaveError()));
+                                    player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.databaseBackupError()));
                                 } else {
-                                    logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                    logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                    logger.warn(AdventureUtility.deserialize(locale.playTimeSaveError()));
+                                    logger.warn(AdventureUtility.deserialize(locale.databaseBackupError()));
                                 }
                             });
 
@@ -84,38 +84,38 @@ public class BackupCommand {
                                 skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                                     if(ctx.getSource().getSender() instanceof Player player) {
                                         if(result) {
-                                            player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupSuccess()));
+                                            player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.databaseBackupSuccess()));
                                         } else {
-                                            player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
+                                            player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.databaseBackupError()));
                                         }
                                     } else {
                                         if(result) {
-                                            logger.info(AdventureUtil.deserialize(locale.databaseBackupSuccess()));
+                                            logger.info(AdventureUtility.deserialize(locale.databaseBackupSuccess()));
                                         } else {
-                                            logger.info(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                            logger.info(AdventureUtility.deserialize(locale.databaseBackupError()));
                                         }
                                     }
                         })).exceptionally(ex -> {
-                            logger.warn(AdventureUtil.deserialize("Failed to backup database: " + ex.getMessage()));
+                            logger.warn(AdventureUtility.deserialize("Failed to backup database: " + ex.getMessage()));
 
                             skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                                 if(ctx.getSource().getSender() instanceof Player player) {
-                                    player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
+                                    player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.databaseBackupError()));
                                 } else {
-                                    logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                    logger.warn(AdventureUtility.deserialize(locale.databaseBackupError()));
                                 }
                             });
 
                             return null;
                         });
-                    }).exceptionally(ex -> {
+                    }).exceptionally(_ -> {
                         skyPlayTime.getServer().getScheduler().runTask(skyPlayTime, () -> {
                             if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.playTimeSaveError()));
-                                player.sendMessage(AdventureUtil.deserialize(locale.prefix() + locale.databaseBackupError()));
+                                player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.playTimeSaveError()));
+                                player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.databaseBackupError()));
                             } else {
-                                logger.warn(AdventureUtil.deserialize(locale.playTimeSaveError()));
-                                logger.warn(AdventureUtil.deserialize(locale.databaseBackupError()));
+                                logger.warn(AdventureUtility.deserialize(locale.playTimeSaveError()));
+                                logger.warn(AdventureUtility.deserialize(locale.databaseBackupError()));
                             }
                         });
 

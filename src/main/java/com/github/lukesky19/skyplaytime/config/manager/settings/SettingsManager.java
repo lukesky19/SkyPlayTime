@@ -17,16 +17,17 @@
 */
 package com.github.lukesky19.skyplaytime.config.manager.settings;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.configurate.ConfigurationUtility;
-import com.github.lukesky19.skylib.libs.configurate.CommentedConfigurationNode;
-import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
-import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.platform.PlatformUtils;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import com.github.lukesky19.skylib.libs.configurate.CommentedConfigurationNode;
+import com.github.lukesky19.skylib.libs.configurate.ConfigurateException;
+import com.github.lukesky19.skylib.libs.configurate.yaml.NodeStyle;
+import com.github.lukesky19.skylib.libs.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -67,13 +68,13 @@ public class SettingsManager {
         saveDefaultSettings();
 
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "settings.yml");
-        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = createLoader(path);
         try {
             settings = loader.load().get(Settings.class);
 
             validateConfig();
         } catch (ConfigurateException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to load plugin settings."));
+            logger.warn(AdventureUtility.plain("Failed to load plugin settings."));
         }
     }
 
@@ -85,7 +86,7 @@ public class SettingsManager {
         ComponentLogger logger = skyPlayTime.getComponentLogger();
         Path path = Path.of(skyPlayTime.getDataFolder() + File.separator + "settings.yml");
 
-        YamlConfigurationLoader loader = ConfigurationUtility.getYamlConfigurationLoader(path);
+        YamlConfigurationLoader loader = createLoader(path);
         try {
             CommentedConfigurationNode node = loader.createNode();
             node.set(Settings.class, settings);
@@ -93,7 +94,7 @@ public class SettingsManager {
 
             this.settings = settings;
         } catch (ConfigurateException e) {
-            logger.warn(AdventureUtil.deserialize("Failed to save plugin settings."));
+            logger.warn(AdventureUtility.plain("Failed to save plugin settings."));
         }
     }
 
@@ -117,13 +118,13 @@ public class SettingsManager {
 
         if(settings.locale() == null) {
             settings = null;
-            logger.warn(AdventureUtil.deserialize("Invalid locale name provided in settings.yml."));
+            logger.warn(AdventureUtility.plain("Invalid locale name provided in settings.yml."));
             return;
         }
 
         if(settings.resetSettings().zoneId() == null) {
             settings = null;
-            logger.warn(AdventureUtil.deserialize("Invalid zone id name provided in settings.yml."));
+            logger.warn(AdventureUtility.plain("Invalid zone id name provided in settings.yml."));
             return;
         }
 
@@ -132,7 +133,7 @@ public class SettingsManager {
             ZoneId.of(settings.resetSettings().zoneId());
         } catch (DateTimeException e) {
             settings = null;
-            logger.warn(AdventureUtil.deserialize("Invalid zone id provided in settings.yml. " + e));
+            logger.warn(AdventureUtility.plain("Invalid zone id provided in settings.yml. " + e));
             return;
         }
 
@@ -140,7 +141,24 @@ public class SettingsManager {
             DayOfWeek.valueOf(settings.resetSettings().dayOfWeek());
         } catch (IllegalArgumentException e) {
             settings = null;
-            logger.warn(AdventureUtil.deserialize("Invalid day of week provided in settings.yml. " + e));
+            logger.warn(AdventureUtility.plain("Invalid day of week provided in settings.yml. " + e));
         }
+    }
+
+    /**
+     * Create the {@link YamlConfigurationLoader} for the path provided.
+     * @apiNote {@link PlatformUtils#getSerializers()} are included by default.
+     * @param path The {@link Path}.
+     * @return The {@link YamlConfigurationLoader}.
+     */
+    protected @NonNull YamlConfigurationLoader createLoader(@NonNull Path path) {
+        return YamlConfigurationLoader.builder()
+                .path(path)
+                .nodeStyle(NodeStyle.BLOCK)
+                .indent(4)
+                .defaultOptions(configurationOptions ->
+                        configurationOptions.serializers(builder ->
+                                builder.registerAll(PlatformUtils.getSerializers())))
+                .build();
     }
 }

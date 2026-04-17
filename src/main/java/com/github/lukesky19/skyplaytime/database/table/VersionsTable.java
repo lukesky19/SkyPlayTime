@@ -1,9 +1,9 @@
 package com.github.lukesky19.skyplaytime.database.table;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.database.parameter.impl.IntegerParameter;
-import com.github.lukesky19.skylib.api.database.parameter.impl.StringParameter;
-import com.github.lukesky19.skylib.api.database.queue.QueueManager;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.IntegerParameter;
+import com.github.lukesky19.skylib.common.api.database.parameter.impl.StringParameter;
+import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
 
@@ -83,7 +83,7 @@ public class VersionsTable {
                     return 0;
                 }
             } catch (SQLException e) {
-                logger.warn(AdventureUtil.deserialize("Failed to get the table version for table id " + tableId + ". Error: " + e.getMessage()));
+                logger.warn(AdventureUtility.plain("Failed to get the table version for table id " + tableId + ". Error: " + e.getMessage()));
                 return -1;
             }
         });

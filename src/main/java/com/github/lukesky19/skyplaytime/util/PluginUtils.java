@@ -17,9 +17,9 @@
 */
 package com.github.lukesky19.skyplaytime.util;
 
-import com.github.lukesky19.skylib.api.adventure.AdventureUtil;
-import com.github.lukesky19.skylib.api.time.Time;
-import com.github.lukesky19.skylib.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
+import com.github.lukesky19.skylib.common.api.time.Time;
+import com.github.lukesky19.skylib.common.api.time.TimeUtil;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -133,6 +133,6 @@ public class PluginUtils {
                 Placeholder.parsed("minutes", String.valueOf(timeRecord.minutes())),
                 Placeholder.parsed("seconds", String.valueOf(timeRecord.seconds())));
 
-        return AdventureUtil.serialize(AdventureUtil.deserialize(messageBuilder.toString(), placeholders));
+        return AdventureUtility.serialize(AdventureUtility.deserialize(messageBuilder.toString(), placeholders));
     }
 }
