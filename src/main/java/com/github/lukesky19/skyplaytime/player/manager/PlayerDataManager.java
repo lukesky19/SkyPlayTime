@@ -71,38 +71,47 @@ public class PlayerDataManager {
     }
 
     /**
-     * Get the {@link PlayerData} for the given {@link UUID}.
-     * @param uuid The {@link UUID} of the player.
-     * @return The {@link PlayerData} or null.
+     * Get the {@link PlayerData} for the given {@link UUID} stored in memory.
+     * See {@link #getPlayerData(UUID)} and {@link #loadPlayerData(Player)} as well.
+     * @param player The {@link Player}.
+     * @return The {@link PlayerData} or null if the player has no player data.
      */
-    public @Nullable PlayerData getPlayerData(@NonNull UUID uuid) {
-        return playerDataMap.get(uuid);
+    public @Nullable PlayerData getPlayerData(@NonNull Player player) {
+        return playerDataMap.get(player.getUniqueId());
+    }
+
+    /**
+     * Get the {@link PlayerData} for the given {@link UUID} stored in memory.
+     * See {@link #getPlayerData(Player)} and {@link #loadPlayerData(Player)} as well.
+     * @param playerId The {@link UUID} of the player.
+     * @return The {@link PlayerData} or null if the player has no player data.
+     */
+    public @Nullable PlayerData getPlayerData(@NonNull UUID playerId) {
+        return playerDataMap.get(playerId);
     }
 
     /**
      * Loads player data from the database.
      * @param player The {@link Player} to load data for.
-     * @param uuid The {@link UUID} of the player to load data for.
      * @return A {@link CompletableFuture} of type {@link Optional} {@link PlayerData} when complete.
      */
-    public @NonNull CompletableFuture<@NonNull Optional<PlayerData>> loadPlayerData(@NonNull Player player, @NonNull UUID uuid) {
+    public @NonNull CompletableFuture<@Nullable PlayerData> loadPlayerData(@NonNull Player player) {
+        UUID playerId = player.getUniqueId();
         PlayTimeTable playTimeTable = databaseManager.getPlayTimeTable();
-        PlayerData playerData = playerDataMap.getOrDefault(uuid, new PlayerData(player.getName()));
+        PlayerData playerData = playerDataMap.computeIfAbsent(playerId, _ -> new PlayerData(player.getName()));
 
-        return playTimeTable.loadPlayerData(uuid, playerData)
-                .thenApply(updatedPlayerData -> {
-                    // Store the player data
-                    playerDataMap.put(uuid, updatedPlayerData);
+        return playTimeTable.loadPlayerData(playerId, playerData).thenApply(_ -> {
+            // Save player data as the player name may have been updated.
+            savePlayerData(playerId, playerData);
 
-                    // Save player data as the player name may have been updated.
-                    savePlayerData(uuid, updatedPlayerData);
+            return playerData;
+        }).exceptionally(_ -> {
+            playerDataMap.remove(playerId);
 
-                    return Optional.of(updatedPlayerData);
-                })
-                .exceptionally(_ -> {
-                    logger.warn(AdventureUtility.plain("Failed to load player data for player " + player.getName()));
-                    return Optional.empty();
-                });
+            logger.warn(AdventureUtility.plain("Failed to load player data for player " + player.getName()));
+
+            return null;
+        });
     }
 
     /**
@@ -113,15 +122,6 @@ public class PlayerDataManager {
         PlayerData playerData = playerDataMap.get(uuid);
         if(playerData == null) {
             logger.warn(AdventureUtility.plain("No player data loaded to save and unload."));
-            return;
-        }
-
-        if(playerData.isErrored()) {
-            logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
-            logger.info(AdventureUtility.plain("Player data will still be unloaded which will lead to data loss."));
-
-            playerDataMap.remove(uuid);
-
             return;
         }
 
@@ -154,11 +154,6 @@ public class PlayerDataManager {
      * @param playerData The {@link PlayerData} to save.
      */
     public void savePlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
-        if(playerData.isErrored()) {
-            logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + uuid));
-            return;
-        }
-
         databaseManager.getPlayTimeTable().savePlayerData(uuid, playerData)
                 .exceptionally(_ -> {
                     logger.warn(AdventureUtility.plain("Failed to save player data to the database."));
@@ -174,5 +169,16 @@ public class PlayerDataManager {
     public @NonNull CompletableFuture<@NonNull List<@NonNull Boolean>> savePlayerData() {
         PlayTimeTable playTimeTable = databaseManager.getPlayTimeTable();
         return playTimeTable.savePlayerData(playerDataMap);
+    }
+
+    /**
+     * Stores the {@link PlayerData} for the {@link UUID} provided.
+     * @apiNote Only stores the data if the {@link UUID} doesn't have any data.
+     * @apiNote For debugging purposes only.
+     * @param playerId The player's {@link UUID}.
+     * @param playerData The {@link PlayerData}.
+     */
+    protected void setPlayerData(@NonNull UUID playerId, @NonNull PlayerData playerData) {
+        playerDataMap.putIfAbsent(playerId, playerData);
     }
 }

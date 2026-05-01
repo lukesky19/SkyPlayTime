@@ -19,8 +19,8 @@ package com.github.lukesky19.skyplaytime.player.manager;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
+import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
@@ -70,10 +70,8 @@ public class TimeManager {
      * @return The player's play time in seconds for the provided {@link TimeCategory}.
      */
     public long getPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory) {
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
@@ -92,10 +90,8 @@ public class TimeManager {
             @NonNull Player player,
             @NonNull TimeCategory timeCategory,
             long playTimeSeconds) {
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
             return false;
         }
@@ -111,10 +107,8 @@ public class TimeManager {
      * @return true if successful, false if not.
      */
     public boolean removePlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
             return false;
         }
@@ -130,10 +124,8 @@ public class TimeManager {
      * @return true if successful, false if not.
      */
     public boolean setPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
             return false;
         }
@@ -172,21 +164,42 @@ public class TimeManager {
         }
 
         // Get the player's data and abort the reset if no player data was found.
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to reset play time for player " + player.getName() + " due to no player data found."));
             return false;
         }
 
-        // Reset the player's play time.
+        return resetPlayTime(player.getUniqueId(), playerData, session, daily, weekly, monthly, yearly, total);
+    }
+
+    /**
+     * Reset the provided {@link PlayerData}'s play time according to the provided boolean options.
+     * @param playerId The {@link UUID} of the player.
+     * @param playerData The player's {@link PlayerData}.
+     * @param session Should session play time be reset?
+     * @param daily Should daily play time be reset?
+     * @param weekly Should weekly play time be reset?
+     * @param monthly Should monthly play time be reset?
+     * @param yearly Should yearly play time be reset?
+     * @param total Should total play time be reset?
+     * @return true if succeeds, false if not.
+     */
+    protected boolean resetPlayTime(
+            @NonNull UUID playerId,
+            @NonNull PlayerData playerData,
+            boolean session,
+            boolean daily,
+            boolean weekly,
+            boolean monthly,
+            boolean yearly,
+            boolean total) {
         if(session) playerData.setSessionPlayTime(0);
         if(daily) playerData.setDailyPlayTime(0);
-        if(weekly) playerData.setDailyPlayTime(0);
-        if(monthly) playerData.setDailyPlayTime(0);
-        if(yearly) playerData.setDailyPlayTime(0);
-        if(total) playerData.setDailyPlayTime(0);
+        if(weekly) playerData.setWeeklyPlayTime(0);
+        if(monthly) playerData.setMonthlyPlayTime(0);
+        if(yearly) playerData.setYearlyPlayTime(0);
+        if(total) playerData.setTotalPlayTime(0);
 
         playerDataManager.savePlayerData(playerId);
 
@@ -250,7 +263,7 @@ public class TimeManager {
      * @param total Should a leaderboard snapshot be created for total play time?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NonNull CompletableFuture<Boolean> createLeaderboardSnapshot(
+    protected @NonNull CompletableFuture<Boolean> createLeaderboardSnapshot(
             @NonNull Settings settings,
             boolean session,
             boolean daily,
@@ -279,7 +292,7 @@ public class TimeManager {
      * @param total Should a leaderboard snapshot be created for total play time?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NonNull CompletableFuture<@NonNull Boolean> resetPlayTime(
+    protected @NonNull CompletableFuture<@NonNull Boolean> resetPlayTime(
             @NonNull Settings settings,
             boolean session,
             boolean daily,
@@ -316,7 +329,7 @@ public class TimeManager {
      * @param yearly Should yearly play time be reset?
      * @param total Should total play time be reset?
      */
-    private void resetOnlinePlayTime(
+    protected void resetOnlinePlayTime(
             boolean session,
             boolean daily,
             boolean weekly,
@@ -342,7 +355,7 @@ public class TimeManager {
      * @param total Should total play time be reset?
      * @return A {@link CompletableFuture} of type {@link Boolean}. true if successful, otherwise false.
      */
-    private @NonNull CompletableFuture<@NonNull Boolean> resetDatabasePlayTime(
+    protected @NonNull CompletableFuture<@NonNull Boolean> resetDatabasePlayTime(
             boolean daily,
             boolean weekly,
             boolean monthly,

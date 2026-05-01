@@ -51,7 +51,6 @@ public class ActivityManager {
         UUID playerId = player.getUniqueId();
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to get last move time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
@@ -68,7 +67,6 @@ public class ActivityManager {
         UUID playerId = player.getUniqueId();
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to get last action time for player " + player.getName() + " due to no player data loaded."));
             return 0;
         }
@@ -84,7 +82,6 @@ public class ActivityManager {
     public void updateMoveTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, uuid);
             logger.warn(AdventureUtility.plain("Unable to update the last move time for player " + player.getName() + " due to no player data loaded."));
             return;
         }
@@ -100,7 +97,6 @@ public class ActivityManager {
     public void updateActionTimeStamp(@NonNull Player player, @NonNull UUID uuid) {
         PlayerData playerData = playerDataManager.getPlayerData(uuid);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, uuid);
             logger.warn(AdventureUtility.plain("Unable to update the last action time for player " + player.getName() + " due to no player data loaded."));
             return;
         }

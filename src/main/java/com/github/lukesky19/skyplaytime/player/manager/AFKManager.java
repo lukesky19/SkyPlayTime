@@ -20,10 +20,10 @@ package com.github.lukesky19.skyplaytime.player.manager;
 import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
 import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
+import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.event.AFKStatusChangeEvent;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.AFKToggleResult;
@@ -78,10 +78,8 @@ public class AFKManager {
      * @return true if afk, false if not.
      */
     public boolean isPlayerAFK(@NonNull Player player) {
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(player);
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Unable to check player AFK status due to no player data found for player " + player.getName()));
             return false;
         }
@@ -97,11 +95,6 @@ public class AFKManager {
     public boolean isPlayerAFK(@NonNull UUID playerId) {
         PlayerData playerData = playerDataManager.getPlayerData(playerId);
         if(playerData == null) {
-            Player player = skyPlayTime.getServer().getPlayer(playerId);
-            if(player != null && player.isOnline() && player.isConnected()) {
-                playerDataManager.loadPlayerData(player, playerId);
-            }
-
             logger.warn(AdventureUtility.plain("Unable to check player AFK status due to no player data found for player id " + playerId));
             return false;
         }
@@ -115,7 +108,7 @@ public class AFKManager {
      */
     public @NonNull Map<UUID, PlayerData> getAFKPlayers() {
         return playerDataManager.getPlayerDataMap().entrySet().stream()
-                .filter(entry -> !entry.getValue().isAFK())
+                .filter(entry -> entry.getValue().isAFK())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -129,8 +122,6 @@ public class AFKManager {
     public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player player, boolean notifyPlayer, boolean notifyServer) {
         Settings settings = settingsManager.getSettings();
         Locale locale = localeManager.getLocale();
-        UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
 
         // Log an error if plugin settings are invalid and return AFKToggleResult.CONFIG_ERROR
         if(settings == null) {
@@ -138,9 +129,10 @@ public class AFKManager {
             return AFKToggleResult.CONFIG_ERROR;
         }
 
+        UUID playerId = player.getUniqueId();
+        PlayerData playerData = playerDataManager.getPlayerData(playerId);
         // Log an error if no player data was found and return AFKToggleResult.ERROR
         if(playerData == null) {
-            playerDataManager.loadPlayerData(player, playerId);
             logger.warn(AdventureUtility.plain("Failed to toggle AFK status as no player data was found for player: " + player.getName()));
             return AFKToggleResult.ERROR;
         }
@@ -217,7 +209,7 @@ public class AFKManager {
      * @param settings The plugin's {@link Settings}.
      * @param player The {@link Player}.
      */
-    private void setAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
+    protected void setAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
         Settings.PlayerSettings playerSettings = settings.afkSettings().playerSettings();
 
         // Set if the player can pickup items while afk.
@@ -241,7 +233,7 @@ public class AFKManager {
      * @param settings The plugin's {@link Settings}.
      * @param player The {@link Player}.
      */
-    private void resetAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
+    protected void resetAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
         // Get the player's UUID
         UUID playerId = player.getUniqueId();
 

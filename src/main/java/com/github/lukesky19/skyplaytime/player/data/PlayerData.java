@@ -31,8 +31,8 @@ public class PlayerData {
     private long dailyPlayTimeSeconds = 0;
     private long weeklyPlayTimeSeconds = 0;
     private long monthlyPlayTimeSeconds = 0;
-    private long totalPlayTimeSeconds = 0;
     private long yearlyPlayTimeSeconds = 0;
+    private long totalPlayTimeSeconds = 0;
     // Leaderboard Data
     private boolean exempt = false;
 
@@ -41,8 +41,6 @@ public class PlayerData {
     private long lastActionTime = System.currentTimeMillis();
     // AFK Status
     private boolean isAFK = false;
-
-    private boolean isErrored = false;
 
     /**
      * Create player data using player name provided.
@@ -54,20 +52,66 @@ public class PlayerData {
     }
 
     /**
-     * Did the player data fail to load properly?
-     * @return Is the player data errored?
+     * Create player data using player name, play time, and exemption status provided.
+     * @param name The name of the player.
+     * @param sessionPlayTimeSeconds The player's session playtime in seconds.
+     * @param dailyPlayTimeSeconds The player's daily playtime in seconds.
+     * @param weeklyPlayTimeSeconds The player's weekly playtime in seconds.
+     * @param monthlyPlayTimeSeconds The player's monthly playtime in seconds.
+     * @param yearlyPlayTimeSeconds The player's yearly playtime in seconds.
+     * @param totalPlayTimeSeconds The player's total playtime in seconds.
+     * @param exempt Is the player exempt from leaderboard reporting?
      */
-    public boolean isErrored() {
-        return isErrored;
+    public PlayerData(
+            @NonNull String name,
+            long sessionPlayTimeSeconds,
+            long dailyPlayTimeSeconds,
+            long weeklyPlayTimeSeconds,
+            long monthlyPlayTimeSeconds,
+            long yearlyPlayTimeSeconds,
+            long totalPlayTimeSeconds,
+            boolean exempt) {
+        this.name = name;
+        this.sessionPlayTimeSeconds = Math.max(0, sessionPlayTimeSeconds);
+        this.dailyPlayTimeSeconds = Math.max(0, dailyPlayTimeSeconds);
+        this.weeklyPlayTimeSeconds = Math.max(0, weeklyPlayTimeSeconds);
+        this.monthlyPlayTimeSeconds = Math.max(0, monthlyPlayTimeSeconds);
+        this.yearlyPlayTimeSeconds = Math.max(0, yearlyPlayTimeSeconds);
+        this.totalPlayTimeSeconds = Math.max(0, totalPlayTimeSeconds);
+        this.exempt = exempt;
     }
 
     /**
-     * Set whether the player data is errored or not.
-     * Player data will not be saved if errored.
-     * @param errored true if errored or false if not.
+     * Create player data using player name, play time, and exemption status provided.
+     * @param name The name of the player.
+     * @param sessionPlayTimeSeconds The player's session playtime in seconds.
+     * @param dailyPlayTimeSeconds The player's daily playtime in seconds.
+     * @param weeklyPlayTimeSeconds The player's weekly playtime in seconds.
+     * @param monthlyPlayTimeSeconds The player's monthly playtime in seconds.
+     * @param yearlyPlayTimeSeconds The player's yearly playtime in seconds.
+     * @param totalPlayTimeSeconds The player's total playtime in seconds.
+     * @param exempt Is the player exempt from leaderboard reporting?
+     * @param isAFK Is the player afk or not?
      */
-    public void setErrored(boolean errored) {
-        this.isErrored = errored;
+    public PlayerData(
+            @NonNull String name,
+            long sessionPlayTimeSeconds,
+            long dailyPlayTimeSeconds,
+            long weeklyPlayTimeSeconds,
+            long monthlyPlayTimeSeconds,
+            long yearlyPlayTimeSeconds,
+            long totalPlayTimeSeconds,
+            boolean exempt,
+            boolean isAFK) {
+        this.name = name;
+        this.sessionPlayTimeSeconds = Math.max(0, sessionPlayTimeSeconds);
+        this.dailyPlayTimeSeconds = Math.max(0, dailyPlayTimeSeconds);
+        this.weeklyPlayTimeSeconds = Math.max(0, weeklyPlayTimeSeconds);
+        this.monthlyPlayTimeSeconds = Math.max(0, monthlyPlayTimeSeconds);
+        this.yearlyPlayTimeSeconds = Math.max(0, yearlyPlayTimeSeconds);
+        this.totalPlayTimeSeconds = Math.max(0, totalPlayTimeSeconds);
+        this.exempt = exempt;
+        this.isAFK = isAFK;
     }
 
     /**

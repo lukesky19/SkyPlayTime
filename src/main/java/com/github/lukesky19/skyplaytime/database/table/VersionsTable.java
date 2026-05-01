@@ -41,28 +41,30 @@ public class VersionsTable {
 
     /**
      * Creates the table in the database if it doesn't exist.
+     * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    public void createTable() {
+    public @NonNull CompletableFuture<Void> createTable() {
         String tableCreationSql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
                 "id INTEGER PRIMARY KEY, " +
                 "table_id TEXT NOT NULL UNIQUE, " +
                 "version INTEGER NOT NULL)";
 
-        queueManager.queueWriteTransaction(tableCreationSql);
+        return queueManager.queueWriteTransaction(tableCreationSql).thenRun(() -> {});
     }
 
     /**
      * Update the version number for a table id.
      * @param tableId The table id.
      * @param version The version to set.
+     * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    public void updateVersion(@NonNull String tableId, int version) {
+    public @NonNull CompletableFuture<Void> updateVersion(@NonNull String tableId, int version) {
         String updateSql = "INSERT INTO " + tableName + " (table_id, version) VALUES (?, ?) ON CONFLICT (table_id) DO UPDATE SET version = ?";
 
         StringParameter tableIdParameter = new StringParameter(tableId);
         IntegerParameter versionParameter = new IntegerParameter(version);
 
-        queueManager.queueWriteTransaction(updateSql, List.of(tableIdParameter, versionParameter, versionParameter));
+        return queueManager.queueWriteTransaction(updateSql, List.of(tableIdParameter, versionParameter, versionParameter)).thenRun(() -> {});
     }
 
     /**
@@ -70,7 +72,7 @@ public class VersionsTable {
      * @param tableId The table id.
      * @return A {@link CompletableFuture} of type {@link Integer} containing the version number. -1 is returned for no version stored.
      */
-    public @NonNull CompletableFuture<Integer> getTableVersion(@NonNull String tableId) {
+    public @NonNull CompletableFuture<Integer> getVersion(@NonNull String tableId) {
         String readSql = "SELECT version FROM " + tableName + " WHERE table_id = ?";
 
         StringParameter tableIdParameter = new StringParameter(tableId);

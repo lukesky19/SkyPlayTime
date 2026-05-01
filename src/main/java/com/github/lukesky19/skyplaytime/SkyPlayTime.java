@@ -49,7 +49,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -122,9 +121,9 @@ public final class SkyPlayTime extends SkyPlugin {
 
         // Initialize player data for any online players that joined before the plugin was fully enabled.
         // This is mostly for plugman edge cases, but 99% of the time is not necessary.
-        List<CompletableFuture<Optional<PlayerData>>> futureList = new ArrayList<>();
+        List<CompletableFuture<PlayerData>> futureList = new ArrayList<>();
         this.getServer().getOnlinePlayers().forEach(player ->
-                futureList.add(playerDataManager.loadPlayerData(player, player.getUniqueId())));
+                futureList.add(playerDataManager.loadPlayerData(player)));
 
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0]));
         allFutures.thenAccept(_ ->

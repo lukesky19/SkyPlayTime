@@ -28,6 +28,7 @@ import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.parameter.CaseSensitiveStringParameter;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
@@ -63,8 +64,9 @@ public class PlayTimeTable {
     /**
      * Creates a table to store all {@link Player}'s {@link UUID}s as a string.
      * Queues the table creation and index creation sql.
+     * @return A {@link CompletableFuture} of type {@link Void} when complete.
      */
-    public void createTable() {
+    public @NonNull CompletableFuture<Void> createTable() {
         String tableCreationSql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
                 "uuid TEXT PRIMARY KEY NOT NULL UNIQUE, " +
                 "name TEXT NOT NULL, " +
@@ -77,18 +79,17 @@ public class PlayTimeTable {
                 "last_updated LONG NOT NULL DEFAULT 0)";
         String indexCreationSql = "CREATE INDEX IF NOT EXISTS idx_player_uuids ON " + tableName + "(uuid);";
 
-        queueManager.queueBulkWriteTransaction(List.of(tableCreationSql, indexCreationSql));
-
-        versionsTable.updateVersion(tableName, 1);
+        return queueManager.queueBulkWriteTransaction(List.of(tableCreationSql, indexCreationSql))
+                .thenCompose(_ -> versionsTable.updateVersion(tableName, 1));
     }
 
     /**
      * Loads the player's play time and exemption status from the database.
      * @param uuid The {@link UUID} to load data for.
      * @param playerData The {@link PlayerData} to put data into.
-     * @return A {@link CompletableFuture} with {@link PlayerData} when complete. The {@link PlayerData} passed to the method will be updated as well.
+     * @return A {@link CompletableFuture} with {@link Void} when complete. The {@link PlayerData} passed to the method will be updated.
      */
-    public @NonNull CompletableFuture<@NonNull PlayerData> loadPlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
+    public @NonNull CompletableFuture<Void> loadPlayerData(@NonNull UUID uuid, @NonNull PlayerData playerData) {
         String selectSql = "SELECT daily, weekly, monthly, yearly, total, exempt FROM " + tableName + " WHERE uuid = ?";
         UUIDParameter uuidParameter = new UUIDParameter(uuid);
 
@@ -103,15 +104,10 @@ public class PlayTimeTable {
                     playerData.setExempt(resultSet.getBoolean("exempt"));
                 }
 
-                return playerData;
+                return null;
             } catch (SQLException e) {
-                playerData.setErrored(true);
-
                 logger.warn(AdventureUtility.plain("Failed to load player data for player " + playerData.getName()));
-                logger.info(AdventureUtility.plain("This player will not have their play time saved to prevent overwriting their historical play time."));
-                logger.info(AdventureUtility.plain("This means that new play time earned will not be saved."));
-
-                return playerData;
+                return null;
             }
         });
     }
@@ -186,52 +182,65 @@ public class PlayTimeTable {
      */
     public @NonNull CompletableFuture<@NonNull List<@NonNull Boolean>> savePlayerData(@NonNull Map<@NonNull UUID, @NonNull PlayerData> playerDataMap) {
         List<List<Parameter<?>>> listOfParametersList = new ArrayList<>();
-        String updateSql = "UPDATE " + tableName + " SET daily = ?, weekly = ?, monthly = ?, yearly = ?, total = ?, exempt = ?, last_updated = ? WHERE uuid = ? AND last_updated < ?";
+        String updateSql = "INSERT INTO " + tableName + " (" +
+                "uuid, " +
+                "name, " +
+                "daily, " +
+                "weekly, " +
+                "monthly, " +
+                "yearly, " +
+                "total, " +
+                "exempt, " +
+                "last_updated) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT (uuid) " +
+                "DO UPDATE SET " +
+                "name = ?, " +
+                "daily = ?, " +
+                "weekly = ?, " +
+                "monthly = ?, " +
+                "yearly = ?, " +
+                "total = ?, " +
+                "exempt = ?, " +
+                "last_updated = ? " +
+                "WHERE last_updated < ?";
 
-        playerDataMap.entrySet()
-                .stream()
-                .filter(entry -> {
-                    UUID playerId = entry.getKey();
-                    PlayerData playerData = entry.getValue();
+        playerDataMap.forEach((playerId, playerData) -> {
+            UUIDParameter uuidParameter = new UUIDParameter(playerId);
+            CaseSensitiveStringParameter playerNameParameter = new CaseSensitiveStringParameter(playerData.getName());
+            LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
+            LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
+            LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
+            LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
+            LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
+            IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
+            LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
 
-                    if(playerData.isErrored()) {
-                        logger.warn(AdventureUtility.plain("Unable to save player data because it failed to load for player with name " + playerData.getName() + " and " + playerId));
-                        return false;
-                    }
+            List<Parameter<?>> parameters = List.of(
+                    uuidParameter,
+                    playerNameParameter,
+                    dailyTimeParameter,
+                    weeklyTimeParameter,
+                    monthlyTimeParameter,
+                    yearlyTimeParameter,
+                    totalTimeParameter,
+                    exemptParameter,
+                    timestampParameter,
+                    playerNameParameter,
+                    dailyTimeParameter,
+                    weeklyTimeParameter,
+                    monthlyTimeParameter,
+                    yearlyTimeParameter,
+                    totalTimeParameter,
+                    exemptParameter,
+                    timestampParameter,
+                    timestampParameter);
 
-                    return true;
-                })
-                .forEach(entry -> {
-                    UUID playerId = entry.getKey();
-                    PlayerData playerData = entry.getValue();
+            listOfParametersList.add(parameters);
+        });
 
-                    LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
-                    LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
-                    LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
-                    LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
-                    LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
-                    IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
-                    LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
-                    UUIDParameter uuidParameter = new UUIDParameter(playerId);
-                    List<Parameter<?>> parameters = List.of(dailyTimeParameter, weeklyTimeParameter, monthlyTimeParameter, yearlyTimeParameter, totalTimeParameter, exemptParameter, timestampParameter, uuidParameter, timestampParameter);
-
-                    listOfParametersList.add(parameters);
-                });
-
-        return queueManager.queueBulkWriteTransaction(updateSql, listOfParametersList).thenApply(list -> {
-                List<Boolean> results = new ArrayList<>();
-
-                list.forEach(rowsUpdated -> {
-                    if(rowsUpdated > 0) {
-                        results.add(true);
-                    } else  {
-                        results.add(false);
-                    }
-                });
-
-                return results;
-            }
-        );
+        return queueManager.queueBulkWriteTransaction(updateSql, listOfParametersList)
+                .thenApply(list -> list.stream().map(rowsUpdated -> rowsUpdated > 0).toList());
     }
 
     /**
