@@ -209,9 +209,11 @@ public final class SkyPlayTime extends SkyPlugin {
      * Attempts to retrieve the {@link NewPlayerPerksAPI}.
      */
     private @Nullable NewPlayerPerksAPI getNewPlayerPerksAPI() {
-        RegisteredServiceProvider<NewPlayerPerksAPI> provider = Bukkit.getServicesManager().getRegistration(NewPlayerPerksAPI.class);
-        if(provider != null) {
-            return provider.getProvider();
+        if(this.getServer().getPluginManager().isPluginEnabled("NewPlayerPerks")) {
+            RegisteredServiceProvider<NewPlayerPerksAPI> provider = Bukkit.getServicesManager().getRegistration(NewPlayerPerksAPI.class);
+            if(provider != null) {
+                return provider.getProvider();
+            }
         }
 
         return null;
