@@ -121,15 +121,19 @@ public class PlayerDataManager {
     public void unloadPlayerData(@NonNull UUID uuid) {
         PlayerData playerData = playerDataMap.get(uuid);
         if(playerData == null) {
-            logger.warn(AdventureUtility.plain("No player data loaded to save and unload."));
+            logger.warn(AdventureUtility.plain("No player data loaded to save and unload player id " + uuid + "."));
             return;
         }
 
         databaseManager.getPlayTimeTable().savePlayerData(uuid, playerData)
-                .thenAccept(_ -> playerDataMap.remove(uuid))
+                .thenAccept(_ -> {
+                    playerDataMap.remove(uuid);
+
+                    logger.info(AdventureUtility.plain("Saved and unloaded player data for player " + playerData.getName()));
+                })
                 .exceptionally(_ -> {
                     playerDataMap.remove(uuid);
-                    logger.warn(AdventureUtility.plain("Failed to save player data to the database."));
+                    logger.warn(AdventureUtility.plain("Failed to save player data for player " + playerData.getName() + " to the database."));
                     return null;
                 });
     }
