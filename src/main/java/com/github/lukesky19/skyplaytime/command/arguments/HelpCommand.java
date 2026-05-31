@@ -18,8 +18,8 @@
 package com.github.lukesky19.skyplaytime.command.arguments;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;

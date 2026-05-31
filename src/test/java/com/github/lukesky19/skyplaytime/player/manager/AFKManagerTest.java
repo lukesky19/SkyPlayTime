@@ -17,16 +17,19 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
-import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfig;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfigManager;
 import com.github.lukesky19.skyplaytime.common.MockBukkitExtension;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
-import com.github.lukesky19.skyplaytime.event.AFKStatusChangeEvent;
+import com.github.lukesky19.skyplaytime.integration.HookManager;
+import com.github.lukesky19.skyplaytime.integration.hook.NewPlayerPerksHook;
+import com.github.lukesky19.skyplaytime.locale.Locale;
+import com.github.lukesky19.skyplaytime.settings.Settings;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.api.event.AFKStatusChangeEvent;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.AFKToggleResult;
+import com.github.lukesky19.skyplaytime.util.enums.AFKToggleResult;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Server;
@@ -37,12 +40,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,10 +72,14 @@ public class AFKManagerTest {
     private SettingsManager settingsManager;
     @Mock
     private LocaleManager localeManager;
-
-    // NewPlayerPerksAPI
     @Mock
-    private NewPlayerPerksAPI newPlayerPerksAPI;
+    private AlgorithmConfigManager algorithmConfigManager;
+
+    // Integration
+    @Mock
+    private HookManager hookManager;
+    @Mock
+    private NewPlayerPerksHook newPlayerPerksHook;
 
     // PlayerDataManager
     @Mock
@@ -88,11 +93,21 @@ public class AFKManagerTest {
     private Player player1;
     private final UUID player1Id = UUID.randomUUID();
     private final String player1Name = "lukeskywlker19";
+    @Mock
+    private PlayerData player1PlayerData;
 
     @Mock
     private Player player2;
+    private final UUID player2Id = UUID.randomUUID();
+    @Mock
+    private PlayerData player2PlayerData;
+
     @Mock
     private Player player3;
+    private final UUID player3Id = UUID.randomUUID();
+    @Mock
+    private PlayerData player3PlayerData;
+
     @Mock
     private Player player4;
     @Mock
@@ -105,7 +120,7 @@ public class AFKManagerTest {
     public void setup() {
         when(skyPlayTime.getComponentLogger()).thenReturn(logger);
 
-        afkManager = new AFKManager(skyPlayTime, settingsManager, localeManager, playerDataManager, newPlayerPerksAPI);
+        afkManager = new AFKManager(skyPlayTime, settingsManager, localeManager, algorithmConfigManager, playerDataManager, hookManager);
     }
 
     /**
@@ -123,7 +138,7 @@ public class AFKManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
 
         assertTrue(afkManager.isPlayerAFK(player1));
 
@@ -135,7 +150,7 @@ public class AFKManagerTest {
      */
     @Test
     public void testIsPlayerAFKNoPlayerData() {
-        when(playerDataManager.getPlayerData(player1)).thenReturn(null);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.empty());
 
         assertFalse(afkManager.isPlayerAFK(player1));
 
@@ -157,7 +172,7 @@ public class AFKManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
 
         assertTrue(afkManager.isPlayerAFK(player1Id));
 
@@ -169,7 +184,7 @@ public class AFKManagerTest {
      */
     @Test
     public void testIsPlayerAFKByUUIDNoPlayerData() {
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(null);
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.empty());
 
         assertFalse(afkManager.isPlayerAFK(player1Id));
 
@@ -249,7 +264,7 @@ public class AFKManagerTest {
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)} where the player1 is marked AFK.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)} where the player1 is marked AFK.
      */
     @Test
     public void testMarkPlayerAFK() {
@@ -260,6 +275,9 @@ public class AFKManagerTest {
 
         Settings settings = createSettings();
         when(settingsManager.getSettings()).thenReturn(settings);
+
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
 
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
@@ -276,14 +294,15 @@ public class AFKManagerTest {
                 60,
                 60,
                 false);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
         assertFalse(playerData.isAFK());
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, true);
         assertEquals(AFKToggleResult.SUCCESS_AFK, result);
 
         assertTrue(afkManager.isPlayerAFK(player1));
+        assertTrue(playerData.isPlayerInitiated());
 
         verify(player1).sendMessage(any(Component.class));
         verify(player2).sendMessage(any(Component.class));
@@ -295,7 +314,7 @@ public class AFKManagerTest {
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)} where the player1 is marked not AFK.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)} where the player1 is marked not AFK.
      */
     @Test
     public void testMarkPlayerNotAFK() {
@@ -310,6 +329,12 @@ public class AFKManagerTest {
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
 
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
+
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
+
         when(player1.getUniqueId()).thenReturn(player1Id);
         when(player1.getName()).thenReturn(player1Name);
 
@@ -323,14 +348,15 @@ public class AFKManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
         assertTrue(playerData.isAFK());
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, false);
         assertEquals(AFKToggleResult.SUCCESS_NO_LONGER_AFK, result);
 
         assertFalse(afkManager.isPlayerAFK(player1));
+        assertFalse(playerData.isPlayerInitiated());
 
         verify(player1).sendMessage(any(Component.class));
         verify(player2).sendMessage(any(Component.class));
@@ -342,39 +368,56 @@ public class AFKManagerTest {
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)}, but the plugin settings are invalid.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)}, but the plugin settings are invalid.
      */
     @Test
     public void testTogglePlayerAFKInvalidSettings() {
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, true);
         assertEquals(AFKToggleResult.CONFIG_ERROR, result);
 
         verify(logger).warn(any(Component.class));
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)}, but the player1 has no player1 data.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)}, but the algorithm config is invalid.
+     */
+    @Test
+    public void testTogglePlayerAFKInvalidAlgorithmConfig() {
+        Settings settings = createSettings();
+        when(settingsManager.getSettings()).thenReturn(settings);
+
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, true);
+        assertEquals(AFKToggleResult.CONFIG_ERROR, result);
+
+        verify(logger).warn(any(Component.class));
+    }
+
+    /**
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)}, but the player1 has no player1 data.
      */
     @Test
     public void testTogglePlayerAFKNoPlayerData() {
         Settings settings = createSettings();
         when(settingsManager.getSettings()).thenReturn(settings);
 
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
+
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
 
         when(player1.getUniqueId()).thenReturn(player1Id);
 
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(null);
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.empty());
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, true);
         assertEquals(AFKToggleResult.ERROR, result);
 
         verify(logger).warn(any(Component.class));
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)}, but the {@link AFKStatusChangeEvent} is canceled.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)}, but the {@link AFKStatusChangeEvent} is canceled.
      */
     @Test
     public void testTogglePlayerAFKCancelled() {
@@ -384,6 +427,9 @@ public class AFKManagerTest {
         Settings settings = createSettings();
         when(settingsManager.getSettings()).thenReturn(settings);
 
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
+
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
 
@@ -398,8 +444,8 @@ public class AFKManagerTest {
                 60,
                 60,
                 false);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
         assertFalse(playerData.isAFK());
 
         // Cancel the event
@@ -409,10 +455,11 @@ public class AFKManagerTest {
             return null;
         }).when(pluginManager).callEvent(any(AFKStatusChangeEvent.class));
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, true, true, true);
         assertEquals(AFKToggleResult.CANCELLED, result);
 
         assertFalse(afkManager.isPlayerAFK(player1));
+        assertFalse(playerData.isPlayerInitiated());
 
         verify(player1, never()).sendMessage(any(Component.class));
         verify(player2, never()).sendMessage(any(Component.class));
@@ -424,7 +471,7 @@ public class AFKManagerTest {
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)} where the player1 is marked AFK and the player and server are not notified.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)} where the player1 is marked AFK and the player and server are not notified.
      */
     @Test
     public void testMarkPlayerAFKDoNotNotify() {
@@ -433,6 +480,9 @@ public class AFKManagerTest {
 
         Settings settings = createSettings();
         when(settingsManager.getSettings()).thenReturn(settings);
+
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
 
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
@@ -448,14 +498,15 @@ public class AFKManagerTest {
                 60,
                 60,
                 false);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
         assertFalse(playerData.isAFK());
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, false, false);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, false, false, false);
         assertEquals(AFKToggleResult.SUCCESS_AFK, result);
 
         assertTrue(afkManager.isPlayerAFK(player1));
+        assertFalse(playerData.isPlayerInitiated());
 
         verify(player1, never()).sendMessage(any(Component.class));
         verify(player2, never()).sendMessage(any(Component.class));
@@ -467,7 +518,7 @@ public class AFKManagerTest {
     }
 
     /**
-     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean)} where the player is marked not AFK and the player and server are not notified.
+     * Test {@link AFKManager#togglePlayerAFK(Player, boolean, boolean, boolean)} where the player is marked not AFK and the player and server are not notified.
      */
     @Test
     public void testMarkPlayerNotAFKDoNotNotify() {
@@ -479,6 +530,12 @@ public class AFKManagerTest {
 
         Locale locale = createLocale();
         when(localeManager.getLocale()).thenReturn(locale);
+
+        AlgorithmConfig algorithmConfig = createAlgorithmConfig();
+        when(algorithmConfigManager.getConfiguration()).thenReturn(algorithmConfig);
+
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
 
         when(player1.getUniqueId()).thenReturn(player1Id);
 
@@ -492,14 +549,15 @@ public class AFKManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player1)).thenReturn(playerData);
-        when(playerDataManager.getPlayerData(player1Id)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(playerData));
+        when(playerDataManager.getPlayerData(player1Id)).thenReturn(Optional.of(playerData));
         assertTrue(playerData.isAFK());
 
-        AFKToggleResult result = afkManager.togglePlayerAFK(player1, false, false);
+        AFKToggleResult result = afkManager.togglePlayerAFK(player1, false, false, false);
         assertEquals(AFKToggleResult.SUCCESS_NO_LONGER_AFK, result);
 
         assertFalse(afkManager.isPlayerAFK(player1));
+        assertFalse(playerData.isPlayerInitiated());
 
         verify(player1, never()).sendMessage(any(Component.class));
         verify(player2, never()).sendMessage(any(Component.class));
@@ -535,15 +593,13 @@ public class AFKManagerTest {
                 1,
                 "en_US",
                 900,
+                256,
+                120,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(true, false, false)),
+                new Settings.PlayerSettings(true, false, false),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
 
@@ -565,6 +621,9 @@ public class AFKManagerTest {
 
         Settings settings = createSettings();
 
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
+
         afkManager.resetAFKPlayerSettings(settings, player1);
 
         verify(player1).setCanPickupItems(true);
@@ -585,15 +644,13 @@ public class AFKManagerTest {
                 1,
                 "en_US",
                 900,
+                256,
+                120,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(true, false, false)),
+                new Settings.PlayerSettings(true, false, false),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
 
@@ -613,8 +670,10 @@ public class AFKManagerTest {
     public void testResetAFKSettingsHasPerks() {
         when(player1.getUniqueId()).thenReturn(player1Id);
 
-        when(newPlayerPerksAPI.hasPerks(player1Id)).thenReturn(true);
-        when(newPlayerPerksAPI.isInvulnerablePerkEnabled()).thenReturn(true);
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
+        when(newPlayerPerksHook.hasPerks(player1Id)).thenReturn(true);
+        when(newPlayerPerksHook.isInvulnerablePerkEnabled()).thenReturn(true);
 
         Settings settings = createSettings();
 
@@ -634,8 +693,10 @@ public class AFKManagerTest {
     public void testResetAFKSettingsInvulnerabilityPerkNotEnabled() {
         when(player1.getUniqueId()).thenReturn(player1Id);
 
-        when(newPlayerPerksAPI.hasPerks(player1Id)).thenReturn(true);
-        when(newPlayerPerksAPI.isInvulnerablePerkEnabled()).thenReturn(false);
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
+        when(newPlayerPerksHook.hasPerks(player1Id)).thenReturn(true);
+        when(newPlayerPerksHook.isInvulnerablePerkEnabled()).thenReturn(false);
 
         Settings settings = createSettings();
 
@@ -655,7 +716,10 @@ public class AFKManagerTest {
     public void testResetAFKSettingsNoNewPlayerPerks() {
         when(player1.getUniqueId()).thenReturn(player1Id);
 
-        AFKManager afkManagerNoNewPlayerPerks = new AFKManager(skyPlayTime, settingsManager, localeManager, playerDataManager, null);
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(false);
+
+        AFKManager afkManagerNoNewPlayerPerks = new AFKManager(skyPlayTime, settingsManager, localeManager, algorithmConfigManager, playerDataManager, hookManager);
 
         Settings settings = createSettings();
 
@@ -669,25 +733,124 @@ public class AFKManagerTest {
     }
 
     /**
+     * Test {@link AFKManager#resetOnlinePlayerAFKSettings()}.
+     */
+    @Test
+    public void testResetOnlinePlayerAFKSettings() {
+        Settings settings = createSettings();
+        when(settingsManager.getSettings()).thenReturn(settings);
+
+        when(hookManager.getHook(NewPlayerPerksHook.class)).thenReturn(newPlayerPerksHook);
+        when(newPlayerPerksHook.isHooked()).thenReturn(true);
+        
+        when(skyPlayTime.getServer()).thenReturn(server);
+        Collection<? extends Player> onlinePlayers = List.of(player1, player2, player3);
+        Mockito.<Collection<? extends Player>> when(server.getOnlinePlayers()).thenReturn(onlinePlayers);
+
+        when(player1.getUniqueId()).thenReturn(player1Id);
+        when(player2.getUniqueId()).thenReturn(player2Id);
+        when(player3.getUniqueId()).thenReturn(player3Id);
+
+        when(playerDataManager.getPlayerData(player1)).thenReturn(Optional.of(player1PlayerData));
+        when(playerDataManager.getPlayerData(player2)).thenReturn(Optional.of(player2PlayerData));
+        when(playerDataManager.getPlayerData(player3)).thenReturn(Optional.of(player3PlayerData));
+
+        when(player1PlayerData.isAFK()).thenReturn(true);
+        when(player2PlayerData.isAFK()).thenReturn(true);
+        when(player3PlayerData.isAFK()).thenReturn(true);
+
+        afkManager.resetOnlinePlayerAFKSettings();
+
+        verify(player1).setCanPickupItems(true);
+        verify(player1).setInvulnerable(false);
+        verify(player1).setSleepingIgnored(false);
+
+        verify(player2).setCanPickupItems(true);
+        verify(player2).setInvulnerable(false);
+        verify(player2).setSleepingIgnored(false);
+
+        verify(player3).setCanPickupItems(true);
+        verify(player3).setInvulnerable(false);
+        verify(player3).setSleepingIgnored(false);
+    }
+
+    /**
+     * Test {@link AFKManager#resetOnlinePlayerAFKSettings()}, but the plugin's settings are invalid.
+     */
+    @Test
+    public void testResetOnlinePlayerAFKSettingsInvalidSettings() {
+        when(settingsManager.getSettings()).thenReturn(null);
+
+        afkManager.resetOnlinePlayerAFKSettings();
+
+        verify(player1, never()).setCanPickupItems(true);
+        verify(player1, never()).setInvulnerable(false);
+        verify(player1, never()).setSleepingIgnored(false);
+
+        verify(player2, never()).setCanPickupItems(true);
+        verify(player2, never()).setInvulnerable(false);
+        verify(player2, never()).setSleepingIgnored(false);
+
+        verify(player3, never()).setCanPickupItems(true);
+        verify(player3, never()).setInvulnerable(false);
+        verify(player3, never()).setSleepingIgnored(false);
+    }
+
+    /**
      * Create {@link Settings} configuration for testing purposes.
-     * @return A {@link Settings} configuration.
+     * @return The {@link Settings} configuration.
      */
     private @NonNull Settings createSettings() {
         return new Settings(
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
+    }
+
+    /**
+     * Create {@link AlgorithmConfig} for testing purposes.
+     * @return The {@link AlgorithmConfig}.
+     */
+    private @NonNull AlgorithmConfig createAlgorithmConfig() {
+        return new AlgorithmConfig(
+                1,
+                120,
+                new AlgorithmConfig.LocationSimilarityOptions(
+                        false,
+                        180,
+                        8,
+                        0.6),
+                new AlgorithmConfig.LocationSimilarityOptions(
+                        false,
+                        3.5,
+                        8,
+                        0.75),
+                new AlgorithmConfig.FishingOptions(
+                        false,
+                        10,
+                        8,
+                        0.75),
+                new AlgorithmConfig.GeneratorOptions(
+                        false,
+                        60,
+                        30),
+                new AlgorithmConfig.LocationSimilarityOptions(
+                        false,
+                        15,
+                        8,
+                        0.75),
+                new AlgorithmConfig.TimeoutOptions(
+                        false,
+                        300));
     }
 
     /**

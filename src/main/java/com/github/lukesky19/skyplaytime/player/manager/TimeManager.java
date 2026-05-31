@@ -19,12 +19,12 @@ package com.github.lukesky19.skyplaytime.player.manager;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.settings.Settings;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
@@ -70,13 +70,12 @@ public class TimeManager {
      * @return The player's play time in seconds for the provided {@link TimeCategory}.
      */
     public long getPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory) {
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
-            logger.warn(AdventureUtility.plain("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
-            return 0;
-        }
-
-        return playerData.getPlayTime(timeCategory);
+        return playerDataManager.getPlayerData(player)
+                .map(playerData -> playerData.getPlayTime(timeCategory))
+                .orElseGet(() -> {
+                    logger.warn(AdventureUtility.plain("Unable to get play time for player " + player.getName() + " due to no player data loaded."));
+                    return 0L;
+                });
     }
 
     /**
@@ -90,13 +89,12 @@ public class TimeManager {
             @NonNull Player player,
             @NonNull TimeCategory timeCategory,
             long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
-            logger.warn(AdventureUtility.plain("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
-            return false;
-        }
-
-        return playerData.addPlayTime(timeCategory, playTimeSeconds);
+        return playerDataManager.getPlayerData(player)
+                .map(playerData -> playerData.addPlayTime(timeCategory, playTimeSeconds))
+                .orElseGet(() -> {
+                    logger.warn(AdventureUtility.plain("Unable to add play time to player " + player.getName() + " due to no player data loaded."));
+                    return false;
+                });
     }
 
     /**
@@ -106,14 +104,16 @@ public class TimeManager {
      * @param playTimeSeconds The play time in seconds to remove.
      * @return true if successful, false if not.
      */
-    public boolean removePlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
-            logger.warn(AdventureUtility.plain("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
-            return false;
-        }
-
-        return playerData.removePlayTime(timeCategory, playTimeSeconds);
+    public boolean removePlayTimeSeconds(
+            @NonNull Player player,
+            @NonNull TimeCategory timeCategory,
+            long playTimeSeconds) {
+        return playerDataManager.getPlayerData(player)
+                .map(playerData -> playerData.removePlayTime(timeCategory, playTimeSeconds))
+                .orElseGet(() -> {
+                    logger.warn(AdventureUtility.plain("Unable to remove play time from player " + player.getName() + " due to no player data loaded."));
+                    return false;
+                });
     }
 
     /**
@@ -123,14 +123,16 @@ public class TimeManager {
      * @param playTimeSeconds The play time in seconds to remove.
      * @return true if successful, false if not.
      */
-    public boolean setPlayTimeSeconds(@NonNull Player player, @NonNull TimeCategory timeCategory, long playTimeSeconds) {
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
-            logger.warn(AdventureUtility.plain("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
-            return false;
-        }
-
-        return playerData.setPlayTime(timeCategory, playTimeSeconds);
+    public boolean setPlayTimeSeconds(
+            @NonNull Player player,
+            @NonNull TimeCategory timeCategory,
+            long playTimeSeconds) {
+        return playerDataManager.getPlayerData(player)
+                .map(playerData -> playerData.setPlayTime(timeCategory, playTimeSeconds))
+                .orElseGet(() -> {
+                    logger.warn(AdventureUtility.plain("Unable to set play time for player " + player.getName() + " due to no player data loaded."));
+                    return false;
+                });
     }
 
     /**
@@ -164,13 +166,12 @@ public class TimeManager {
         }
 
         // Get the player's data and abort the reset if no player data was found.
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
-            logger.warn(AdventureUtility.plain("Unable to reset play time for player " + player.getName() + " due to no player data found."));
-            return false;
-        }
-
-        return resetPlayTime(player.getUniqueId(), playerData, session, daily, weekly, monthly, yearly, total);
+        return playerDataManager.getPlayerData(player)
+                .map(playerData -> resetPlayTime(player.getUniqueId(), playerData, session, daily, weekly, monthly, yearly, total))
+                .orElseGet(() -> {
+                    logger.warn(AdventureUtility.plain("Unable to reset play time for player " + player.getName() + " due to no player data found."));
+                    return false;
+                });
     }
 
     /**
@@ -194,12 +195,12 @@ public class TimeManager {
             boolean monthly,
             boolean yearly,
             boolean total) {
-        if(session) playerData.setSessionPlayTime(0);
-        if(daily) playerData.setDailyPlayTime(0);
-        if(weekly) playerData.setWeeklyPlayTime(0);
-        if(monthly) playerData.setMonthlyPlayTime(0);
-        if(yearly) playerData.setYearlyPlayTime(0);
-        if(total) playerData.setTotalPlayTime(0);
+        if(session) playerData.setPlayTime(TimeCategory.SESSION, 0);
+        if(daily) playerData.setPlayTime(TimeCategory.DAILY, 0);
+        if(weekly) playerData.setPlayTime(TimeCategory.WEEKLY, 0);
+        if(monthly) playerData.setPlayTime(TimeCategory.MONTHLY, 0);
+        if(yearly) playerData.setPlayTime(TimeCategory.YEARLY, 0);
+        if(total) playerData.setPlayTime(TimeCategory.TOTAL, 0);
 
         playerDataManager.savePlayerData(playerId);
 
@@ -338,12 +339,12 @@ public class TimeManager {
             boolean total) {
         Map<@NonNull UUID, @NonNull PlayerData> playerDataMap = playerDataManager.getPlayerDataMap();
 
-        if (session) playerDataMap.values().forEach(data -> data.setSessionPlayTime(0));
-        if (daily) playerDataMap.values().forEach(data -> data.setDailyPlayTime(0));
-        if (weekly) playerDataMap.values().forEach(data -> data.setWeeklyPlayTime(0));
-        if (monthly) playerDataMap.values().forEach(data -> data.setMonthlyPlayTime(0));
-        if (yearly) playerDataMap.values().forEach(data -> data.setYearlyPlayTime(0));
-        if (total) playerDataMap.values().forEach(data -> data.setTotalPlayTime(0));
+        if (session) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.SESSION, 0));
+        if (daily) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.DAILY, 0));
+        if (weekly) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.WEEKLY, 0));
+        if (monthly) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.MONTHLY, 0));
+        if (yearly) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.YEARLY, 0));
+        if (total) playerDataMap.values().forEach(data -> data.setPlayTime(TimeCategory.TOTAL, 0));
     }
 
     /**

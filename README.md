@@ -45,6 +45,7 @@
 * /skyplaytime debug last-move - View the last time the player moved.
 * /skyplaytime debug last-action - View the last time the player completed an action.
 * /skyplaytime debug list - View a list that displays whether a player is online, offline, or unknown and whether their play time is being tracked.
+* /skyplaytime debug algorithms <player_name> - View the results of all algorithms for the player.
 
 ## Permissions
 * `skyplaytime.command.skyplaytime` - Base Command Permission

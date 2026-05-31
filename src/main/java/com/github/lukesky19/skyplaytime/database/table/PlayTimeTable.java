@@ -27,7 +27,7 @@ import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
 import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import com.github.lukesky19.skyplaytime.util.parameter.CaseSensitiveStringParameter;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
@@ -96,11 +96,12 @@ public class PlayTimeTable {
         return queueManager.queueReadTransaction(selectSql, List.of(uuidParameter), resultSet -> {
             try {
                 if(resultSet.next()) {
-                    playerData.setDailyPlayTime(playerData.getDailyPlayTimeSeconds() + resultSet.getLong("daily"));
-                    playerData.setWeeklyPlayTime(playerData.getWeeklyPlayTimeSeconds() + resultSet.getLong("weekly"));
-                    playerData.setMonthlyPlayTime(playerData.getMonthlyPlayTimeSeconds() + resultSet.getLong("monthly"));
-                    playerData.setYearlyPlayTime(playerData.getYearlyPlayTimeSeconds() + resultSet.getLong("yearly"));
-                    playerData.setTotalPlayTime(playerData.getTotalPlayTimeSeconds() + resultSet.getLong("total"));
+                    playerData.addPlayTime(TimeCategory.DAILY, resultSet.getLong("daily"));
+                    playerData.addPlayTime(TimeCategory.WEEKLY, resultSet.getLong("weekly"));
+                    playerData.addPlayTime(TimeCategory.MONTHLY, resultSet.getLong("monthly"));
+                    playerData.addPlayTime(TimeCategory.YEARLY, resultSet.getLong("yearly"));
+                    playerData.addPlayTime(TimeCategory.TOTAL, resultSet.getLong("total"));
+
                     playerData.setExempt(resultSet.getBoolean("exempt"));
                 }
 
@@ -144,11 +145,13 @@ public class PlayTimeTable {
 
         UUIDParameter uuidParameter = new UUIDParameter(uuid);
         StringParameter nameParameter = new StringParameter(playerData.getName());
-        LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
-        LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
-        LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
-        LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
-        LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
+
+        LongParameter dailyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.DAILY));
+        LongParameter weeklyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.WEEKLY));
+        LongParameter monthlyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.MONTHLY));
+        LongParameter yearlyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.YEARLY));
+        LongParameter totalTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.TOTAL));
+
         IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
         LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
 
@@ -208,11 +211,13 @@ public class PlayTimeTable {
         playerDataMap.forEach((playerId, playerData) -> {
             UUIDParameter uuidParameter = new UUIDParameter(playerId);
             CaseSensitiveStringParameter playerNameParameter = new CaseSensitiveStringParameter(playerData.getName());
-            LongParameter dailyTimeParameter = new LongParameter(playerData.getDailyPlayTimeSeconds());
-            LongParameter weeklyTimeParameter = new LongParameter(playerData.getWeeklyPlayTimeSeconds());
-            LongParameter monthlyTimeParameter = new LongParameter(playerData.getMonthlyPlayTimeSeconds());
-            LongParameter yearlyTimeParameter = new LongParameter(playerData.getYearlyPlayTimeSeconds());
-            LongParameter totalTimeParameter = new LongParameter(playerData.getTotalPlayTimeSeconds());
+
+            LongParameter dailyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.DAILY));
+            LongParameter weeklyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.WEEKLY));
+            LongParameter monthlyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.MONTHLY));
+            LongParameter yearlyTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.YEARLY));
+            LongParameter totalTimeParameter = new LongParameter(playerData.getPlayTime(TimeCategory.TOTAL));
+
             IntegerParameter exemptParameter = new IntegerParameter(playerData.isExempt() ? 1 : 0);
             LongParameter timestampParameter = new LongParameter(System.currentTimeMillis());
 

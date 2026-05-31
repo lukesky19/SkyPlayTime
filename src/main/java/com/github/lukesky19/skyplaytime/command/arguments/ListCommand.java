@@ -19,8 +19,8 @@ package com.github.lukesky19.skyplaytime.command.arguments;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.util.PluginUtils;
@@ -76,7 +76,7 @@ public class ListCommand {
                     List<String> playerNamesAndStatuses = getPlayerNamesAndStatuses(locale);
 
                     // Get the server's player count excluding vanished players
-                    long playerCount = skyPlayTime.getServer().getOnlinePlayers().stream().filter(PluginUtils::isPlayerVanished).count();
+                    long playerCount = skyPlayTime.getServer().getOnlinePlayers().stream().filter(player -> !PluginUtils.isPlayerVanished(player)).count();
                     // Create the placeholders list
                     List<TagResolver.Single> placeholders = List.of(Placeholder.parsed("player_count", String.valueOf(playerCount)));
 

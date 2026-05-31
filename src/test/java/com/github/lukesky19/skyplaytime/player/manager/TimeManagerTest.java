@@ -19,13 +19,13 @@ package com.github.lukesky19.skyplaytime.player.manager;
 
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
 import com.github.lukesky19.skyplaytime.common.MockBukkitExtension;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.settings.Settings;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
@@ -108,7 +108,7 @@ public class TimeManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player)).thenReturn(Optional.of(playerData));
 
         long playTime = timeManager.getPlayTimeSeconds(player, TimeCategory.MONTHLY);
 
@@ -142,7 +142,7 @@ public class TimeManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player)).thenReturn(Optional.of(playerData));
 
         assertTrue(timeManager.addPlayTimeSeconds(player, TimeCategory.MONTHLY, 30));
 
@@ -174,7 +174,7 @@ public class TimeManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player)).thenReturn(Optional.of(playerData));
 
         assertTrue(timeManager.removePlayTimeSeconds(player, TimeCategory.MONTHLY, 30));
 
@@ -206,7 +206,7 @@ public class TimeManagerTest {
                 60,
                 false,
                 true);
-        when(playerDataManager.getPlayerData(player)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player)).thenReturn(Optional.of(playerData));
 
         assertTrue(timeManager.setPlayTimeSeconds(player, TimeCategory.MONTHLY, 45));
 
@@ -240,12 +240,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(0, playerData.getSessionPlayTimeSeconds());
-        assertEquals(0, playerData.getDailyPlayTimeSeconds());
-        assertEquals(0, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(0, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(0, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(0, playerData.getTotalPlayTimeSeconds());
+        assertEquals(0, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -265,12 +265,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(0, playerData.getSessionPlayTimeSeconds());
-        assertEquals(60, playerData.getDailyPlayTimeSeconds());
-        assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, playerData.getTotalPlayTimeSeconds());
+        assertEquals(0, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -290,12 +290,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(60, playerData.getSessionPlayTimeSeconds());
-        assertEquals(0, playerData.getDailyPlayTimeSeconds());
-        assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, playerData.getTotalPlayTimeSeconds());
+        assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -315,12 +315,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(60, playerData.getSessionPlayTimeSeconds());
-        assertEquals(60, playerData.getDailyPlayTimeSeconds());
-        assertEquals(0, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, playerData.getTotalPlayTimeSeconds());
+        assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -340,12 +340,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(60, playerData.getSessionPlayTimeSeconds());
-        assertEquals(60, playerData.getDailyPlayTimeSeconds());
-        assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(0, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, playerData.getTotalPlayTimeSeconds());
+        assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -365,12 +365,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(60, playerData.getSessionPlayTimeSeconds());
-        assertEquals(60, playerData.getDailyPlayTimeSeconds());
-        assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(0, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, playerData.getTotalPlayTimeSeconds());
+        assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -390,12 +390,12 @@ public class TimeManagerTest {
 
         verify(playerDataManager).savePlayerData(playerId);
 
-        assertEquals(60, playerData.getSessionPlayTimeSeconds());
-        assertEquals(60, playerData.getDailyPlayTimeSeconds());
-        assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-        assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-        assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-        assertEquals(0, playerData.getTotalPlayTimeSeconds());
+        assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(0, playerData.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**
@@ -427,15 +427,13 @@ public class TimeManagerTest {
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
         when(settingsManager.getSettings()).thenReturn(settings);
@@ -470,12 +468,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(0, playerData.getSessionPlayTimeSeconds());
-            assertEquals(0, playerData.getDailyPlayTimeSeconds());
-            assertEquals(0, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(0, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(0, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(0, playerData.getTotalPlayTimeSeconds());
+            assertEquals(0, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -504,12 +502,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(0, playerData.getSessionPlayTimeSeconds());
-            assertEquals(60, playerData.getDailyPlayTimeSeconds());
-            assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(60, playerData.getTotalPlayTimeSeconds());
+            assertEquals(0, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -538,12 +536,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(60, playerData.getSessionPlayTimeSeconds());
-            assertEquals(0, playerData.getDailyPlayTimeSeconds());
-            assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(60, playerData.getTotalPlayTimeSeconds());
+            assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -572,12 +570,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(60, playerData.getSessionPlayTimeSeconds());
-            assertEquals(60, playerData.getDailyPlayTimeSeconds());
-            assertEquals(0, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(60, playerData.getTotalPlayTimeSeconds());
+            assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -606,12 +604,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(60, playerData.getSessionPlayTimeSeconds());
-            assertEquals(60, playerData.getDailyPlayTimeSeconds());
-            assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(0, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(60, playerData.getTotalPlayTimeSeconds());
+            assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -640,12 +638,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(60, playerData.getSessionPlayTimeSeconds());
-            assertEquals(60, playerData.getDailyPlayTimeSeconds());
-            assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(0, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(60, playerData.getTotalPlayTimeSeconds());
+            assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -674,12 +672,12 @@ public class TimeManagerTest {
         verify(logger, never()).warn(any(Component.class));
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(60, playerData.getSessionPlayTimeSeconds());
-            assertEquals(60, playerData.getDailyPlayTimeSeconds());
-            assertEquals(60, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(60, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(60, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(0, playerData.getTotalPlayTimeSeconds());
+            assertEquals(60, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(60, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -724,15 +722,13 @@ public class TimeManagerTest {
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 true,
                 false,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
         when(settingsManager.getSettings()).thenReturn(settings);
@@ -822,15 +818,13 @@ public class TimeManagerTest {
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 false,
                 false,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
         when(settingsManager.getSettings()).thenReturn(settings);
@@ -846,12 +840,12 @@ public class TimeManagerTest {
         future.thenAccept(Assertions::assertTrue).join();
 
         playerDataMap.forEach((_, playerData) -> {
-            assertEquals(0, playerData.getSessionPlayTimeSeconds());
-            assertEquals(0, playerData.getDailyPlayTimeSeconds());
-            assertEquals(0, playerData.getWeeklyPlayTimeSeconds());
-            assertEquals(0, playerData.getMonthlyPlayTimeSeconds());
-            assertEquals(0, playerData.getYearlyPlayTimeSeconds());
-            assertEquals(0, playerData.getTotalPlayTimeSeconds());
+            assertEquals(0, playerData.getPlayTime(TimeCategory.SESSION));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.DAILY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.WEEKLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.MONTHLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.YEARLY));
+            assertEquals(0, playerData.getPlayTime(TimeCategory.TOTAL));
         });
     }
 
@@ -878,15 +872,13 @@ public class TimeManagerTest {
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
 
@@ -905,15 +897,13 @@ public class TimeManagerTest {
                 1,
                 "en_US",
                 900,
+                512,
+                300,
                 true,
                 true,
                 "30d",
                 "90d",
-                new Settings.AfkSettings(
-                        300,
-                        60,
-                        30,
-                        new Settings.PlayerSettings(false, true, true)),
+                new Settings.PlayerSettings(false, true, true),
                 new Settings.ResetSettings("America/New_York", "SUNDAY", 10),
                 new Settings.LastResetTimes(0, 0, 0, 0));
         when(settingsManager.getSettings()).thenReturn(settings);
@@ -935,7 +925,7 @@ public class TimeManagerTest {
                 60,
                 false,
                 false);
-        when(playerDataManager.getPlayerData(player)).thenReturn(playerData);
+        when(playerDataManager.getPlayerData(player)).thenReturn(Optional.of(playerData));
 
         return playerData;
     }

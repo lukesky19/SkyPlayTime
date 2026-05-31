@@ -17,7 +17,7 @@
 */
 package com.github.lukesky19.skyplaytime.leaderboard.data;
 
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import com.github.lukesky19.skylib.libs.configurate.objectmapping.ConfigSerializable;

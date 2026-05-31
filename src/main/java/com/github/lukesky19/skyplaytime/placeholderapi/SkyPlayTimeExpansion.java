@@ -13,7 +13,7 @@
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  ifnot, see <https://www.gnu.org/licenses/>.
 */
 package com.github.lukesky19.skyplaytime.placeholderapi;
 
@@ -24,8 +24,7 @@ import com.github.lukesky19.skyplaytime.leaderboard.data.Position;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
-import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -105,88 +104,21 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
         placeholder = placeholder.toLowerCase();
 
         switch(placeholder.toLowerCase()) {
-            case "session_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
+            case "session_time", "daily_time", "weekly_time", "monthly_time", "yearly_time", "total_time" -> {
+                TimeCategory category = TimeCategory.valueOf(placeholder.split("_")[0].toUpperCase());
 
-                return formatTime(playerData.getSessionPlayTimeSeconds());
+                return playerDataManager.getPlayerData(uuid)
+                        .map(playerData -> formatTime(playerData.getPlayTime(category)))
+                        .orElse("");
             }
 
-            case "daily_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
+            case "session_time_raw", "daily_time_raw", "weekly_time_raw", "monthly_time_raw",
+                 "yearly_time_raw", "total_time_raw" -> {
+                TimeCategory category = TimeCategory.valueOf(placeholder.split("_")[0].toUpperCase());
 
-                return formatTime(playerData.getDailyPlayTimeSeconds());
-            }
-
-            case "weekly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getWeeklyPlayTimeSeconds());
-            }
-
-            case "monthly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getMonthlyPlayTimeSeconds());
-            }
-
-            case "yearly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getYearlyPlayTimeSeconds());
-            }
-
-            case "total_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getTotalPlayTimeSeconds());
-            }
-
-            case "session_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getSessionPlayTimeSeconds());
-            }
-
-            case "daily_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getDailyPlayTimeSeconds());
-            }
-
-            case "weekly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getWeeklyPlayTimeSeconds());
-            }
-
-            case "monthly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getMonthlyPlayTimeSeconds());
-            }
-
-            case "yearly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getYearlyPlayTimeSeconds());
-            }
-
-            case "total_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getTotalPlayTimeSeconds());
+                return playerDataManager.getPlayerData(uuid)
+                        .map(playerData -> String.valueOf(playerData.getPlayTime(category)))
+                        .orElse("");
             }
 
             case "afk" -> {
@@ -280,88 +212,21 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
         placeholder = placeholder.toLowerCase();
 
         switch(placeholder.toLowerCase()) {
-            case "session_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
+            case "session_time", "daily_time", "weekly_time", "monthly_time", "yearly_time", "total_time" -> {
+                TimeCategory category = TimeCategory.valueOf(placeholder.split("_")[0].toUpperCase());
 
-                return formatTime(playerData.getSessionPlayTimeSeconds());
+                return playerDataManager.getPlayerData(uuid)
+                        .map(playerData -> formatTime(playerData.getPlayTime(category)))
+                        .orElse("");
             }
 
-            case "daily_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
+            case "session_time_raw", "daily_time_raw", "weekly_time_raw", "monthly_time_raw",
+                 "yearly_time_raw", "total_time_raw" -> {
+                TimeCategory category = TimeCategory.valueOf(placeholder.split("_")[0].toUpperCase());
 
-                return formatTime(playerData.getDailyPlayTimeSeconds());
-            }
-
-            case "weekly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getWeeklyPlayTimeSeconds());
-            }
-
-            case "monthly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getMonthlyPlayTimeSeconds());
-            }
-
-            case "yearly_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getYearlyPlayTimeSeconds());
-            }
-
-            case "total_time" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return formatTime(playerData.getTotalPlayTimeSeconds());
-            }
-
-            case "session_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getSessionPlayTimeSeconds());
-            }
-
-            case "daily_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getDailyPlayTimeSeconds());
-            }
-
-            case "weekly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getWeeklyPlayTimeSeconds());
-            }
-
-            case "monthly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getMonthlyPlayTimeSeconds());
-            }
-
-            case "yearly_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getYearlyPlayTimeSeconds());
-            }
-
-            case "total_time_raw" -> {
-                PlayerData playerData = playerDataManager.getPlayerData(uuid);
-                if(playerData == null) return "";
-
-                return String.valueOf(playerData.getTotalPlayTimeSeconds());
+                return playerDataManager.getPlayerData(uuid)
+                        .map(playerData -> String.valueOf(playerData.getPlayTime(category)))
+                        .orElse("");
             }
 
             case "afk" -> {
@@ -484,49 +349,48 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
         boolean firstUnit = true;
 
         if(timeRecord.years() > 0) {
-            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.years()).append(" year").append(timeRecord.years() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.months() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.months() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.months()).append(" month").append(timeRecord.months() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.weeks() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.weeks() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.weeks()).append(" week").append(timeRecord.weeks() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.days() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.days() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.days()).append(" day").append(timeRecord.days() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.hours() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.hours() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.hours()).append(" hour").append(timeRecord.hours() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.minutes() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.minutes() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.minutes()).append(" minute").append(timeRecord.minutes() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        if (timeRecord.seconds() > 0) {
-            if (!firstUnit) messageBuilder.append(" ");
+        if(timeRecord.seconds() > 0) {
+            if(!firstUnit) messageBuilder.append(" ");
             messageBuilder.append(timeRecord.seconds()).append(" second").append(timeRecord.seconds() > 1 ? "s" : "");
             firstUnit = false;
         }
 
-        // If no units were added, return "0 seconds" or similar
-        if (firstUnit) {
+        // ifno units were added, return "0 seconds" or similar
+        if(firstUnit) {
             return "0 seconds";
         }
 
@@ -553,8 +417,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
         for(String unit : timeUnits) {
             switch (unit.toLowerCase()) {
                 case "years" -> {
-                    if (timeRecord.years() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.years() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.years()).append(" year").append(timeRecord.years() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -562,8 +426,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "yr" -> {
-                    if (timeRecord.years() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.years() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.years()).append("yr");
                         firstUnit = false;
                     }
@@ -571,8 +435,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "y" -> {
-                    if (timeRecord.years() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.years() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.years()).append("y");
                         firstUnit = false;
                     }
@@ -580,8 +444,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "months" -> {
-                    if (timeRecord.months() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.months() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.months()).append(" month").append(timeRecord.months() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -589,8 +453,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "mo" -> {
-                    if (timeRecord.months() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.months() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.months()).append("M");
                         firstUnit = false;
                     }
@@ -598,8 +462,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "weeks" -> {
-                    if (timeRecord.weeks() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.weeks() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.weeks()).append(" week").append(timeRecord.weeks() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -607,8 +471,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "w" -> {
-                    if (timeRecord.weeks() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.weeks() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.weeks()).append("w");
                         firstUnit = false;
                     }
@@ -616,8 +480,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "days" -> {
-                    if (timeRecord.days() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.days() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.days()).append(" day").append(timeRecord.days() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -625,8 +489,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "d" -> {
-                    if (timeRecord.days() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.days() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.days()).append("d");
                         firstUnit = false;
                     }
@@ -634,8 +498,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "hours" -> {
-                    if (timeRecord.hours() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.hours() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.hours()).append(" hour").append(timeRecord.hours() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -643,8 +507,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "hr" -> {
-                    if (timeRecord.hours() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.hours() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.hours()).append("hr");
                         firstUnit = false;
                     }
@@ -652,8 +516,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "h" -> {
-                    if (timeRecord.hours() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.hours() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.hours()).append("h");
                         firstUnit = false;
                     }
@@ -661,8 +525,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "minutes" -> {
-                    if (timeRecord.minutes() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.minutes() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.minutes()).append(" minute").append(timeRecord.minutes() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -670,8 +534,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "min" -> {
-                    if (timeRecord.minutes() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.minutes() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.minutes()).append("m");
                         firstUnit = false;
                     }
@@ -679,8 +543,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "seconds" -> {
-                    if (timeRecord.seconds() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.seconds() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.seconds()).append(" second").append(timeRecord.seconds() > 1 ? "s" : "");
                         firstUnit = false;
                     }
@@ -688,8 +552,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "sec" -> {
-                    if (timeRecord.seconds() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.seconds() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.seconds()).append(" sec");
                         firstUnit = false;
                     }
@@ -697,8 +561,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
                 }
 
                 case "s" -> {
-                    if (timeRecord.seconds() > 0) {
-                        if (!firstUnit) messageBuilder.append(" ");
+                    if(timeRecord.seconds() > 0) {
+                        if(!firstUnit) messageBuilder.append(" ");
                         messageBuilder.append(timeRecord.seconds()).append("s");
                         firstUnit = false;
                     }
@@ -707,8 +571,8 @@ public class SkyPlayTimeExpansion extends PlaceholderExpansion {
             }
         }
 
-        // If no units were added, return "0 seconds" or similar
-        if (firstUnit) {
+        // ifno units were added, return "0 seconds" or similar
+        if(firstUnit) {
             return "0 seconds";
         }
 

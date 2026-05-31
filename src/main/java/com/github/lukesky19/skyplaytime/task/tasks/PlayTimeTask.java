@@ -19,8 +19,9 @@ package com.github.lukesky19.skyplaytime.task.tasks;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.event.PlayTimeGainedEvent;
+import com.github.lukesky19.skyplaytime.api.event.PlayTimeGainedEvent;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ public class PlayTimeTask extends BukkitRunnable {
                 .forEach((uuid, playerData) -> {
                     Player player = server.getPlayer(uuid);
                     if(player != null && player.isOnline() && player.isConnected()) {
-                        playerData.addPlayTime(1);
+                        playerData.addPlayTime(TimeCategory.ALL, 1);
 
                         PlayTimeGainedEvent playTimeGainedEvent = new PlayTimeGainedEvent(player);
                         pluginManager.callEvent(playTimeGainedEvent);

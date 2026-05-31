@@ -19,10 +19,10 @@ package com.github.lukesky19.skyplaytime.task.tasks;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.settings.Settings;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.player.manager.TimeManager;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.NonNull;
@@ -108,11 +108,13 @@ public class ResetTask extends BukkitRunnable {
                     settings.version(),
                     settings.locale(),
                     settings.saveIntervalSeconds(),
+                    settings.maxLocationHistoryCount(),
+                    settings.maxLocationAgeSeconds(),
                     settings.backupOnReset(),
                     settings.leaderboardSnapshotOnReset(),
                     settings.backupsRemoveOlderThan(),
                     settings.leaderboardRemoveOlderThan(),
-                    settings.afkSettings(),
+                    settings.playerSettings(),
                     settings.resetSettings(),
                     lastResetTimesRecord);
             settingsManager.saveSettings(updatedSettings);

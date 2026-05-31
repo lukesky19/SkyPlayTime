@@ -20,7 +20,7 @@ package com.github.lukesky19.skyplaytime.util;
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skylib.common.api.time.Time;
 import com.github.lukesky19.skylib.common.api.time.TimeUtil;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;

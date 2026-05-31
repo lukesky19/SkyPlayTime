@@ -17,8 +17,12 @@
 */
 package com.github.lukesky19.skyplaytime.player.data;
 
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.location.LocationSnapshot;
 import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class stores play time data for players.
@@ -26,21 +30,34 @@ import org.jspecify.annotations.NonNull;
 public class PlayerData {
     // Player Data
     private final @NonNull String name;
-    // Play Time Data
-    private long sessionPlayTimeSeconds = 0;
-    private long dailyPlayTimeSeconds = 0;
-    private long weeklyPlayTimeSeconds = 0;
-    private long monthlyPlayTimeSeconds = 0;
-    private long yearlyPlayTimeSeconds = 0;
-    private long totalPlayTimeSeconds = 0;
-    // Leaderboard Data
-    private boolean exempt = false;
 
-    // Activity Data
-    private long lastMoveTime = System.currentTimeMillis();
-    private long lastActionTime = System.currentTimeMillis();
+    // Play Time Data
+    private final @NonNull Time session = new Time();
+    private final @NonNull Time daily = new Time();
+    private final @NonNull Time weekly = new Time();
+    private final @NonNull Time monthly = new Time();
+    private final @NonNull Time yearly = new Time();
+    private final @NonNull Time total = new Time();
+
+    // Activity Timestamps
+    private long gracePeriod = 0;
+    private long lastMove = 0;
+    private long lastInteract = 0;
+    private long lastBlockBreak = 0;
+    private long lastBlockPlace = 0;
+    private long lastRodCast = 0;
+    private long lastRodCatch = 0;
+    private long lastRodReel = 0;
+
+    // Player locations
+    private final @NonNull List<LocationSnapshot> locationList = new ArrayList<>();
+
     // AFK Status
     private boolean isAFK = false;
+    private boolean manualAFK = false;
+
+    // Leaderboard Data
+    private boolean exempt = false;
 
     /**
      * Create player data using player name provided.
@@ -72,12 +89,14 @@ public class PlayerData {
             long totalPlayTimeSeconds,
             boolean exempt) {
         this.name = name;
-        this.sessionPlayTimeSeconds = Math.max(0, sessionPlayTimeSeconds);
-        this.dailyPlayTimeSeconds = Math.max(0, dailyPlayTimeSeconds);
-        this.weeklyPlayTimeSeconds = Math.max(0, weeklyPlayTimeSeconds);
-        this.monthlyPlayTimeSeconds = Math.max(0, monthlyPlayTimeSeconds);
-        this.yearlyPlayTimeSeconds = Math.max(0, yearlyPlayTimeSeconds);
-        this.totalPlayTimeSeconds = Math.max(0, totalPlayTimeSeconds);
+
+        this.session.add(sessionPlayTimeSeconds);
+        this.daily.add(dailyPlayTimeSeconds);
+        this.weekly.add(weeklyPlayTimeSeconds);
+        this.monthly.add(monthlyPlayTimeSeconds);
+        this.yearly.add(yearlyPlayTimeSeconds);
+        this.total.add(totalPlayTimeSeconds);
+
         this.exempt = exempt;
     }
 
@@ -104,366 +123,70 @@ public class PlayerData {
             boolean exempt,
             boolean isAFK) {
         this.name = name;
-        this.sessionPlayTimeSeconds = Math.max(0, sessionPlayTimeSeconds);
-        this.dailyPlayTimeSeconds = Math.max(0, dailyPlayTimeSeconds);
-        this.weeklyPlayTimeSeconds = Math.max(0, weeklyPlayTimeSeconds);
-        this.monthlyPlayTimeSeconds = Math.max(0, monthlyPlayTimeSeconds);
-        this.yearlyPlayTimeSeconds = Math.max(0, yearlyPlayTimeSeconds);
-        this.totalPlayTimeSeconds = Math.max(0, totalPlayTimeSeconds);
+
+        this.session.add(sessionPlayTimeSeconds);
+        this.daily.add(dailyPlayTimeSeconds);
+        this.weekly.add(weeklyPlayTimeSeconds);
+        this.monthly.add(monthlyPlayTimeSeconds);
+        this.yearly.add(yearlyPlayTimeSeconds);
+        this.total.add(totalPlayTimeSeconds);
+
         this.exempt = exempt;
         this.isAFK = isAFK;
     }
 
     /**
-     * Adds the provided play time in seconds to all play time counters.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
+     * Constructor
+     * @param name The name of the player.
+     * @param sessionPlayTimeSeconds The player's session playtime in seconds.
+     * @param dailyPlayTimeSeconds The player's daily playtime in seconds.
+     * @param weeklyPlayTimeSeconds The player's weekly playtime in seconds.
+     * @param monthlyPlayTimeSeconds The player's monthly playtime in seconds.
+     * @param yearlyPlayTimeSeconds The player's yearly playtime in seconds.
+     * @param totalPlayTimeSeconds The player's total playtime in seconds.
+     * @param lastMove The timestamp of when the player last moved.
+     * @param lastBlockBreak The timestamp of when the player last broke a block.
+     * @param lastBlockPlace The timestamp of when the player last placed a block.
+     * @param lastRodCast  The timestamp of when the player last cast a fishing rod.
+     * @param lastRodCatch The timestamp of when the player last caught something with a fishing rod.
+     * @param lastRodReel The timestamp of when the player last reeled a fishing rod.
+     * @param isAFK Is the player afk or not?isAFK
+     * @param exempt Is the player exempt from leaderboard reporting?
      */
-    public boolean addPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds += playTimeSeconds;
-        dailyPlayTimeSeconds += playTimeSeconds;
-        weeklyPlayTimeSeconds += playTimeSeconds;
-        monthlyPlayTimeSeconds += playTimeSeconds;
-        yearlyPlayTimeSeconds += playTimeSeconds;
-        totalPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from all play time counters.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removePlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds += playTimeSeconds;
-        dailyPlayTimeSeconds += playTimeSeconds;
-        weeklyPlayTimeSeconds += playTimeSeconds;
-        monthlyPlayTimeSeconds += playTimeSeconds;
-        totalPlayTimeSeconds += playTimeSeconds;
-
-        if(sessionPlayTimeSeconds < 0) sessionPlayTimeSeconds = 0;
-        if(dailyPlayTimeSeconds < 0) dailyPlayTimeSeconds = 0;
-        if(weeklyPlayTimeSeconds < 0) weeklyPlayTimeSeconds = 0;
-        if(monthlyPlayTimeSeconds < 0) monthlyPlayTimeSeconds = 0;
-        if(totalPlayTimeSeconds < 0) totalPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces all play time counters with the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds = playTimeSeconds;
-        dailyPlayTimeSeconds = playTimeSeconds;
-        weeklyPlayTimeSeconds = playTimeSeconds;
-        monthlyPlayTimeSeconds = playTimeSeconds;
-        totalPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's session play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's session play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds -= playTimeSeconds;
-
-        if(sessionPlayTimeSeconds < 0) sessionPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's session play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setSessionPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        sessionPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's play time in seconds for their current session.
-     * @return The player's session play time in seconds.
-     */
-    public long getSessionPlayTimeSeconds() {
-        return sessionPlayTimeSeconds;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's daily play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        dailyPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's daily play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        dailyPlayTimeSeconds -= playTimeSeconds;
-
-        if(dailyPlayTimeSeconds < 0) dailyPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's daily play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setDailyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        dailyPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's daily play time in seconds.
-     * @return The player's daily play time in seconds.
-     */
-    public long getDailyPlayTimeSeconds() {
-        return dailyPlayTimeSeconds;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's weekly play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        weeklyPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's weekly play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        weeklyPlayTimeSeconds -= playTimeSeconds;
-
-        if(weeklyPlayTimeSeconds < 0) weeklyPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's weekly play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setWeeklyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        weeklyPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's weekly play time in seconds.
-     * @return The player's weekly play time in seconds.
-     */
-    public long getWeeklyPlayTimeSeconds() {
-        return weeklyPlayTimeSeconds;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's monthly play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        monthlyPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's monthly play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        monthlyPlayTimeSeconds -= playTimeSeconds;
-
-        if(monthlyPlayTimeSeconds < 0) monthlyPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's monthly play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setMonthlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        monthlyPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's monthly play time in seconds.
-     * @return The player's monthly play time in seconds.
-     */
-    public long getMonthlyPlayTimeSeconds() {
-        return monthlyPlayTimeSeconds;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's yearly play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        yearlyPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's yearly play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        yearlyPlayTimeSeconds -= playTimeSeconds;
-
-        if(yearlyPlayTimeSeconds < 0) yearlyPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's total play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setYearlyPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        yearlyPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's yearly play time in seconds.
-     * @return The player's yearly play time in seconds.
-     */
-    public long getYearlyPlayTimeSeconds() {
-        return yearlyPlayTimeSeconds;
-    }
-
-    /**
-     * Adds the provided play time in seconds to the player's total play time counter.
-     * @param playTimeSeconds The play time in seconds to add. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean addTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        totalPlayTimeSeconds += playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Removes the provided play time in seconds from player's total play time counter.
-     * @param playTimeSeconds The play time in seconds to remove. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean removeTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        totalPlayTimeSeconds -= playTimeSeconds;
-
-        if(totalPlayTimeSeconds < 0) totalPlayTimeSeconds = 0;
-
-        return true;
-    }
-
-    /**
-     * Replaces the player's total play time using the provided play time in seconds.
-     * @param playTimeSeconds The play time in seconds to set. Must be a positive number.
-     * @return true if successful, false if not.
-     */
-    public boolean setTotalPlayTime(long playTimeSeconds) {
-        if(playTimeSeconds < 0) return false;
-
-        totalPlayTimeSeconds = playTimeSeconds;
-
-        return true;
-    }
-
-    /**
-     * Get the player's total play time in seconds.
-     * @return The player's total play time in seconds.
-     */
-    public long getTotalPlayTimeSeconds() {
-        return totalPlayTimeSeconds;
+    public PlayerData(
+            @NonNull String name,
+            long sessionPlayTimeSeconds,
+            long dailyPlayTimeSeconds,
+            long weeklyPlayTimeSeconds,
+            long monthlyPlayTimeSeconds,
+            long yearlyPlayTimeSeconds,
+            long totalPlayTimeSeconds,
+            long lastMove,
+            long lastBlockBreak,
+            long lastBlockPlace,
+            long lastRodCast,
+            long lastRodCatch,
+            long lastRodReel,
+            boolean isAFK,
+            boolean exempt) {
+        this.name = name;
+
+        this.session.add(sessionPlayTimeSeconds);
+        this.daily.add(dailyPlayTimeSeconds);
+        this.weekly.add(weeklyPlayTimeSeconds);
+        this.monthly.add(monthlyPlayTimeSeconds);
+        this.yearly.add(yearlyPlayTimeSeconds);
+        this.total.add(totalPlayTimeSeconds);
+
+        this.lastMove = lastMove;
+        this.lastBlockBreak = lastBlockBreak;
+        this.lastBlockPlace = lastBlockPlace;
+        this.lastRodCast = lastRodCast;
+        this.lastRodCatch = lastRodCatch;
+        this.lastRodReel = lastRodReel;
+
+        this.isAFK = isAFK;
+        this.exempt = exempt;
     }
 
     /**
@@ -476,13 +199,18 @@ public class PlayerData {
         if(seconds < 0) return false;
 
         return switch(timeCategory) {
-            case SESSION -> addSessionPlayTime(seconds);
-            case DAILY -> addDailyPlayTime(seconds);
-            case WEEKLY -> addWeeklyPlayTime(seconds);
-            case MONTHLY -> addMonthlyPlayTime(seconds);
-            case YEARLY -> addYearlyPlayTime(seconds);
-            case TOTAL -> addTotalPlayTime(seconds);
-            case ALL -> addPlayTime(seconds);
+            case SESSION -> session.add(seconds);
+            case DAILY -> daily.add(seconds);
+            case WEEKLY -> weekly.add(seconds);
+            case MONTHLY -> monthly.add(seconds);
+            case YEARLY -> yearly.add(seconds);
+            case TOTAL -> total.add(seconds);
+            case ALL -> this.session.add(seconds)
+                    && this.daily.add(seconds)
+                    && this.weekly.add(seconds)
+                    && this.monthly.add(seconds)
+                    && this.yearly.add(seconds)
+                    && this.total.add(seconds);
         };
     }
 
@@ -496,13 +224,18 @@ public class PlayerData {
         if(seconds < 0) return false;
 
         return switch(timeCategory) {
-            case SESSION -> removeSessionPlayTime(seconds);
-            case DAILY -> removeDailyPlayTime(seconds);
-            case WEEKLY -> removeWeeklyPlayTime(seconds);
-            case MONTHLY -> removeMonthlyPlayTime(seconds);
-            case YEARLY -> removeYearlyPlayTime(seconds);
-            case TOTAL -> removeTotalPlayTime(seconds);
-            case ALL -> removePlayTime(seconds);
+            case SESSION -> session.remove(seconds);
+            case DAILY -> daily.remove(seconds);
+            case WEEKLY -> weekly.remove(seconds);
+            case MONTHLY -> monthly.remove(seconds);
+            case YEARLY -> yearly.remove(seconds);
+            case TOTAL -> total.remove(seconds);
+            case ALL -> this.session.remove(seconds)
+                    && this.daily.remove(seconds)
+                    && this.weekly.remove(seconds)
+                    && this.monthly.remove(seconds)
+                    && this.yearly.remove(seconds)
+                    && this.total.remove(seconds);
         };
     }
 
@@ -516,13 +249,18 @@ public class PlayerData {
         if(seconds < 0) return false;
 
         return switch(timeCategory) {
-            case SESSION -> setSessionPlayTime(seconds);
-            case DAILY -> setDailyPlayTime(seconds);
-            case WEEKLY -> setWeeklyPlayTime(seconds);
-            case MONTHLY -> setMonthlyPlayTime(seconds);
-            case YEARLY -> setYearlyPlayTime(seconds);
-            case TOTAL -> setTotalPlayTime(seconds);
-            case ALL -> setPlayTime(seconds);
+            case SESSION -> session.set(seconds);
+            case DAILY -> daily.set(seconds);
+            case WEEKLY -> weekly.set(seconds);
+            case MONTHLY -> monthly.set(seconds);
+            case YEARLY -> yearly.set(seconds);
+            case TOTAL -> total.set(seconds);
+            case ALL -> this.session.set(seconds)
+                    && this.daily.set(seconds)
+                    && this.weekly.set(seconds)
+                    && this.monthly.set(seconds)
+                    && this.yearly.set(seconds)
+                    && this.total.set(seconds);
         };
     }
 
@@ -534,12 +272,12 @@ public class PlayerData {
      */
     public long getPlayTime(@NonNull TimeCategory timeCategory) {
         return switch (timeCategory) {
-            case SESSION -> getSessionPlayTimeSeconds();
-            case DAILY -> getDailyPlayTimeSeconds();
-            case WEEKLY -> getWeeklyPlayTimeSeconds();
-            case MONTHLY -> getMonthlyPlayTimeSeconds();
-            case YEARLY -> getYearlyPlayTimeSeconds();
-            case TOTAL, ALL -> getTotalPlayTimeSeconds();
+            case SESSION -> session.get();
+            case DAILY -> daily.get();
+            case WEEKLY -> weekly.get();
+            case MONTHLY -> monthly.get();
+            case YEARLY -> yearly.get();
+            case TOTAL, ALL -> total.get();
         };
     }
 
@@ -560,35 +298,179 @@ public class PlayerData {
     }
 
     /**
+     * Get the timestamp when the player's grace period expires or expired at.
+     * @return The timestamp when player's grace period expires or expired at.
+     */
+    public long getGracePeriod() {
+        return gracePeriod;
+    }
+
+    /**
+     * Set the timestamp for when the player should next be checked for being marked as AFK.
+     * @param gracePeriod The timestamp for when the player should next be checked for being marked as AFK.
+     */
+    public void setGracePeriod(long gracePeriod) {
+        this.gracePeriod = gracePeriod;
+    }
+
+    /**
+     * Is the player's grace period active and should be ignored when processing algorithms.
+     * @return true if the player's grace period is active otherwise false.
+     */
+    public boolean isGracePeriodActive() {
+        return gracePeriod >= System.currentTimeMillis();
+    }
+
+    /**
      * Gets the player's last move timestamp.
      * @return The player's last move timestamp.
      */
-    public long getLastMoveTime() {
-        return lastMoveTime;
+    public long getLastMove() {
+        return lastMove;
     }
 
     /**
      * Sets the player's last move timestamp.
-     * @param lastMoveTime The timestamp of {@link System#currentTimeMillis()} of when the player last moved their character.
+     * @param lastMoveTime The timestamp from {@link System#currentTimeMillis()}.
      */
     public void setLastMoveTime(long lastMoveTime) {
-        this.lastMoveTime = lastMoveTime;
+        this.lastMove = lastMoveTime;
     }
 
     /**
-     * Gets the player's last longeract timestamp.
-     * @return The player's last longeract timestamp.
+     * Gets the player's last interact timestamp.
+     * @return The player's last interact timestamp.
      */
-    public long getLastActionTime() {
-        return lastActionTime;
+    public long getLastInteract() {
+        return lastInteract;
     }
 
     /**
-     * Sets the player's last longeract timestamp.
-     * @param lastActionTime The timestamp of {@link System#currentTimeMillis()} of when the player last longeracted with something.
+     * Sets the player's last interact timestamp.
+     * @param lastInteract The timestamp from {@link System#currentTimeMillis()}.
      */
-    public void setLastActionTime(long lastActionTime) {
-        this.lastActionTime = lastActionTime;
+    public void setLastInteractTime(long lastInteract) {
+        this.lastInteract = lastInteract;
+    }
+
+    /**
+     * Gets the player's last block break timestamp.
+     * @return The player's last block break timestamp.
+     */
+    public long getLastBlockBreak() {
+        return lastBlockBreak;
+    }
+
+    /**
+     * Sets the player's last block break timestamp.
+     * @param lastBlockBreak The timestamp from {@link System#currentTimeMillis()}.
+     */
+    public void setLastBlockBreak(long lastBlockBreak) {
+        this.lastBlockBreak = lastBlockBreak;
+    }
+
+    /**
+     * Gets the player's last block place timestamp.
+     * @return The player's last block place timestamp.
+     */
+    public long getLastBlockPlace() {
+        return lastBlockPlace;
+    }
+
+    /**
+     * Sets the player's last block place timestamp.
+     * @param lastBlockPlace The timestamp from {@link System#currentTimeMillis()}.
+     */
+    public void setLastBlockPlace(long lastBlockPlace) {
+        this.lastBlockPlace = lastBlockPlace;
+    }
+
+    /**
+     * Gets the player's last fishing rod cast timestamp.
+     * @return The player's last fishing rod cast timestamp.
+     */
+    public long getLastRodCast() {
+        return lastRodCast;
+    }
+
+    /**
+     * Sets the player's last fishing rod cast timestamp.
+     * @param lastRodCast The timestamp from {@link System#currentTimeMillis()}.
+     */
+    public void setLastRodCast(long lastRodCast) {
+        this.lastRodCast = lastRodCast;
+    }
+
+    /**
+     * Gets the player's last fishing rod catch timestamp.
+     * @return The player's last fishing rod catch timestamp.
+     */
+    public long getLastRodCatch() {
+        return lastRodCatch;
+    }
+
+    /**
+     * Sets the player's last fishing rod catch timestamp.
+     * @param lastRodCatch The timestamp from {@link System#currentTimeMillis()}.
+     */
+    public void setLastRodCatch(long lastRodCatch) {
+        this.lastRodCatch = lastRodCatch;
+    }
+
+    /**
+     * Gets the player's last fishing rod reel timestamp.
+     * @return The player's last fishing rod reel timestamp.
+     */
+    public long getLastRodReel() {
+        return lastRodReel;
+    }
+
+    /**
+     * Sets the player's last fishing rod reel timestamp.
+     * @param lastRodReel The timestamp from {@link System#currentTimeMillis()}.
+     */
+    public void setLastRodReel(long lastRodReel) {
+        this.lastRodReel = lastRodReel;
+    }
+
+    /**
+     * Add a {@link LocationSnapshot} to the list.
+     * @param locationSnapshot The {@link LocationSnapshot}.
+     * @param maxSnapshots The maximum number of snapshots to store.
+     */
+    public void addLocationSnapshot(
+            @NonNull LocationSnapshot locationSnapshot,
+            int maxSnapshots) {
+        if(!locationList.isEmpty() && maxSnapshots > 0) {
+            while(locationList.size() >= maxSnapshots) {
+                locationList.removeFirst();
+            }
+        }
+
+        locationList.add(locationSnapshot);
+    }
+
+    /**
+     * Remove the {@link LocationSnapshot} from the list.
+     * @param locationSnapshot The {@link LocationSnapshot}.
+     */
+    public void removeLocationSnapshot(@NonNull LocationSnapshot locationSnapshot) {
+        locationList.remove(locationSnapshot);
+    }
+
+    /**
+     * Remove the most recent {@link LocationSnapshot} from the list.
+     */
+    public void removeMostRecentLocationSnapshot() {
+        locationList.removeLast();
+    }
+
+    /**
+     * Get the {@link List} of {@link LocationSnapshot}s.
+     * @return A {@link List} of {@link LocationSnapshot}s.
+     */
+    public @NonNull List<LocationSnapshot> getLocationList() {
+        return locationList;
     }
 
     /**
@@ -605,6 +487,22 @@ public class PlayerData {
      */
     public boolean isAFK() {
         return isAFK;
+    }
+
+    /**
+     * Sets whether the player is manually marked as afk (i.e., the /afk command) or not.
+     * @param status true if manually afk, false if not.
+     */
+    public void setPlayerInitiatedAFK(boolean status) {
+        this.manualAFK = status;
+    }
+
+    /**
+     * Is the player currently manually AFK (i.e., the /afk command) or not?
+     * @return true if manually AFK, false if not.
+     */
+    public boolean isPlayerInitiated() {
+        return manualAFK;
     }
 
     /**

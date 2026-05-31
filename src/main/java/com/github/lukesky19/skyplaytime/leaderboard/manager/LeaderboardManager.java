@@ -27,7 +27,7 @@ import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.table.PlayTimeTable;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
@@ -73,15 +73,14 @@ public class LeaderboardManager {
      * @return true if successful, false if not.
      */
     public boolean markPlayerExempt(@NonNull Player player) {
-        PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
-        if(playerData == null) {
+        Optional<PlayerData> optionalPlayerData = playerDataManager.getPlayerData(player);
+        if(optionalPlayerData.isPresent()) {
+            optionalPlayerData.get().setExempt(true);
+            return true;
+        } else {
             logger.warn(AdventureUtility.plain("Unable to mark player exempt due to no player data found for player " + player.getName()));
             return false;
         }
-
-        playerData.setExempt(true);
-
-        return true;
     }
 
     /**
@@ -90,15 +89,14 @@ public class LeaderboardManager {
      * @return true if successful, false if not.
      */
     public boolean markPlayerNotExempt(@NonNull Player player) {
-        PlayerData playerData = playerDataManager.getPlayerData(player.getUniqueId());
-        if(playerData == null) {
+        Optional<PlayerData> optionalPlayerData = playerDataManager.getPlayerData(player);
+        if(optionalPlayerData.isPresent()) {
+            optionalPlayerData.get().setExempt(false);
+            return true;
+        } else {
             logger.warn(AdventureUtility.plain("Unable to mark player not exempt due to no player data found for player " + player.getName()));
             return false;
         }
-
-        playerData.setExempt(false);
-
-        return true;
     }
 
     /**

@@ -35,10 +35,10 @@ package com.github.lukesky19.skyplaytime.command.arguments;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
-import com.github.lukesky19.skyplaytime.util.AFKToggleResult;
+import com.github.lukesky19.skyplaytime.util.enums.AFKToggleResult;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
@@ -95,8 +95,7 @@ public class AFKCommand {
                             List<TagResolver.Single> placeholders = new ArrayList<>();
                             placeholders.add(Placeholder.parsed("player_name", target.getName()));
 
-                            AFKToggleResult result = afkManager.togglePlayerAFK(target, true, true);
-
+                            AFKToggleResult result = afkManager.togglePlayerAFK(target, true, true, true);
                             switch(result) {
                                 case SUCCESS_AFK -> {
                                     if(isSenderPlayer) {
@@ -135,7 +134,7 @@ public class AFKCommand {
                     Locale locale = localeManager.getLocale();
 
                     if(ctx.getSource().getSender() instanceof Player player) {
-                        afkManager.togglePlayerAFK(player, true, true);
+                        afkManager.togglePlayerAFK(player, true, true, true);
 
                         return 1;
                     } else {

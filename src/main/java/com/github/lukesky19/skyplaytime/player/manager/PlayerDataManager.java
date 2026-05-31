@@ -72,22 +72,20 @@ public class PlayerDataManager {
 
     /**
      * Get the {@link PlayerData} for the given {@link UUID} stored in memory.
-     * See {@link #getPlayerData(UUID)} and {@link #loadPlayerData(Player)} as well.
      * @param player The {@link Player}.
-     * @return The {@link PlayerData} or null if the player has no player data.
+     * @return The {@link Optional} {@link PlayerData}.
      */
-    public @Nullable PlayerData getPlayerData(@NonNull Player player) {
-        return playerDataMap.get(player.getUniqueId());
+    public @NonNull Optional<PlayerData> getPlayerData(@NonNull Player player) {
+        return Optional.ofNullable(playerDataMap.get(player.getUniqueId()));
     }
 
     /**
      * Get the {@link PlayerData} for the given {@link UUID} stored in memory.
-     * See {@link #getPlayerData(Player)} and {@link #loadPlayerData(Player)} as well.
      * @param playerId The {@link UUID} of the player.
-     * @return The {@link PlayerData} or null if the player has no player data.
+     * @return The {@link Optional} {@link PlayerData}.
      */
-    public @Nullable PlayerData getPlayerData(@NonNull UUID playerId) {
-        return playerDataMap.get(playerId);
+    public @NonNull Optional<PlayerData> getPlayerData(@NonNull UUID playerId) {
+        return Optional.ofNullable(playerDataMap.get(playerId));
     }
 
     /**

@@ -19,10 +19,11 @@ package com.github.lukesky19.skyplaytime.task;
 
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmManager;
+import com.github.lukesky19.skyplaytime.settings.Settings;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.player.manager.TimeManager;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.task.tasks.*;
@@ -45,12 +46,14 @@ public class TaskManager {
     private final @NonNull TimeManager timeManager;
     private final @NonNull AFKManager afkManager;
     private final @NonNull LeaderboardManager leaderboardManager;
+    private final @NonNull AlgorithmManager algorithmManager;
 
     // Tasks
     private @Nullable BukkitTask activityTask;
     private @Nullable BukkitTask cacheTopTenTask;
     private @Nullable BukkitTask calculateTopTenTask;
-    private @Nullable BukkitTask cleanupTask;
+    private @Nullable BukkitTask diskCleanupTask;
+    private @Nullable BukkitTask playerDataCleanupTask;
     private @Nullable BukkitTask playTimeTask;
     private @Nullable BukkitTask resetTask;
     private @Nullable BukkitTask saveTask;
@@ -63,6 +66,7 @@ public class TaskManager {
      * @param timeManager A {@link TimeManager} instance.
      * @param afkManager An {@link AFKManager} instance.
      * @param leaderboardManager A {@link LeaderboardManager} instance.
+     * @param algorithmManager An {@link AlgorithmManager} instance.
      */
     public TaskManager(
             @NonNull SkyPlayTime skyPlayTime,
@@ -70,7 +74,8 @@ public class TaskManager {
             @NonNull PlayerDataManager playerDataManager,
             @NonNull TimeManager timeManager,
             @NonNull AFKManager afkManager,
-            @NonNull LeaderboardManager leaderboardManager) {
+            @NonNull LeaderboardManager leaderboardManager,
+            @NonNull AlgorithmManager algorithmManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
@@ -78,6 +83,7 @@ public class TaskManager {
         this.timeManager = timeManager;
         this.afkManager = afkManager;
         this.leaderboardManager = leaderboardManager;
+        this.algorithmManager = algorithmManager;
     }
 
     /**
@@ -97,7 +103,8 @@ public class TaskManager {
         startActivityTask();
         startCacheTopTenTask();
         startCalculateTopTenTask();
-        startCleanupTask();
+        startDiskCleanupTask();
+        startPlayerDataCleanupTask();
         startPlayTimeTask();
         startResetTask();
         startSaveTask();
@@ -110,7 +117,8 @@ public class TaskManager {
         stopActivityTask();
         stopCacheTopTenTask();
         stopCalculateTopTenTask();
-        stopCleanupTask();
+        stopDiskDataCleanupTask();
+        stopPlayerDataCleanupTask();
         stopPlayTimeTask();
         stopResetTask();
         stopSaveTask();
@@ -120,7 +128,7 @@ public class TaskManager {
      * Start the {@link ActivityTask}.
      */
     private void startActivityTask() {
-        activityTask = new ActivityTask(skyPlayTime, settingsManager, playerDataManager, afkManager).runTaskTimer(skyPlayTime, 20L, 20L);
+        activityTask = new ActivityTask(skyPlayTime, playerDataManager, afkManager, algorithmManager).runTaskTimer(skyPlayTime, 20L, 20L);
     }
 
     /**
@@ -179,23 +187,44 @@ public class TaskManager {
     }
 
     /**
-     * Start the {@link CleanupTask}.
+     * Start the {@link DiskCleanupTask}.
      */
-    private void startCleanupTask() {
+    private void startDiskCleanupTask() {
         long ticks = 60 * 60 * 20L;
-        cleanupTask = new CleanupTask(skyPlayTime, settingsManager).runTaskTimer(skyPlayTime, 10 * 20L, ticks);
+        diskCleanupTask = new DiskCleanupTask(skyPlayTime, settingsManager).runTaskTimer(skyPlayTime, 10 * 20L, ticks);
     }
 
     /**
-     * Stop the {@link ActivityTask}.
+     * Stop the {@link DiskCleanupTask}.
      */
-    private void stopCleanupTask() {
-        if(cleanupTask != null) {
-            if(!cleanupTask.isCancelled()) {
-                cleanupTask.cancel();
+    private void stopDiskDataCleanupTask() {
+        if(diskCleanupTask != null) {
+            if(!diskCleanupTask.isCancelled()) {
+                diskCleanupTask.cancel();
             }
 
-            cleanupTask = null;
+            diskCleanupTask = null;
+        }
+    }
+
+    /**
+     * Start the {@link PlayerDataCleanupTask}.
+     */
+    private void startPlayerDataCleanupTask() {
+        playerDataCleanupTask = new PlayerDataCleanupTask(settingsManager, playerDataManager)
+                .runTaskTimer(skyPlayTime, 20L, 20L);
+    }
+
+    /**
+     * Stop the {@link PlayerDataCleanupTask}.
+     */
+    private void stopPlayerDataCleanupTask() {
+        if(playerDataCleanupTask != null) {
+            if(!playerDataCleanupTask.isCancelled()) {
+                playerDataCleanupTask.cancel();
+            }
+
+            playerDataCleanupTask = null;
         }
     }
 

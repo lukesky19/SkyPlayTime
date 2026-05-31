@@ -18,13 +18,13 @@
 package com.github.lukesky19.skyplaytime.command;
 
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmManager;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
-import com.github.lukesky19.skyplaytime.player.manager.ActivityManager;
 import com.github.lukesky19.skyplaytime.command.arguments.*;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardSnapshotManager;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.player.manager.TimeManager;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -45,7 +45,7 @@ public class SkyPlayTimeCommand {
     private final @NonNull LeaderboardManager leaderboardManager;
     private final @NonNull TimeManager timeManager;
     private final @NonNull AFKManager afkManager;
-    private final @NonNull ActivityManager activityManager;
+    private final @NonNull AlgorithmManager algorithmManager;
 
     /**
      * Constructor
@@ -57,7 +57,7 @@ public class SkyPlayTimeCommand {
      * @param timeManager A {@link TimeManager} instance.
      * @param leaderboardManager A {@link LeaderboardManager} instance.
      * @param afkManager An {@link AFKManager} instance.
-     * @param activityManager An {@link ActivityManager} instance.
+     * @param algorithmManager An {@link AlgorithmManager} instance.
      */
     public SkyPlayTimeCommand(
             @NonNull SkyPlayTime skyPlayTime,
@@ -68,7 +68,7 @@ public class SkyPlayTimeCommand {
             @NonNull LeaderboardManager leaderboardManager,
             @NonNull TimeManager timeManager,
             @NonNull AFKManager afkManager,
-            @NonNull ActivityManager activityManager) {
+            @NonNull AlgorithmManager algorithmManager) {
         this.skyPlayTime = skyPlayTime;
         this.localeManager = localeManager;
         this.leaderboardSnapshotManager = leaderboardSnapshotManager;
@@ -77,7 +77,7 @@ public class SkyPlayTimeCommand {
         this.leaderboardManager = leaderboardManager;
         this.timeManager = timeManager;
         this.afkManager = afkManager;
-        this.activityManager = activityManager;
+        this.algorithmManager = algorithmManager;
     }
 
     /**
@@ -91,7 +91,7 @@ public class SkyPlayTimeCommand {
         AddCommand addCommand = new AddCommand(skyPlayTime, localeManager, timeManager);
         AFKCommand afkCommand = new AFKCommand(skyPlayTime, localeManager, afkManager);
         BackupCommand backupCommand = new BackupCommand(skyPlayTime, localeManager, playerDataManager, databaseManager);
-        DebugCommand debugCommand = new DebugCommand(skyPlayTime, localeManager, playerDataManager, afkManager, activityManager);
+        DebugCommand debugCommand = new DebugCommand(skyPlayTime, localeManager, playerDataManager, afkManager, algorithmManager);
         ExemptCommand exemptCommand = new ExemptCommand(skyPlayTime, localeManager, leaderboardManager);
         HelpCommand helpCommand = new HelpCommand(localeManager);
         LeaderboardCommand leaderboardCommand = new LeaderboardCommand(skyPlayTime, localeManager, leaderboardManager, leaderboardSnapshotManager);

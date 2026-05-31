@@ -4,6 +4,11 @@ version: 1
 locale: en_US
 # This is how often data is saved to the database
 save-interval-seconds: 900
+# The maximum number of location snapshots to save per-player.
+max-location-history-count: 512
+# The maximum age in seconds to keep location snapshots for.
+# If the timestamp of the location snapshot is older than this number of seconds, it will be removed.
+max-location-age-seconds: 300.0
 # Should the database be backed-up when any play time is reset?
 backup-on-reset: true
 # Should a snapshot of the leaderboard be saved when any play time is reset?
@@ -12,26 +17,14 @@ leaderboard-snapshot-on-reset: true
 backups-remove-older-than: 30d
 # The cutoff for when old leaderboard snapshots should be removed.
 leaderboard-remove-older-than: 90d
-afk-settings:
-    # This is the time in seconds that must pass before the player is marked as AFK. Both movement and action time must be greater than or equal to this value.
-    # Set to -1 to disable.
-    auto-afk-seconds: 300
-    # If a player's last movement time has been met or exceeded the movement time below, and their action time is at or less than the action time below, they will also be marked as AFK.
-    # This is useful for detecting AFK mining and other automated actions.
-    # You can set to -1 for either (or both) to disable.
-    movement-time-seconds: 60
-    # If a player's last movement time above has been met or exceeded, and their action time below is at or less than, they will also be marked as AFK.
-    # This is useful for detecting AFK mining and other automated actions.
-    # You can set to -1 for either (or both) to disable.
-    action-time-seconds: 30
-    # These are settings that can be applied when a player is marked as AFK.
-    player-settings:
-        # Should afk players be able to pick up items?
-        afk-item-pickup: false
-        # Should afk players be invulnerable?
-        afk-invulnerable: true
-        # Should afk players be marked as sleeping?
-        afk-sleeping: true
+# These are settings that can be applied when a player is marked as AFK.
+player-settings:
+    # Should afk players be able to pick up items?
+    afk-item-pickup: false
+    # Should afk players be invulnerable?
+    afk-invulnerable: true
+    # Should afk players be marked as sleeping?
+    afk-sleeping: true
 reset-settings:
     # The time zone to use when calculating reset times.
     zone-id: "America/New_York"

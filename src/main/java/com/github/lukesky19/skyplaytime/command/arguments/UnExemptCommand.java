@@ -19,9 +19,9 @@ package com.github.lukesky19.skyplaytime.command.arguments;
 
 import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.SkyPlayTimeAPI;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.api.SkyPlayTimeAPI;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;

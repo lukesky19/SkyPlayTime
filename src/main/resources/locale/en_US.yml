@@ -22,6 +22,7 @@ help:
     - "<white>/</white><aqua>skyplaytime</aqua> <yellow>debug last-move</yellow>"
     - "<white>/</white><aqua>skyplaytime</aqua> <yellow>debug last-action</yellow>"
     - "<white>/</white><aqua>skyplaytime</aqua> <yellow>debug list</yellow>"
+    - "<white>/</white><aqua>skyplaytime</aqua> <yellow>debug algorithms <player name></yellow>"
 reload: "<aqua>The plugin has been reloaded.</aqua>"
 afk-message: "<gray>You are now afk.</gray>"
 no-longer-afk-message: "<gray>You are no longer afk.</gray>"

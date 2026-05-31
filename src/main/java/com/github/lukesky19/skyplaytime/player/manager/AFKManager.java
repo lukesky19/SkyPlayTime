@@ -17,16 +17,19 @@
 */
 package com.github.lukesky19.skyplaytime.player.manager;
 
-import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
-import com.github.lukesky19.skyplaytime.config.data.settings.Settings;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
-import com.github.lukesky19.skyplaytime.event.AFKStatusChangeEvent;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfig;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfigManager;
+import com.github.lukesky19.skyplaytime.integration.HookManager;
+import com.github.lukesky19.skyplaytime.integration.hook.NewPlayerPerksHook;
+import com.github.lukesky19.skyplaytime.locale.Locale;
+import com.github.lukesky19.skyplaytime.settings.Settings;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.api.event.AFKStatusChangeEvent;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.AFKToggleResult;
+import com.github.lukesky19.skyplaytime.util.enums.AFKToggleResult;
 import com.github.lukesky19.skyplaytime.util.PluginUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -34,7 +37,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,29 +49,33 @@ public class AFKManager {
     private final @NonNull ComponentLogger logger;
     private final @NonNull SettingsManager settingsManager;
     private final @NonNull LocaleManager localeManager;
+    private final @NonNull AlgorithmConfigManager algorithmConfigManager;
     private final @NonNull PlayerDataManager playerDataManager;
-    private final @Nullable NewPlayerPerksAPI newPlayerPerksAPI;
+    private final @NonNull HookManager hookManager;
 
     /**
      * Constructor
      * @param skyPlayTime The plugin's main instance.
      * @param settingsManager A {@link SettingsManager} instance.
      * @param localeManager A {@link LocaleManager} instance.
+     * @param algorithmConfigManager An {@link AlgorithmConfigManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
-     * @param newPlayerPerksAPI A {@link NewPlayerPerksAPI} instance. May be null.
+     * @param hookManager A {@link HookManager} instance.
      */
     public AFKManager(
             @NonNull SkyPlayTime skyPlayTime,
             @NonNull SettingsManager settingsManager,
             @NonNull LocaleManager localeManager,
+            @NonNull AlgorithmConfigManager algorithmConfigManager,
             @NonNull PlayerDataManager playerDataManager,
-            @Nullable NewPlayerPerksAPI newPlayerPerksAPI) {
+            @NonNull HookManager hookManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.settingsManager = settingsManager;
         this.localeManager = localeManager;
+        this.algorithmConfigManager = algorithmConfigManager;
         this.playerDataManager = playerDataManager;
-        this.newPlayerPerksAPI = newPlayerPerksAPI;
+        this.hookManager = hookManager;
     }
 
     /**
@@ -78,13 +84,13 @@ public class AFKManager {
      * @return true if afk, false if not.
      */
     public boolean isPlayerAFK(@NonNull Player player) {
-        PlayerData playerData = playerDataManager.getPlayerData(player);
-        if(playerData == null) {
+        Optional<PlayerData> optionalPlayerData = playerDataManager.getPlayerData(player);
+        if(optionalPlayerData.isPresent()) {
+            return optionalPlayerData.get().isAFK();
+        } else {
             logger.warn(AdventureUtility.plain("Unable to check player AFK status due to no player data found for player " + player.getName()));
             return false;
         }
-
-        return playerData.isAFK();
     }
 
     /**
@@ -93,13 +99,13 @@ public class AFKManager {
      * @return true if afk, false if not.
      */
     public boolean isPlayerAFK(@NonNull UUID playerId) {
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
-        if(playerData == null) {
+        Optional<PlayerData> optionalPlayerData = playerDataManager.getPlayerData(playerId);
+        if(optionalPlayerData.isPresent()) {
+            return optionalPlayerData.get().isAFK();
+        } else {
             logger.warn(AdventureUtility.plain("Unable to check player AFK status due to no player data found for player id " + playerId));
             return false;
         }
-
-        return playerData.isAFK();
     }
 
     /**
@@ -117,11 +123,13 @@ public class AFKManager {
      * @param player The {@link Player}.
      * @param notifyPlayer Should the player be notified of their AFK status change?
      * @param notifyServer Should the server be notified of this player's AFK status change?
+     * @param playerInitiated Did the player initiate the AFK Toggle?
      * @return The enum {@link AFKToggleResult} containing the result.
      */
-    public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player player, boolean notifyPlayer, boolean notifyServer) {
+    public @NonNull AFKToggleResult togglePlayerAFK(@NonNull Player player, boolean notifyPlayer, boolean notifyServer, boolean playerInitiated) {
         Settings settings = settingsManager.getSettings();
         Locale locale = localeManager.getLocale();
+        AlgorithmConfig algorithmConfig = algorithmConfigManager.getConfiguration();
 
         // Log an error if plugin settings are invalid and return AFKToggleResult.CONFIG_ERROR
         if(settings == null) {
@@ -129,8 +137,13 @@ public class AFKManager {
             return AFKToggleResult.CONFIG_ERROR;
         }
 
+        if(algorithmConfig == null) {
+            logger.warn(AdventureUtility.plain("Failed to toggle AFK Status for player " + player.getName() + " due to invalid algorithm configuration settings."));
+            return AFKToggleResult.CONFIG_ERROR;
+        }
+
         UUID playerId = player.getUniqueId();
-        PlayerData playerData = playerDataManager.getPlayerData(playerId);
+        PlayerData playerData = playerDataManager.getPlayerData(playerId).orElse(null);
         // Log an error if no player data was found and return AFKToggleResult.ERROR
         if(playerData == null) {
             logger.warn(AdventureUtility.plain("Failed to toggle AFK status as no player data was found for player: " + player.getName()));
@@ -138,11 +151,12 @@ public class AFKManager {
         }
 
         // Get Player Data
+        boolean vanished = PluginUtils.isPlayerVanished(player);
         boolean currentAFKStatus = playerData.isAFK();
-        if(PluginUtils.isPlayerVanished(player)) notifyServer = false;
+        if(vanished) notifyServer = false;
 
         // Create a AFKStatusChangeEvent and call the event
-        AFKStatusChangeEvent afkStatusChangeEvent = new AFKStatusChangeEvent(player, !currentAFKStatus);
+        AFKStatusChangeEvent afkStatusChangeEvent = new AFKStatusChangeEvent(player, !currentAFKStatus, vanished);
         skyPlayTime.getServer().getPluginManager().callEvent(afkStatusChangeEvent);
 
         // if the event was cancelled, return AFKToggleResult.CANCELLED
@@ -152,6 +166,7 @@ public class AFKManager {
         if(currentAFKStatus) {
             // Set AFK status to false
             playerData.setAFK(false);
+            playerData.setPlayerInitiatedAFK(false);
 
             // If the target player should be notified that they are no longer AFK, do so here
             if(notifyPlayer) player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.noLongerAfkMessage()));
@@ -169,9 +184,8 @@ public class AFKManager {
                 onlinePlayersExceptTarget.forEach(onlinePlayer -> onlinePlayer.sendMessage(serverMessage));
             }
 
-            // Reset movement and action time counters to avoid being marked as AFK right away.
-            playerData.setLastMoveTime(System.currentTimeMillis());
-            playerData.setLastActionTime(System.currentTimeMillis());
+            // Apply grace period
+            playerData.setGracePeriod((long) (System.currentTimeMillis() + (algorithmConfig.gracePeriodSeconds() * 1000)));
 
             // Reset AFK settings
             resetAFKPlayerSettings(settings, player);
@@ -180,6 +194,8 @@ public class AFKManager {
         } else {
             // Set AFK status to true
             playerData.setAFK(true);
+            // Set if player initiated AFK
+            if(playerInitiated) playerData.setPlayerInitiatedAFK(true);
 
             // If the target player should be notified that they are now AFK, do so here
             if(notifyPlayer) player.sendMessage(AdventureUtility.deserialize(locale.prefix() + locale.afkMessage()));
@@ -210,7 +226,7 @@ public class AFKManager {
      * @param player The {@link Player}.
      */
     protected void setAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
-        Settings.PlayerSettings playerSettings = settings.afkSettings().playerSettings();
+        Settings.PlayerSettings playerSettings = settings.playerSettings();
 
         // Set if the player can pickup items while afk.
         if(!playerSettings.afkItemPickup()) {
@@ -229,15 +245,42 @@ public class AFKManager {
     }
 
     /**
+     * Undoes any settings that were applied to any online players that are AFK.
+     */
+    public void resetOnlinePlayerAFKSettings() {
+        Settings settings = settingsManager.getSettings();
+        if(settings == null) return;
+        Settings.PlayerSettings playerSettings = settings.playerSettings();
+        NewPlayerPerksHook newPlayerPerksHook = hookManager.getHook(NewPlayerPerksHook.class);
+
+        skyPlayTime.getServer().getOnlinePlayers().stream()
+                .filter(this::isPlayerAFK)
+                .forEach(player ->
+                        resetAFKPlayerSettings(playerSettings, newPlayerPerksHook, player));
+    }
+
+    /**
      * Undoes any settings that were applied to the AFK player.
      * @param settings The plugin's {@link Settings}.
      * @param player The {@link Player}.
      */
     protected void resetAFKPlayerSettings(@NonNull Settings settings, @NonNull Player player) {
+        resetAFKPlayerSettings(settings.playerSettings(), hookManager.getHook(NewPlayerPerksHook.class), player);
+    }
+
+    /**
+     * Undoes any settings that were applied to the AFK player.
+     * @param playerSettings The plugin's {@link Settings.PlayerSettings}.
+     * @param newPlayerPerksHook A {@link NewPlayerPerksHook} instance.
+     * @param player The {@link Player}.
+     */
+    protected void resetAFKPlayerSettings(
+            Settings.@NonNull PlayerSettings playerSettings,
+            @NonNull NewPlayerPerksHook newPlayerPerksHook,
+            @NonNull Player player) {
         // Get the player's UUID
         UUID playerId = player.getUniqueId();
 
-        Settings.PlayerSettings playerSettings = settings.afkSettings().playerSettings();
         // Reset if the player can pickup items while afk.
         if(!playerSettings.afkItemPickup()) {
             player.setCanPickupItems(true);
@@ -246,9 +289,9 @@ public class AFKManager {
         // Reset if the player is invulnerable while afk.
         if(playerSettings.afkInvulnerable()) {
             // If the NewPlayerPerksAPI is not null, check the player's perks
-            if(newPlayerPerksAPI != null) {
+            if(newPlayerPerksHook.isHooked()) {
                 // If the player doesn't have perks or the invulnerable perk isn't used, remove invulnerability
-                if(!newPlayerPerksAPI.hasPerks(playerId) || !newPlayerPerksAPI.isInvulnerablePerkEnabled()) {
+                if(!newPlayerPerksHook.hasPerks(playerId) || !newPlayerPerksHook.isInvulnerablePerkEnabled()) {
                     player.setInvulnerable(false);
                 }
             } else {

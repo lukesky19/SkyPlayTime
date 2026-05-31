@@ -20,7 +20,7 @@ package com.github.lukesky19.skyplaytime.database.table;
 import com.github.lukesky19.skyplaytime.database.table.abstracts.AbstractTableTest;
 import com.github.lukesky19.skyplaytime.leaderboard.data.TopTen;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jspecify.annotations.NonNull;
@@ -141,12 +141,12 @@ public class PlayTimeTableTest extends AbstractTableTest {
         loadFuture.join();
         assertFalse(loadFuture.isCompletedExceptionally());
 
-        assertEquals(0, testPlayerData.getSessionPlayTimeSeconds());
-        assertEquals(20, testPlayerData.getDailyPlayTimeSeconds());
-        assertEquals(30, testPlayerData.getWeeklyPlayTimeSeconds());
-        assertEquals(40, testPlayerData.getMonthlyPlayTimeSeconds());
-        assertEquals(50, testPlayerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, testPlayerData.getTotalPlayTimeSeconds());
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(20, testPlayerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(30, testPlayerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(40, testPlayerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(50, testPlayerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, testPlayerData.getPlayTime(TimeCategory.TOTAL));
 
         verify(logger, never()).info(any(Component.class));
         verify(logger, never()).warn(any(Component.class));
@@ -171,12 +171,12 @@ public class PlayTimeTableTest extends AbstractTableTest {
         loadFuture.join();
         assertFalse(loadFuture.isCompletedExceptionally());
 
-        assertEquals(0, testPlayerData.getSessionPlayTimeSeconds());
-        assertEquals(0, testPlayerData.getDailyPlayTimeSeconds());
-        assertEquals(0, testPlayerData.getWeeklyPlayTimeSeconds());
-        assertEquals(0, testPlayerData.getMonthlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData.getYearlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData.getTotalPlayTimeSeconds());
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.TOTAL));
 
         verify(logger, never()).info(any(Component.class));
         verify(logger, never()).warn(any(Component.class));
@@ -247,12 +247,12 @@ public class PlayTimeTableTest extends AbstractTableTest {
         loadFuture.join();
         assertFalse(loadFuture.isCompletedExceptionally());
 
-        assertEquals(0, testPlayerData.getSessionPlayTimeSeconds());
-        assertEquals(20, testPlayerData.getDailyPlayTimeSeconds());
-        assertEquals(30, testPlayerData.getWeeklyPlayTimeSeconds());
-        assertEquals(40, testPlayerData.getMonthlyPlayTimeSeconds());
-        assertEquals(50, testPlayerData.getYearlyPlayTimeSeconds());
-        assertEquals(60, testPlayerData.getTotalPlayTimeSeconds());
+        assertEquals(0, testPlayerData.getPlayTime(TimeCategory.SESSION));
+        assertEquals(20, testPlayerData.getPlayTime(TimeCategory.DAILY));
+        assertEquals(30, testPlayerData.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(40, testPlayerData.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(50, testPlayerData.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(60, testPlayerData.getPlayTime(TimeCategory.TOTAL));
         assertTrue(testPlayerData.isExempt());
 
         verify(logger, never()).info(any(Component.class));
@@ -377,9 +377,9 @@ public class PlayTimeTableTest extends AbstractTableTest {
         livePlayTimeTable.loadPlayerData(playerId2, testPlayerData2).join();
         livePlayTimeTable.loadPlayerData(playerId3, testPlayerData3).join();
 
-        assertEquals(0, testPlayerData1.getDailyPlayTimeSeconds());
-        assertEquals(0, testPlayerData2.getDailyPlayTimeSeconds());
-        assertEquals(0, testPlayerData3.getDailyPlayTimeSeconds());
+        assertEquals(0, testPlayerData1.getPlayTime(TimeCategory.DAILY));
+        assertEquals(0, testPlayerData2.getPlayTime(TimeCategory.DAILY));
+        assertEquals(0, testPlayerData3.getPlayTime(TimeCategory.DAILY));
     }
 
     /**
@@ -436,9 +436,9 @@ public class PlayTimeTableTest extends AbstractTableTest {
         livePlayTimeTable.loadPlayerData(playerId2, testPlayerData2).join();
         livePlayTimeTable.loadPlayerData(playerId3, testPlayerData3).join();
 
-        assertEquals(0, testPlayerData1.getWeeklyPlayTimeSeconds());
-        assertEquals(0, testPlayerData2.getWeeklyPlayTimeSeconds());
-        assertEquals(0, testPlayerData3.getWeeklyPlayTimeSeconds());
+        assertEquals(0, testPlayerData1.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(0, testPlayerData2.getPlayTime(TimeCategory.WEEKLY));
+        assertEquals(0, testPlayerData3.getPlayTime(TimeCategory.WEEKLY));
     }
 
     /**
@@ -495,9 +495,9 @@ public class PlayTimeTableTest extends AbstractTableTest {
         livePlayTimeTable.loadPlayerData(playerId2, testPlayerData2).join();
         livePlayTimeTable.loadPlayerData(playerId3, testPlayerData3).join();
 
-        assertEquals(0, testPlayerData1.getMonthlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData2.getMonthlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData3.getMonthlyPlayTimeSeconds());
+        assertEquals(0, testPlayerData1.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(0, testPlayerData2.getPlayTime(TimeCategory.MONTHLY));
+        assertEquals(0, testPlayerData3.getPlayTime(TimeCategory.MONTHLY));
     }
 
     /**
@@ -554,9 +554,9 @@ public class PlayTimeTableTest extends AbstractTableTest {
         livePlayTimeTable.loadPlayerData(playerId2, testPlayerData2).join();
         livePlayTimeTable.loadPlayerData(playerId3, testPlayerData3).join();
 
-        assertEquals(0, testPlayerData1.getYearlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData2.getYearlyPlayTimeSeconds());
-        assertEquals(0, testPlayerData3.getYearlyPlayTimeSeconds());
+        assertEquals(0, testPlayerData1.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(0, testPlayerData2.getPlayTime(TimeCategory.YEARLY));
+        assertEquals(0, testPlayerData3.getPlayTime(TimeCategory.YEARLY));
     }
 
     /**
@@ -613,9 +613,9 @@ public class PlayTimeTableTest extends AbstractTableTest {
         livePlayTimeTable.loadPlayerData(playerId2, testPlayerData2).join();
         livePlayTimeTable.loadPlayerData(playerId3, testPlayerData3).join();
 
-        assertEquals(0, testPlayerData1.getTotalPlayTimeSeconds());
-        assertEquals(0, testPlayerData2.getTotalPlayTimeSeconds());
-        assertEquals(0, testPlayerData3.getTotalPlayTimeSeconds());
+        assertEquals(0, testPlayerData1.getPlayTime(TimeCategory.TOTAL));
+        assertEquals(0, testPlayerData2.getPlayTime(TimeCategory.TOTAL));
+        assertEquals(0, testPlayerData3.getPlayTime(TimeCategory.TOTAL));
     }
 
     /**

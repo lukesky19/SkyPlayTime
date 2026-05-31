@@ -17,14 +17,14 @@
 */
 package com.github.lukesky19.skyplaytime.command.arguments;
 
-import com.github.lukesky19.skylib.common.api.time.TimeUtil;
+import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skylib.paper.api.adventure.PaperAdventureUtility;
 import com.github.lukesky19.skyplaytime.SkyPlayTime;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.data.locale.Locale;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmManager;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.locale.Locale;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
-import com.github.lukesky19.skyplaytime.player.manager.ActivityManager;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -33,10 +33,10 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NonNull;
 
-import java.time.ZoneId;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,7 +49,7 @@ public class DebugCommand {
     private final @NonNull LocaleManager localeManager;
     private final @NonNull PlayerDataManager playerDataManager;
     private final @NonNull AFKManager afkManager;
-    private final @NonNull ActivityManager activityManager;
+    private final @NonNull AlgorithmManager algorithmManager;
 
     /**
      * Constructor
@@ -57,20 +57,20 @@ public class DebugCommand {
      * @param localeManager A {@link LocaleManager} instance.
      * @param playerDataManager A {@link PlayerDataManager} instance.
      * @param afkManager An {@link AFKManager} instance.
-     * @param activityManager An {@link ActivityManager} instance.
+     * @param algorithmManager An {@link AlgorithmManager} instance.
      */
     public DebugCommand(
             @NonNull SkyPlayTime skyPlayTime,
             @NonNull LocaleManager localeManager,
             @NonNull PlayerDataManager playerDataManager,
             @NonNull AFKManager afkManager,
-            @NonNull ActivityManager activityManager) {
+            @NonNull AlgorithmManager algorithmManager) {
         this.skyPlayTime = skyPlayTime;
         this.logger = skyPlayTime.getComponentLogger();
         this.localeManager = localeManager;
         this.playerDataManager = playerDataManager;
         this.afkManager = afkManager;
-        this.activityManager = activityManager;
+        this.algorithmManager = algorithmManager;
     }
 
     /**
@@ -123,49 +123,25 @@ public class DebugCommand {
                 })
         );
 
-        builder.then(Commands.literal("last-move")
-                .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.last-move"))
-                .then(Commands.argument("player", ArgumentTypes.player())
-                        .executes(ctx -> {
-                            Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            Locale locale = localeManager.getLocale();
+        builder.then(Commands.literal("algorithms")
+            .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.debug.algorithms"))
+            .then(Commands.argument("player", ArgumentTypes.player())
+                .executes(ctx -> {
+                    CommandSender sender = ctx.getSource().getSender();
+                    Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
+                    UUID targetUUID = target.getUniqueId();
 
-                            String timeStampFormat = "MM-dd-yyyy HH:mm:ss";
-                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastMoveTime(target), ZoneId.of("America/New_York"), timeStampFormat);
-                            String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last moved at <yellow>" + timeMessage + "</yellow>.</aqua>";
+                    return playerDataManager.getPlayerData(targetUUID)
+                            .map(playerData -> {
+                                sender.sendMessage(AdventureUtility.deserialize("Algorithm Results for Player " + target.getName()));
+                                algorithmManager.getAlgorithmList().forEach(algorithm ->
+                                        sender.sendMessage(AdventureUtility.deserialize("Algorithm: " + algorithm.getName() + " | Result: " + algorithm.isPlayerInactive(target, playerData))));
 
-                            if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + lastMoveMessage));
-                            } else {
-                                logger.info(PaperAdventureUtility.deserialize(lastMoveMessage));
-                            }
-
-                            return 1;
-                        })
-                )
-        );
-
-        builder.then(Commands.literal("last-interact")
-                .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.last-interact"))
-                .then(Commands.argument("player", ArgumentTypes.player())
-                        .executes(ctx -> {
-                            Player target = ctx.getArgument("player", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource()).getFirst();
-                            Locale locale = localeManager.getLocale();
-
-                            String timeStampFormat = "MM-dd-yyyy HH:mm:ss";
-                            String timeMessage = TimeUtil.millisToTimeStamp(activityManager.getLastActionTime(target), ZoneId.of("America/New_York"), timeStampFormat);
-                            String lastMoveMessage = "<aqua>Player <yellow>" + target.getName() + "</yellow> last interacted at <yellow>" + timeMessage + "</yellow>.</aqua>";
-
-                            if(ctx.getSource().getSender() instanceof Player player) {
-                                player.sendMessage(PaperAdventureUtility.deserialize(locale.prefix() + lastMoveMessage));
-                            } else {
-                                logger.info(PaperAdventureUtility.deserialize(lastMoveMessage));
-                            }
-
-                            return 1;
-                        })
-                )
-        );
+                                return 1;
+                            })
+                            .orElse(0);
+                })
+        ));
 
         builder.then(Commands.literal("list")
                 .requires(ctx -> ctx.getSender().hasPermission("skyplaytime.command.skyplaytime.debug.list"))

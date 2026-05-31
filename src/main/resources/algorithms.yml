@@ -1,0 +1,60 @@
+# DO NOT TOUCH! - This is for migrating the config file format if necessary.
+version: 1
+# The grace period in seconds applied when a player is no longer AFK.
+grace-period-seconds: 120
+# The configuration options for the afk pool algorithm.
+afk-pool-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # How far back to consider location history. I.e., Consider the locations from the past 3 minutes (180 seconds).
+    location-history-seconds: 180
+    # The minimum number of locations required to calculate movement threshold.
+    min-location-count: 8
+    # The location similarity threshold. Should be exactly or between 0 and 1. A percentage a decimal.
+    threshold: 0.60
+# The configuration options for the bubble column algorithm.
+bubble-column-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # How far back to consider location history. I.e., Consider the locations from the past 3.5 seconds.
+    location-history-seconds: 3.5
+    # The minimum number of locations required to calculate movement threshold.
+    min-location-count: 8
+    # The location similarity threshold. Should be exactly or between 0 and 1. A percentage a decimal.
+    threshold: 0.75
+# The configuration options for the fishing algorithm.
+fishing-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # How far back to consider location history. I.e., Consider the locations from the past 90 seconds.
+    location-history-seconds: 90
+    # The minimum number of locations required to calculate movement threshold.
+    min-location-count: 8
+    # The location similarity threshold. Should be exactly or between 0 and 1. A percentage a decimal.
+    threshold: 0.75
+# The configuration options for the cobblestone generator algorithm.
+generator-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # The movement time threshold to consider the player AFK.
+    # This is where the player hasn't moved in the last X seconds.
+    movement-time-seconds: 60
+    # The action time threshold to consider the player AFK.
+    # This is where the player has completed an action in the last X seconds.
+    action-time-seconds: 30
+# The configuration options for the piston algorithm.
+piston-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # How far back to consider location history. I.e., Consider the locations from the past 15 seconds.
+    location-history-seconds: 15
+    # The minimum number of locations required to calculate movement threshold.
+    min-location-count: 8
+    # The location similarity threshold. Should be exactly or between 0 and 1. A percentage a decimal.
+    threshold: 0.75
+# The configuration options for the timeout algorithm.
+timeout-options:
+    # Should this algorithm be disabled?
+    disable: false
+    # The number of seconds to consider a player AFK after.
+    auto-afk-seconds: 300

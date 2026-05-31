@@ -18,7 +18,7 @@
 package com.github.lukesky19.skyplaytime.task.tasks;
 
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
-import com.github.lukesky19.skyplaytime.util.TimeCategory;
+import com.github.lukesky19.skyplaytime.util.enums.TimeCategory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.NonNull;
 

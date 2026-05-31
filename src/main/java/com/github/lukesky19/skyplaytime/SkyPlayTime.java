@@ -17,35 +17,43 @@
 */
 package com.github.lukesky19.skyplaytime;
 
-import com.github.lukesky19.newPlayerPerks.NewPlayerPerksAPI;
 import com.github.lukesky19.skylib.common.api.adventure.AdventureUtility;
 import com.github.lukesky19.skylib.paper.api.plugin.SkyPlugin;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfig;
+import com.github.lukesky19.skyplaytime.api.SkyPlayTimeAPI;
+import com.github.lukesky19.skyplaytime.api.algorithm.Algorithm;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmConfigManager;
+import com.github.lukesky19.skyplaytime.algorithm.AlgorithmManager;
+import com.github.lukesky19.skyplaytime.algorithm.impl.*;
+import com.github.lukesky19.skyplaytime.integration.HookManager;
+import com.github.lukesky19.skyplaytime.listener.block.BlockListener;
+import com.github.lukesky19.skyplaytime.listener.connection.LoginListener;
+import com.github.lukesky19.skyplaytime.listener.connection.LogoutListener;
+import com.github.lukesky19.skyplaytime.listener.fishing.FishListener;
+import com.github.lukesky19.skyplaytime.listener.movement.MovementListener;
+import com.github.lukesky19.skyplaytime.listener.player.PlayerInteractListener;
 import com.github.lukesky19.skyplaytime.player.data.PlayerData;
 import com.github.lukesky19.skyplaytime.player.manager.AFKManager;
-import com.github.lukesky19.skyplaytime.player.manager.ActivityManager;
 import com.github.lukesky19.skyplaytime.command.SkyPlayTimeCommand;
 import com.github.lukesky19.skyplaytime.command.arguments.AFKCommand;
 import com.github.lukesky19.skyplaytime.command.arguments.ListCommand;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardManager;
 import com.github.lukesky19.skyplaytime.leaderboard.manager.LeaderboardSnapshotManager;
-import com.github.lukesky19.skyplaytime.config.manager.locale.LocaleManager;
-import com.github.lukesky19.skyplaytime.config.manager.settings.SettingsManager;
+import com.github.lukesky19.skyplaytime.locale.LocaleManager;
+import com.github.lukesky19.skyplaytime.settings.SettingsManager;
 import com.github.lukesky19.skyplaytime.database.connection.ConnectionManager;
 import com.github.lukesky19.skyplaytime.database.DatabaseManager;
 import com.github.lukesky19.skyplaytime.database.queue.QueueManager;
-import com.github.lukesky19.skyplaytime.listener.*;
 import com.github.lukesky19.skyplaytime.placeholderapi.SkyPlayTimeExpansion;
 import com.github.lukesky19.skyplaytime.player.manager.PlayerDataManager;
 import com.github.lukesky19.skyplaytime.player.manager.TimeManager;
 import com.github.lukesky19.skyplaytime.task.TaskManager;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +65,7 @@ import java.util.concurrent.CompletableFuture;
 public final class SkyPlayTime extends SkyPlugin {
     private SettingsManager settingsManager;
     private LocaleManager localeManager;
+    private AlgorithmConfigManager algorithmConfigManager;
     private DatabaseManager databaseManager;
     private PlayerDataManager playerDataManager;
     private LeaderboardManager leaderboardManager;
@@ -75,12 +84,12 @@ public final class SkyPlayTime extends SkyPlugin {
     @Override
     public void onEnable() {
         if(!checkSkyLibVersion()) return;
-        NewPlayerPerksAPI newPlayerPerksAPI = getNewPlayerPerksAPI();
 
         // Initialize Classes
         // Config Classes
         settingsManager = new SettingsManager(this);
         localeManager = new LocaleManager(this, settingsManager);
+        algorithmConfigManager = new AlgorithmConfigManager(this);
         LeaderboardSnapshotManager leaderboardSnapshotManager = new LeaderboardSnapshotManager(this);
 
         // Database Classes
@@ -88,25 +97,36 @@ public final class SkyPlayTime extends SkyPlugin {
         QueueManager queueManager = new QueueManager(connectionManager);
         databaseManager = new DatabaseManager(this, connectionManager, queueManager);
 
-        // Manager classes
+        // Integration/Hooks
+        HookManager hookManager = new HookManager(this);
+
+        // Player Data and Related
         playerDataManager = new PlayerDataManager(this, databaseManager);
         leaderboardManager = new LeaderboardManager(this, leaderboardSnapshotManager, playerDataManager, databaseManager);
         TimeManager timeManager = new TimeManager(this, settingsManager, databaseManager, playerDataManager, leaderboardManager);
-        afkManager = new AFKManager(this, settingsManager, localeManager, playerDataManager, newPlayerPerksAPI);
-        ActivityManager activityManager = new ActivityManager(this.getComponentLogger(), playerDataManager);
-        taskManager = new TaskManager(this, settingsManager, playerDataManager, timeManager, afkManager, leaderboardManager);
+        afkManager = new AFKManager(this, settingsManager, localeManager, algorithmConfigManager, playerDataManager, hookManager);
+
+        // Algorithms
+        AlgorithmManager algorithmManager = initAlgorithmManager();
+
+        // Tasks
+        taskManager = new TaskManager(this, settingsManager, playerDataManager, timeManager, afkManager, leaderboardManager, algorithmManager);
 
         // Register Listeners
-        this.getServer().getPluginManager().registerEvents(new LoginListener(playerDataManager), this);
-        this.getServer().getPluginManager().registerEvents(new LogoutListener(playerDataManager), this);
-        this.getServer().getPluginManager().registerEvents(new ActivityListener(this, settingsManager, afkManager, activityManager), this);
+        PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(new LoginListener(algorithmConfigManager, playerDataManager), this);
+        pluginManager.registerEvents(new LogoutListener(playerDataManager), this);
+        pluginManager.registerEvents(new MovementListener(settingsManager, playerDataManager, afkManager), this);
+        pluginManager.registerEvents(new FishListener(playerDataManager), this);
+        pluginManager.registerEvents(new BlockListener(playerDataManager), this);
+        pluginManager.registerEvents(new PlayerInteractListener(playerDataManager), this);
 
         // Create and register the API
-        SkyPlayTimeAPI skyPlayTimeAPI = new SkyPlayTimeAPI(timeManager, afkManager, leaderboardManager);
+        SkyPlayTimeAPI skyPlayTimeAPI = new SkyPlayTimeAPI(playerDataManager, timeManager, afkManager, leaderboardManager, algorithmManager);
         this.getServer().getServicesManager().register(SkyPlayTimeAPI.class, skyPlayTimeAPI, this, ServicePriority.Lowest);
 
         // Register Commands
-        SkyPlayTimeCommand skyPlayTimeCommand = new SkyPlayTimeCommand(this, localeManager, leaderboardSnapshotManager, databaseManager, playerDataManager, leaderboardManager, timeManager, afkManager, activityManager);
+        SkyPlayTimeCommand skyPlayTimeCommand = new SkyPlayTimeCommand(this, localeManager, leaderboardSnapshotManager, databaseManager, playerDataManager, leaderboardManager, timeManager, afkManager, algorithmManager);
         AFKCommand afkCommand = new AFKCommand(this, localeManager, afkManager);
         ListCommand listCommand = new ListCommand(this, localeManager, playerDataManager);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
@@ -126,9 +146,44 @@ public final class SkyPlayTime extends SkyPlugin {
                 futureList.add(playerDataManager.loadPlayerData(player)));
 
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0]));
-        allFutures.thenAccept(_ ->
-                leaderboardManager.updateDatabaseTopTen().thenAccept(_ ->
-                        leaderboardManager.updateTopTenAllCategories()));
+        allFutures.thenAccept(_ -> {
+            leaderboardManager.updateDatabaseTopTen().thenAccept(_ ->
+                    leaderboardManager.updateTopTenAllCategories());
+
+            AlgorithmConfig algorithmConfig = algorithmConfigManager.getConfiguration();
+            if(algorithmConfig != null) {
+                long gracePeriod = (long) (System.currentTimeMillis() + (algorithmConfig.gracePeriodSeconds() * 1000));
+                playerDataManager.getPlayerDataMap().forEach((_, playerData) -> playerData.setGracePeriod(gracePeriod));
+            }
+
+            // Start tasks after player data has been loaded and grace periods applied
+            // This is done outside of reload in onEnable to prevent players being marked AFK before grace periods are applied.
+            taskManager.restartTasks();
+        });
+    }
+
+    /**
+     * Initialize the {@link AlgorithmManager} and bundled algorithms.
+     * @return The {@link AlgorithmManager}.
+     */
+    private @NonNull AlgorithmManager initAlgorithmManager() {
+        AlgorithmManager algorithmManager = new AlgorithmManager();
+
+        Algorithm afkPoolAlgorithm = new AfkPoolAlgorithm(algorithmConfigManager);
+        Algorithm bubbleColumnAlgorithm = new BubbleColumnAlgorithm(algorithmConfigManager);
+        Algorithm fishingAlgorithm = new FishingAlgorithm(algorithmConfigManager);
+        Algorithm generatorAlgorithm = new GeneratorAlgorithm(algorithmConfigManager);
+        Algorithm pistonAlgorithm = new PistonAlgorithm(algorithmConfigManager);
+        Algorithm timeoutAlgorithm = new TimeoutAlgorithm(algorithmConfigManager);
+
+        algorithmManager.addAlgorithm(afkPoolAlgorithm);
+        algorithmManager.addAlgorithm(bubbleColumnAlgorithm);
+        algorithmManager.addAlgorithm(fishingAlgorithm);
+        algorithmManager.addAlgorithm(generatorAlgorithm);
+        algorithmManager.addAlgorithm(pistonAlgorithm);
+        algorithmManager.addAlgorithm(timeoutAlgorithm);
+
+        return algorithmManager;
     }
 
     @Override
@@ -145,9 +200,11 @@ public final class SkyPlayTime extends SkyPlugin {
 
         settingsManager.loadSettings();
         localeManager.loadLocale();
-        taskManager.restartTasks();
+        algorithmConfigManager.loadConfiguration();
 
         if(!onEnable) {
+            taskManager.restartTasks();
+
             leaderboardManager.updateDatabaseTopTen().thenAccept(_ ->
                     leaderboardManager.updateTopTenAllCategories());
         }
@@ -162,6 +219,10 @@ public final class SkyPlayTime extends SkyPlugin {
 
         if(taskManager != null) {
             taskManager.stopTasks();
+        }
+
+        if(afkManager != null) {
+            afkManager.resetOnlinePlayerAFKSettings();
         }
 
         if(playerDataManager != null) {
@@ -203,20 +264,6 @@ public final class SkyPlayTime extends SkyPlugin {
                 skyPlayTimeExpansion.unregister();
             }
         }
-    }
-
-    /**
-     * Attempts to retrieve the {@link NewPlayerPerksAPI}.
-     */
-    private @Nullable NewPlayerPerksAPI getNewPlayerPerksAPI() {
-        if(this.getServer().getPluginManager().isPluginEnabled("NewPlayerPerks")) {
-            RegisteredServiceProvider<NewPlayerPerksAPI> provider = Bukkit.getServicesManager().getRegistration(NewPlayerPerksAPI.class);
-            if(provider != null) {
-                return provider.getProvider();
-            }
-        }
-
-        return null;
     }
 
     /**

@@ -165,7 +165,7 @@ public class PlayerDataManagerTest {
                 false);
         playerDataManager.setPlayerData(playerId, playerData);
 
-        PlayerData testPlayerData = playerDataManager.getPlayerData(player);
+        PlayerData testPlayerData = playerDataManager.getPlayerData(player).orElse(null);
         assertNotNull(testPlayerData);
         assertEquals(playerData, testPlayerData);
     }
@@ -187,7 +187,7 @@ public class PlayerDataManagerTest {
                 false);
         playerDataManager.setPlayerData(playerId, playerData);
 
-        PlayerData testPlayerData = playerDataManager.getPlayerData(playerId);
+        PlayerData testPlayerData = playerDataManager.getPlayerData(playerId).orElse(null);
         assertNotNull(testPlayerData);
         assertEquals(playerData, testPlayerData);
     }
